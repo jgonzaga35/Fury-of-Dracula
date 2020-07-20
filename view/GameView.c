@@ -23,7 +23,9 @@
 #include <string.h>
 
 #define TURNS_PER_ROUND	5
+#define STARTING_SCORE 366
 #define DELIMITER 		" "
+#define CURR_PLACE		0
 
 // TODO: ADD YOUR OWN STRUCTS HERE
 
@@ -36,7 +38,7 @@ struct gameView {
 	Player currentPlayer;
 	PlaceId trails[NUM_PLAYERS][TRAIL_SIZE];
 	PlaceId vampireLocation;
-	PlaceId *trapLocations;
+	PlaceId trapLocations[TRAIL_SIZE];
 
 	// Implicit variables
 	int numOfKills;
@@ -47,7 +49,7 @@ struct gameView {
 
 GameView GvNew(char *pastPlays, Message messages[])
 {
-	GameView new = malloc(sizeof(*new));
+	GameView new = malloc(sizeof(struct gameView));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate GameView!\n");
 		exit(EXIT_FAILURE);
@@ -208,7 +210,7 @@ static void performDraculaAction(GameView gv, PlaceId p, char cmd, int turns) {
 			break;
 		case 'V':
 			if (turns == 5) gv->score -= SCORE_LOSS_VAMPIRE_MATURES;
-			else gv->vampireLocation = gv->currLocation[PLAYER_DRACULA];
+			else gv->vampireLocation = gv->trails[PLAYER_DRACULA][CURR_PLACE];
 			break;
 	}
 }
