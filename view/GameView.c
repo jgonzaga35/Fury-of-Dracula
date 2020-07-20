@@ -125,12 +125,28 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
  * memory leaks. Otherwise, set it to false.
  */
 	/* 
+	// Dynamically allocate array of PlaceIds
+	PlaceId *history;
+
+	// How many PlaceIds to allocate?? Unsure...
+	history = (PlaceId *)malloc(sizeof(PlaceId)*TRAIL_SIZE);
+
+	// To count numReturnedMoves:
+	// 1. Initialise history array with -1.
+	// 2. Fill in history array with move history.
+	// 3. Count elements in array until history[i] == -1.
+
+	// Fill in PlaceId array with move history of given player.
+	// How to find move history of given player???
 	for (int i = 0; i < TRAIL_SIZE; i++) {
-		
+		history[i] = 
 
 	}
-	*/
 
+	// When should the caller of this function be allowed
+	// to modify or free the array?? 
+	*/
+	
 	*numReturnedMoves = 0;
 	*canFree = false;
 	return NULL;
