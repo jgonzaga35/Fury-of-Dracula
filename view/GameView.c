@@ -27,8 +27,6 @@
 #define DELIMITER 		" "
 #define CURR_PLACE		0
 
-// TODO: ADD YOUR OWN STRUCTS HERE
-
 struct gameView {
 	// Explicit variables
 	Round numRound;
@@ -39,11 +37,9 @@ struct gameView {
 	PlaceId trails[NUM_PLAYERS][TRAIL_SIZE];
 	PlaceId vampireLocation;
 	PlaceId trapLocations[TRAIL_SIZE];
-
-	// Implicit variables
-	int numOfKills;
 };
 
+// Function prototypes
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
@@ -92,16 +88,6 @@ int GvGetHealth(GameView gv, Player player)
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-
-	// If the player hasn't had a turn (The id doesn't apear in the first four play)
-	if ()
-
-	// If hunter, reuturn last play's location
-
-	// If Dracula, 
-
-
 	return NOWHERE;
 }
 
@@ -111,29 +97,11 @@ PlaceId GvGetVampireLocation(GameView gv)
 	return NOWHERE;
 }
 
-// Helper function to derive the location of the vampires
-PlaceId GvGetVampireLocationHelper(char *pastPlays, Round numRound, int numTurn) {
-	// Find the location of the last V that Dracula put
-		// the last play that mod 13 == 0
-		// Log the location
-	// From that play, check if the vampire is killed
-		// From the play, check if V appear in the hunters encounter
-
-	
-}
-
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numTraps = 0;
 	return NULL;
-}
-
-// Helper function to derive the location of the traps
-PlaceId *GvGetTrapLocationsHelper(char *pastPlays, int *numTraps) {
-	// Find when in the last six move of Dracula, a T appear in encounter
-	// Find since the last play of Dracula, is there T appear in the hunter play, 
-		// if so, delete from the location array
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -200,19 +168,17 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 
 // TODO
 
-static void performDraculaAction(GameView gv, PlaceId p, char cmd, int turns) {
-	switch(cmd) {
-		case '.': break;
-		case 'T':
-			placeEncounter();
-			break;
-		case 'M':
-			break;
-		case 'V':
-			if (turns == 5) gv->score -= SCORE_LOSS_VAMPIRE_MATURES;
-			else gv->vampireLocation = gv->trails[PLAYER_DRACULA][CURR_PLACE];
-			break;
-	}
-}
-
-static void placeEncounter(GameView gv, PlaceId p, char cmd, int turns) 
+// static void performDraculaAction(GameView gv, char cmd, int turns) {
+// 	switch(cmd) {
+// 		case '.': break;
+// 		case 'T':
+// 			placeEncounter();
+// 			break;
+// 		case 'M':
+// 			break;
+// 		case 'V':
+// 			if (turns == 5) gv->score -= SCORE_LOSS_VAMPIRE_MATURES;
+// 			else gv->vampireLocation = gv->trails[PLAYER_DRACULA][CURR_PLACE];
+// 			break;
+// 	}
+// }
