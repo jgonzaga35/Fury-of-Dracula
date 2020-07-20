@@ -18,12 +18,29 @@
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
+
 // add your own #includes here
+#include <string.h>
+
+#define NUM_OF_PLAYER	4
+#define TURNS_PER_ROUND	5
+#define DELIMITER 		" "
 
 // TODO: ADD YOUR OWN STRUCTS HERE
 
 struct gameView {
-	// TODO: ADD FIELDS HERE
+	// Explicit variables
+	Round numRound;
+	int score;
+	int health[NUM_OF_PLAYER];
+
+	Player currentPlayer;
+	PlaceId currLocation[NUM_OF_PLAYER];
+	PlaceId vampireLocation;
+	PlaceId *trapLocations;
+
+	// Implicit variables
+	int numOfKills;
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -31,12 +48,22 @@ struct gameView {
 
 GameView GvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GameView new = malloc(sizeof(*new));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate GameView!\n");
 		exit(EXIT_FAILURE);
 	}
+
+	// Store pastPlays in to an array
+	int numTurns = 0;
+   	char *token = strtok(pastPlays, DELIMITER);
+	while( token != NULL ) {
+		printf( " %s\n", token );
+		numTurns++;
+		token = strtok(NULL, DELIMITER);
+	}
+
+	new->numRound = numTurns / TURNS_PER_ROUND;
 
 	return new;
 }
@@ -52,8 +79,7 @@ void GvFree(GameView gv)
 
 Round GvGetRound(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return gv->numRound;
 }
 
 Player GvGetPlayer(GameView gv)
@@ -77,6 +103,14 @@ int GvGetHealth(GameView gv, Player player)
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+
+	// If the player hasn't had a turn (The id doesn't apear in the first four play)
+
+	// If hunter, reuturn last play's location
+
+	// If Dracula, 
+
+
 	return NOWHERE;
 }
 
@@ -86,11 +120,27 @@ PlaceId GvGetVampireLocation(GameView gv)
 	return NOWHERE;
 }
 
+// Helper function to derive the location of the vampires
+PlaceId GvGetVampireLocationHelper(char *pastPlays) {
+	// Find the location of the last V that Dracula put
+		// the last play that mod 13 == 0
+		// Log the location
+	// From that play, check if the vampire is killed
+		// From the play, check if V appear in the hunters encounter
+}
+
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numTraps = 0;
 	return NULL;
+}
+
+// Helper function to derive the location of the traps
+PlaceId *GvGetTrapLocationsHelper(char *pastPlays, int *numTraps) {
+	// Find when in the last six move of Dracula, a T appear in encounter
+	// Find since the last play of Dracula, is there T appear in the hunter play, 
+		// if so, delete from the location array
 }
 
 ////////////////////////////////////////////////////////////////////////
