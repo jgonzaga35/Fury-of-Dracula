@@ -22,6 +22,7 @@
 // add your own #includes here
 #include <string.h>
 
+#define STRLEN_OF_ROUND 40
 #define NUM_OF_PLAYER	4
 #define TURNS_PER_ROUND	5
 #define DELIMITER 		" "
@@ -84,20 +85,26 @@ Round GvGetRound(GameView gv)
 
 Player GvGetPlayer(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return PLAYER_LORD_GODALMING;
+	return gv->currentPlayer;
 }
 
 int GvGetScore(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return gv->score;
 }
 
 int GvGetHealth(GameView gv, Player player)
-{
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+{ // -------- not sure if this is right until we compile --------
+	int h = gv->health[player];
+	if 
+	(	
+		0 <= player && player <= 3 && // hunter
+		0 <= h && h <= GAME_START_HUNTER_LIFE_POINTS // health allowable
+	) return h;
+	
+	if (player == 4 && h >= 0) return h; // Dracula
+
+	return -1; // error
 }
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
@@ -109,7 +116,7 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 	// If hunter, reuturn last play's location
 
 	// If Dracula, 
-
+	
 
 	return NOWHERE;
 }

@@ -10,7 +10,7 @@
 ########################################################################
 
 CC = gcc
-CFLAGS = -Wall -Werror -g
+CFLAGS = -g
 BINS = testGameView testHunterView testDraculaView testMap
 
 all: $(BINS)
