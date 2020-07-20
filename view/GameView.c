@@ -128,6 +128,42 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
                           int *numReturnedMoves, bool *canFree)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+/**
+ * Gets  the complete move history, in chronological order, of the given
+ * player as shown in the play string.
+ *
+ * This  function  should  return  the  moves in a dynamically allocated
+ * array, and set *numReturnedMoves to the number of moves returned.
+ *
+ * This  function can decide whether the caller is allowed to  modify or
+ * free the returned array. (If the array is part of the  GameView  data
+ * structure,  you may not want the caller to modify or free it.) If the
+ * returned array can be modified/freed, set *canFree to true  to  avoid
+ * memory leaks. Otherwise, set it to false.
+ */
+	/* 
+	// Dynamically allocate array of PlaceIds
+	PlaceId *history;
+
+	// How many PlaceIds to allocate?? Unsure...
+	history = (PlaceId *)malloc(sizeof(PlaceId)*TRAIL_SIZE);
+
+	// To count numReturnedMoves:
+	// 1. Initialise history array with -1.
+	// 2. Fill in history array with move history.
+	// 3. Count elements in array until history[i] == -1.
+
+	// Fill in PlaceId array with move history of given player.
+	// How to find move history of given player???
+	for (int i = 0; i < TRAIL_SIZE; i++) {
+		history[i] = 
+
+	}
+
+	// When should the caller of this function be allowed
+	// to modify or free the array?? 
+	*/
+	
 	*numReturnedMoves = 0;
 	*canFree = false;
 	return NULL;
