@@ -22,7 +22,6 @@
 // add your own #includes here
 #include <string.h>
 
-#define NUM_OF_PLAYER	4
 #define TURNS_PER_ROUND	5
 #define DELIMITER 		" "
 
@@ -32,10 +31,10 @@ struct gameView {
 	// Explicit variables
 	Round numRound;
 	int score;
-	int health[NUM_OF_PLAYER];
+	int health[NUM_PLAYERS];
 
 	Player currentPlayer;
-	PlaceId currLocation[NUM_OF_PLAYER];
+	PlaceId trails[NUM_PLAYERS][TRAIL_SIZE];
 	PlaceId vampireLocation;
 	PlaceId *trapLocations;
 
@@ -53,17 +52,6 @@ GameView GvNew(char *pastPlays, Message messages[])
 		fprintf(stderr, "Couldn't allocate GameView!\n");
 		exit(EXIT_FAILURE);
 	}
-
-	// Store pastPlays in to an array
-	int numTurns = 0;
-   	char *token = strtok(pastPlays, DELIMITER);
-	while( token != NULL ) {
-		printf( " %s\n", token );
-		numTurns++;
-		token = strtok(NULL, DELIMITER);
-	}
-
-	new->numRound = numTurns / TURNS_PER_ROUND;
 
 	return new;
 }
@@ -105,6 +93,7 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 
 	// If the player hasn't had a turn (The id doesn't apear in the first four play)
+	if ()
 
 	// If hunter, reuturn last play's location
 
@@ -121,12 +110,14 @@ PlaceId GvGetVampireLocation(GameView gv)
 }
 
 // Helper function to derive the location of the vampires
-PlaceId GvGetVampireLocationHelper(char *pastPlays) {
+PlaceId GvGetVampireLocationHelper(char *pastPlays, Round numRound, int numTurn) {
 	// Find the location of the last V that Dracula put
 		// the last play that mod 13 == 0
 		// Log the location
 	// From that play, check if the vampire is killed
 		// From the play, check if V appear in the hunters encounter
+
+	
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
@@ -206,3 +197,20 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 // Your own interface functions
 
 // TODO
+
+static void performDraculaAction(GameView gv, PlaceId p, char cmd, int turns) {
+	switch(cmd) {
+		case '.': break;
+		case 'T':
+			placeEncounter();
+			break;
+		case 'M':
+			break;
+		case 'V':
+			if (turns == 5) gv->score -= SCORE_LOSS_VAMPIRE_MATURES;
+			else gv->vampireLocation = gv->currLocation[PLAYER_DRACULA];
+			break;
+	}
+}
+
+static void placeEncounter(GameView gv, PlaceId p, char cmd, int turns) 
