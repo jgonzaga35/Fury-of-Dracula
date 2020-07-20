@@ -24,6 +24,7 @@
 
 #define NUM_OF_PLAYER	4
 #define TURNS_PER_ROUND	5
+#define STARTING_SCORE 366
 #define DELIMITER 		" "
 
 // TODO: ADD YOUR OWN STRUCTS HERE
@@ -36,8 +37,8 @@ struct gameView {
 
 	Player currentPlayer;
 	PlaceId currLocation[NUM_OF_PLAYER];
-	PlaceId vampireLocation;
-	PlaceId *trapLocations;
+	PlaceId vampireLocation[366];
+	PlaceId trapLocations[366];
 
 	// Implicit variables
 	int numOfKills;
@@ -48,10 +49,19 @@ struct gameView {
 
 GameView GvNew(char *pastPlays, Message messages[])
 {
-	GameView new = malloc(sizeof(*new));
+	GameView new = malloc(sizeof(struct gameView));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate GameView!\n");
 		exit(EXIT_FAILURE);
+	}
+
+	new->numRound = 0;
+	new->currentPlayer = new->numRound % 5;
+	new->score = STARTING_SCORE;
+
+	for (int i = 0; i < TRAIL_SIZE; i++) {
+		new->trapLocations[i] = NOWHERE;
+		new->vampireLocation[i] = NOWHERE;
 	}
 
 	// Store pastPlays in to an array
