@@ -97,7 +97,7 @@ int GvGetHealth(GameView gv, Player player)
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-
+	if (gv->)
 	// If the player hasn't had a turn (The id doesn't apear in the first four play)
 
 	// If hunter, reuturn last play's location
