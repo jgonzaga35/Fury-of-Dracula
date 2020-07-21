@@ -11,3 +11,8 @@ GitHub Username: atraw
 Name: Prayag Rawat
 zID: z5312819
 Tutorial Code: H13B
+
+GitHub Username: andrewta1607
+Name: Andrew
+zID: z5313122
+Tutorial Code: H13A
