@@ -304,7 +304,7 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 PlaceId *GvGetMoveHistory(GameView gv, Player player,
                           int *numReturnedMoves, bool *canFree)
 {
-	/* 
+
 	// Return NULL if no history yet?
 	if (gv->pastPlays == NULL) {
 		*numReturnedMoves = 0;
@@ -319,7 +319,7 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	switch (player) {
 		case 0: playerName = 'G'; // Lord Godalming
 				break;
-		case 1: playerName = 'S': // Dr Seward
+		case 1: playerName = 'S'; // Dr Seward
 				break;
 		case 2: playerName = 'H'; // Van Helsing
 				break;
@@ -336,11 +336,13 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	// Loop through pastPlays string...
 	char *pastPlays = strdup(gv->pastPlays);
 	int i = 0;
+	char *placeAbbrev;
 	for (char *move = strtok(pastPlays, " "); move != NULL; move = strtok(NULL, " ")) {
 		if (move[0] == playerName) {
-			// Doesnt work. move is a char * but pastMoves[i] is 
-			// of type PlaceId.
-			pastMoves[i] = move;
+			// Store each move by their PlaceId.
+			char abbreviation[] = {move[1], move[2]};
+			placeAbbrev = strdup(abbreviation);
+			pastMoves[i] = placeAbbrevToId(placeAbbrev);
 			i++; 
 		}
 	}
@@ -348,13 +350,13 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 
 	// once the caller of this function is finished using this data
 	// they can free it
-	*canFree = false; 
+	*canFree = true;
 
 	// Reverse order of array so the most recent moves
 	// are in the lowest value indexes of array. 
-	int start = 0;
-	int end = i;
-	char temp;
+	PlaceId start = 0;
+	PlaceId end = i;
+	PlaceId temp;
 	while (start < end) {
 		temp = pastMoves[start];
 		pastMoves[start] = pastMoves[end];
@@ -364,17 +366,16 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	}
 	// pastMoves returns an array filled with moves from oldest to newest.
 	return pastMoves;
-	*/
-	
-	*numReturnedMoves = 0;
-	*canFree = false;
-	return NULL;
+
+	// *numReturnedMoves = 0;
+	// *canFree = false;
+	// return NULL;
 }
 
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
                         int *numReturnedMoves, bool *canFree)
 {
-	/*
+	
 	PlaceId *MoveHistory = GvGetMoveHistory(gv, player, numReturnedMoves, true);
 	if (MoveHistory == NULL) return NULL;
 
@@ -389,10 +390,10 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 	*canFree = true;
 	return LastMoves;
 
-	*/
-	*numReturnedMoves = 0;
-	*canFree = false;
-	return NULL;
+	
+	// *numReturnedMoves = 0;
+	// *canFree = false;
+	// return NULL;
 }
 
 PlaceId *GvGetLocationHistory(GameView gv, Player player,
