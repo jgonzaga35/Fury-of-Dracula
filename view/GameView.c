@@ -34,7 +34,7 @@ struct gameView {
 	Round numRound;
 	int score;
 	int health[NUM_PLAYERS];
-
+	char *pastPlays;
 	Player currentPlayer;
 	PlaceId trails[NUM_PLAYERS][TRAIL_SIZE];
 	PlaceId vampireLocation;
