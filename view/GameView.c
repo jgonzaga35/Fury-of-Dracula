@@ -161,6 +161,8 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	int i = 0;
 	for (char *move = strtok(pastPlays, " "); move != NULL; move = strtok(NULL, " ")) {
 		if (move[0] == playerName) {
+			// Doesnt work. move is a char * but pastMoves[i] is 
+			// of type PlaceId.
 			pastMoves[i] = move;
 			i++; 
 		}
@@ -220,6 +222,7 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
                               int *numReturnedLocs, bool *canFree)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+
 	*numReturnedLocs = 0;
 	*canFree = false;
 	return NULL;
