@@ -379,7 +379,7 @@ static void initializeHealthScoreTurnsLocation(GameView gv)
 		gv->health[i] = GAME_START_HUNTER_LIFE_POINTS;
 		for (int j = 0; j < TRAIL_SIZE; j++) 
 		{
-			gv->trails[i][j] = UNKNOWN_PLACE;
+			gv->trails[i][j] = NOWHERE;
 			gv->trapLocations[j] = NOWHERE;
 		}
 	}
