@@ -16,3 +16,8 @@ GitHub Username: andrewta1607
 Name: Andrew
 zID: z5313122
 Tutorial Code: H13A
+
+GitHub username: lplsz
+name: Peter Li
+zID: z5314408
+Tutorial Code: H13A
