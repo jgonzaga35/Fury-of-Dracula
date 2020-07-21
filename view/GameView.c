@@ -29,6 +29,7 @@
 
 struct gameView {
 	// Explicit variables
+	Map map;
 	Round numTurn;
 	int score;
 	int health[NUM_PLAYERS];
@@ -51,6 +52,12 @@ static void goToHospital(GameView gv, Player player);
 static void haveRest(GameView gv, Player player, PlaceId location);
 static void performDraculaAction(GameView gv, char firstCmd, char secondCmd, PlaceId draculaLocation);
 static void updateEncounters(GameView gv, char cmd);
+// ---------------------Making a move helper functions--------------------------
+static int validPlayer(Player player);
+static void getRoadCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs);
+static void getRailCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs);
+static void getBoatCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs);
+
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -274,17 +281,8 @@ int GvGetHealth(GameView gv, Player player)
 }
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
-{
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	if (gv->)
-	// If the player hasn't had a turn (The id doesn't apear in the first four play)
-
-	// If hunter, reuturn last play's location
-
-	// If Dracula, 
-	
-
-	return NOWHERE;
+{	
+	return gv->trails[player][CURR_PLACE];
 }
 
 PlaceId GvGetVampireLocation(GameView gv)
@@ -477,11 +475,30 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 ////////////////////////////////////////////////////////////////////////
 // Making a Move
 
+// returns ture if valid player, else returns false
+static int validPlayer(Player player) {
+	if (PLAYER_LORD_GODALMING <= player && player <= PLAYER_DRACULA) return 1;
+	else return 0;
+}
+
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                         PlaceId from, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	if (gv == NULL) return NULL;
+	if (!validPlayer(player)) return NULL;
+
 	*numReturnedLocs = 0;
+	Map europe = MapNew();
+	ConnList CNN;
+	
+	if (PLAYER_LORD_GODALMING <= player && player <= PLAYER_MINA_HARKER) {
+		// Player is a hunter
+
+	} else if (player == PLAYER_DRACULA) { // Player is dracula
+
+	}
+
+	MapFree(europe);
 	return NULL;
 }
 
@@ -489,8 +506,17 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                               PlaceId from, bool road, bool rail,
                               bool boat, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
+	if (gv == NULL) return NULL;
+	if (!isValidPlayer(player)) return NULL;
+	if (!(numReturnedLocs >= 0)) *numReturnedLocs = 0;
+	
+	PlaceId *allowableCNC = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
+	ConnList CNC = MapGetConnections(gv->map, from); // reachable connections
+	
+	if (road) getRoadCN(CNC, allowableCNC, numReturnedLocs);
+	if (rail) getRailCNC(CNN, allowableCNC, numReturnedLocs, round, player, from);
+	if (b at) getBoatCNC(CNN, allowableCNC, numReturnedLocs);
+
 	return NULL;
 }
 
