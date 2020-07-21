@@ -376,12 +376,12 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
                         int *numReturnedMoves, bool *canFree)
 {
 	
-	PlaceId *MoveHistory = GvGetMoveHistory(gv, player, numReturnedMoves, true);
+	PlaceId *MoveHistory = GvGetMoveHistory(gv, player, numReturnedMoves, canFree);
 	if (MoveHistory == NULL) return NULL;
 
 	PlaceId *LastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
 	int i = 0;
-	while (i < numMoves && i < numReturnedMoves) {
+	while (i < numMoves && i < *numReturnedMoves) {
 		// Put moves from entire history from most recent to oldest
 		// into LastMoves
 		LastMoves[i] = MoveHistory[i];
