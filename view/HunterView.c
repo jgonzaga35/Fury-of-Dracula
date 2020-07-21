@@ -25,6 +25,7 @@
 
 struct hunterView {
 	// TODO: ADD FIELDS HERE
+	GameView  gv;
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -33,18 +34,19 @@ struct hunterView {
 HunterView HvNew(char *pastPlays, Message messages[])
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	HunterView new = malloc(sizeof(*new));
+	HunterView new = malloc(sizeof(struct hunterView));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
 		exit(EXIT_FAILURE);
 	}
-
+	new->gv = GvNew(pastPlays, messages);
 	return new;
 }
 
 void HvFree(HunterView hv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	GvFree(hv->gv);
 	free(hv);
 }
 
