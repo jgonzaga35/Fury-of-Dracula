@@ -86,6 +86,11 @@ GameView GvNew(char *pastPlays, Message messages[])
 		case 'G': case 'S' : case 'H' : case 'M' :
 			if (isDead(new, player)) new->health[player] = GAME_START_HUNTER_LIFE_POINTS;
 			char *cmd = getCmd(pastPlays, i);
+			// char cmd[4];
+			// for (int j = 0; j < 4; j++) {
+			// 	cmd[j] = pastPlays[i + 3];
+			// }
+
 			performHunterAction(new, player, cmd, location); 
 			haveRest(new, player);
 			break;
@@ -465,7 +470,7 @@ static char *getCmd(char *pastPlays, int index)
 	char *cmd = malloc(4 * sizeof(char));
 	for (int i = 0; i < 4; i++) 
 	{
-		cmd[i] = pastPlays[index + 3];
+		cmd[i] = pastPlays[index + 3 + i];
 	}
 	return cmd;
 }

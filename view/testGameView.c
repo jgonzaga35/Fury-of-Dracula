@@ -160,6 +160,8 @@ int main(void)
 		
 		GameView gv = GvNew(trail, messages);
 
+		printf("Dracula is at %d\n", GvGetPlayerLocation(gv, PLAYER_DRACULA));
+
 		assert(GvGetRound(gv) == 2);
 		assert(GvGetPlayer(gv) == PLAYER_LORD_GODALMING);
 		assert(GvGetScore(gv) == GAME_START_SCORE - 2 * SCORE_LOSS_DRACULA_TURN);
