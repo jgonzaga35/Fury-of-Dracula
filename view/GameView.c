@@ -313,15 +313,15 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 
 	char playerName = '\0';
 	switch (player) {
-		case 0: playerName = 'G'; // Lord Godalming
+		case PLAYER_LORD_GODALMING: playerName = 'G'; 
 				break;
-		case 1: playerName = 'S'; // Dr Seward
+		case PLAYER_DR_SEWARD: playerName = 'S'; 
 				break;
-		case 2: playerName = 'H'; // Van Helsing
+		case PLAYER_VAN_HELSING: playerName = 'H'; 
 				break;
-		case 3: playerName = 'M'; // Mina Harker
+		case PLAYER_MINA_HARKER: playerName = 'M'; 
 				break;
-		case 4: playerName = 'D'; // Dracula
+		case PLAYER_DRACULA: playerName = 'D';
 				break;
 	}
 	// error handling
@@ -367,16 +367,11 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 
 	// pastMoves returns an array filled with moves from oldest to newest.
 	return pastMoves;
-
-	// *numReturnedMoves = 0;
-	// *canFree = false;
-	// return NULL;
 }
 
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
                         int *numReturnedMoves, bool *canFree)
 {
-	
 	PlaceId *MoveHistory = GvGetMoveHistory(gv, player, numReturnedMoves, canFree);
 	if (MoveHistory == NULL) return NULL;
 
@@ -394,18 +389,11 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 	// return answer
 	*canFree = true;
 	return LastMoves;
-
-	
-	// *numReturnedMoves = 0;
-	// *canFree = false;
-	// return NULL;
 }
 
 PlaceId *GvGetLocationHistory(GameView gv, Player player,
                               int *numReturnedLocs, bool *canFree)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-
 	// Error handling
 	assert(gv != NULL);
 
@@ -438,10 +426,6 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 	*canFree = true;
 	free(pastMoves);
 	return pastLocs;
-
-	// *numReturnedLocs = 0;
-	// *canFree = false;
-	// return NULL;
 }
 
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
