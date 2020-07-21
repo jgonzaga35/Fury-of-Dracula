@@ -21,11 +21,13 @@
 
 // add your own #includes here
 #include <string.h>
+#include <ctype.h>
 
-#define STRLEN_OF_ROUND 40
+#define TRUE			1
+#define FALSE			0
 #define TURNS_PER_ROUND	5
-#define DELIMITER 		" "
 #define CURR_PLACE		0
+#define CHARS_PER_PLAY	8
 
 struct gameView {
 	// Explicit variables
@@ -35,6 +37,7 @@ struct gameView {
 	int health[NUM_PLAYERS];
 	char *pastPlays;
 	Player currentPlayer;
+	PlaceId draculaDroppedTrail;				// The location of the place that drop from dracula's trail
 	PlaceId trails[NUM_PLAYERS][TRAIL_SIZE];	// Never null
 	PlaceId vampireLocation;					// Never null
 	PlaceId trapLocations[TRAIL_SIZE];			// Null at sometimes, will be fixed later
@@ -44,20 +47,24 @@ struct gameView {
 // Function prototypes
 static void initializeHealthScoreTurnsLocation(GameView gv);
 static PlaceId getLocation(char firstLetter, char secondLetter);
-static void updatePlayerLocation(GameView gv, Player player, PlaceId place);
+static void updatePlayerLocation(GameView gv, char playerAbbrev, PlaceId place);
 static int isDead(GameView gv, Player player);
 static char * getCmd(char *pastPlays, int index);
 static void performHunterAction(GameView gv, Player player, char cmd[4], PlaceId location);
 static void goToHospital(GameView gv, Player player);
-static void haveRest(GameView gv, Player player, PlaceId location);
+static void haveRest(GameView gv, Player player);
 static void performDraculaAction(GameView gv, char firstCmd, char secondCmd, PlaceId draculaLocation);
 static void updateEncounters(GameView gv, char cmd);
+static void addTrap(GameView gv, PlaceId location);
+static void removeTrap(GameView gv, PlaceId location);
+static void updateLifePoint(GameView gv, PlaceId location);
+static PlaceId traceHide(GameView gv);
+static PlaceId traceDoubleBack(GameView gv);
 // ---------------------Making a move helper functions--------------------------
 static int validPlayer(Player player);
 static void getRoadCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs);
 static void getRailCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs);
 static void getBoatCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs);
-
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -70,181 +77,52 @@ GameView GvNew(char *pastPlays, Message messages[])
 		exit(EXIT_FAILURE);
 	}
 
-	int length = strlen(pastPlays);
-
 	initializeHealthScoreTurnsLocation(new);
 
-	int i;
+	int length = strlen(pastPlays);
+	int i = 0;
 	while (i < length) {
+		// TODO: consider C? S? HI D1 TP
 		PlaceId location = getLocation(pastPlays[i + 1], pastPlays[i + 2]);
-		updatePlayerLocation(new, pastPlays[i], location);
-		char p = pastPlays[i];
+		updatePlayerLocation(new, pastPlays[i], location);	
 		Player player = new->currentPlayer; 
 
-		switch (p)
+		switch (pastPlays[i])
 		{
 		case 'G': case 'S' : case 'H' : case 'M' :
 			if (isDead(new, player)) new->health[player] = GAME_START_HUNTER_LIFE_POINTS;
 			char *cmd = getCmd(pastPlays, i);
+			// char cmd[4];
+			// for (int j = 0; j < 4; j++) {
+			// 	cmd[j] = pastPlays[i + 3];
+			// }
+
 			performHunterAction(new, player, cmd, location); 
-			haveRest(new, player, location);
+			haveRest(new, player);
 			break;
 		case 'D':
-			performDraculaAction(new, pastPlays[i + 4], pastPlays[i + 5], location);
 			updateEncounters(new, pastPlays[i + 5]);
+			performDraculaAction(new, pastPlays[i + 3], pastPlays[i + 4], location);
+
+			// Update score and life points
+			updateLifePoint(new, location);
+			new->score -= SCORE_LOSS_DRACULA_TURN;
 			break;
 		default:
 			break;
 		}
 
-
 		new->numTurn += 1;
-		i += 8;
+		i += CHARS_PER_PLAY;
 	}
+
+	new->currentPlayer = new->numTurn % NUM_PLAYERS;
 
 	return new;
 }
 
-static void initializeHealthScoreTurnsLocation(GameView gv) 
-{
-	gv->score = GAME_START_SCORE;
-	gv->numTurn = 0;
-	gv->numTrap = 0;
-
-	for (int i = 0; i < NUM_PLAYERS; i++) {
-		gv->health[i] = GAME_START_HUNTER_LIFE_POINTS;
-		for (int j = 0; j < TRAIL_SIZE; j++) {
-			gv->trails[i][j] = NOWHERE;
-		}
-	}
-	gv->health[PLAYER_DRACULA] = GAME_START_BLOOD_POINTS;
-
-	gv->vampireLocation = NOWHERE;
-
-	return;
-}
-
-// Update the currentPlay and their location
-static void updatePlayerLocation(GameView gv, Player player, PlaceId place)
-{
-	switch (player)
-	{
-	case PLAYER_LORD_GODALMING:
-		gv->currentPlayer = PLAYER_LORD_GODALMING;
-		break;
-	case PLAYER_DR_SEWARD:
-		gv->currentPlayer = PLAYER_DR_SEWARD;
-		break;
-	case PLAYER_VAN_HELSING:
-		gv->currentPlayer = PLAYER_VAN_HELSING;
-		break;
-	case PLAYER_MINA_HARKER:
-		gv->currentPlayer = PLAYER_MINA_HARKER;
-		break;
-	case PLAYER_DRACULA:
-		gv->currentPlayer = PLAYER_DRACULA;
-		break;
-	default:
-		fprintf(stderr, "Player character is incorrent exp: GSHMD act: %c\n", player);
-        exit(EXIT_FAILURE);
-		break;
-	}
-
-	for (int i = TRAIL_SIZE - 1; i > 0; i--) {
-		gv->trails[player][i] = gv->trails[player][i - 1];
-	}
-
-	gv->trails[player][CURR_PLACE] = place;
-}
-
-
-static PlaceId getLocation(char firstLetter, char secondLetter)
-{
-	char name[3];
-	name[0] = firstLetter;
-	name[1] = secondLetter;
-	name[2] = '\0';
-	return placeAbbrevToId(name);
-}
-
-// Check if the hunter is dead
-static int isDead(GameView gv, Player player)
-{
-	return gv->health[player] <= 0; 
-}
-
-// Extract the four character encounter code
-static char *getCmd(char *pastPlays, int index) 
-{
-	char cmd[4];
-	for (int i = 0; i < 4; i++) 
-	{
-		cmd[i] = pastPlays[index + 4];
-	}
-	return cmd[0];
-}
-
-// Reset the life point and shift the trail to hospital
-static void goToHospital(GameView gv, Player player) 
-{
-	gv->health[player] = 0;
-	for (int i = TRAIL_SIZE; i > 0; i--) 
-	{
-		gv->trails[player][i] = gv->trails[player][i - 1];
-	}
-	gv->trails[player][CURR_PLACE] = ST_JOSEPH_AND_ST_MARY;
-}
-
-// Deal with hunter's encounter
-static void performHunterAction(GameView gv, Player player, char cmd[4], PlaceId location)
-{
-	for (int i = 0; i < 4; i++) {
-		switch (cmd[i])
-		{
-		case 'T':
-			// TODO: Remove the trap from the traplocation
-			gv->health[player] -= LIFE_LOSS_TRAP_ENCOUNTER;
-			if (isDead(gv, player)) 
-			{
-				goToHospital(gv, player);
-				goto exit_forloop;
-			}
-			break;
-		case 'V':
-			gv->vampireLocation = NOWHERE;
-			break;
-		case 'D':
-			gv->health[player] -= LIFE_LOSS_DRACULA_ENCOUNTER;
-			gv->health[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
-			if (isDead(gv, player)) 
-			{
-				goToHospital(gv, player);
-				goto exit_forloop;
-			}
-			break;
-		case '.':
-			break;
-		default:
-			fprintf(stderr, "Hunter encounter character is incorrent exp: TVD act: %c\n", cmd[i]);
-        	exit(EXIT_FAILURE);
-			break;
-		}
-	}
-	exit_forloop: ;
-}
-
-// Check if the hunter performed rest
-static void haveRest(GameView gv, Player player, PlaceId location) {
-	if (gv->trails[player][CURR_PLACE + 1] == location) {
-		gv->health[player] += LIFE_GAIN_REST;
-		if (gv->health[player] >= GAME_START_HUNTER_LIFE_POINTS) gv->health[player] = GAME_START_HUNTER_LIFE_POINTS;
-	}
-}
-
-
 void GvFree(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	free(gv);
 }
 
@@ -523,20 +401,207 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
-// TODO
+// Helper functions
+
+// Set the initial state of all varaibles
+static void initializeHealthScoreTurnsLocation(GameView gv) 
+{
+	gv->score = GAME_START_SCORE;
+	gv->numTurn = 0;
+	gv->numTrap = 0;
+
+	for (int i = 0; i < NUM_PLAYERS; i++) 
+	{
+		gv->health[i] = GAME_START_HUNTER_LIFE_POINTS;
+		for (int j = 0; j < TRAIL_SIZE; j++) 
+		{
+			gv->trails[i][j] = NOWHERE;
+			gv->trapLocations[j] = NOWHERE;
+		}
+	}
+	gv->health[PLAYER_DRACULA] = GAME_START_BLOOD_POINTS;
+
+	gv->draculaDroppedTrail = NOWHERE;
+	gv->vampireLocation = NOWHERE;
+
+	return;
+}
+
+// Return the place represent by the abbreviation
+static PlaceId getLocation(char firstLetter, char secondLetter)
+{
+	char abbrev[3];
+	abbrev[0] = firstLetter;
+	abbrev[1] = secondLetter;
+	abbrev[2] = '\0';
+
+	if (!strcmp("C?", abbrev)) 
+	{
+		return CITY_UNKNOWN;
+	} else if (!strcmp("S?", abbrev)) 
+	{
+		return SEA_UNKNOWN;
+	} else if(!strcmp("HI", abbrev)) 
+	{
+		return HIDE;
+	} else if (!strcmp("TP", abbrev)) 
+	{
+		return TELEPORT;
+	} else if (abbrev[0] == 'D' && isdigit(abbrev[1])) 
+	{
+		int i = abbrev[i] - '0';
+		return (102 + i);
+	}
+	return placeAbbrevToId(abbrev);
+}
+
+// Update the currentPlayer and their respective location
+static void updatePlayerLocation(GameView gv, char playerAbbrev, PlaceId place)
+{
+	switch (playerAbbrev)
+	{
+	case 'G':
+		gv->currentPlayer = PLAYER_LORD_GODALMING;
+		break;
+	case 'S':
+		gv->currentPlayer = PLAYER_DR_SEWARD;
+		break;
+	case 'H':
+		gv->currentPlayer = PLAYER_VAN_HELSING;
+		break;
+	case 'M':
+		gv->currentPlayer = PLAYER_MINA_HARKER;
+		break;
+	case 'D':
+		gv->currentPlayer = PLAYER_DRACULA;
+		break;
+	default:
+		fprintf(stderr, "Player character is incorrent exp: GSHMD act: %c\n", playerAbbrev);
+        exit(EXIT_FAILURE);
+		break;
+	}
+
+	// Record the location that will be dropped from the trail
+	if (playerAbbrev == 'D') gv->draculaDroppedTrail = gv->trails[PLAYER_DRACULA][TRAIL_SIZE - 1];
+
+	Player player = gv->currentPlayer;
+	for (int i = TRAIL_SIZE - 1; i > 0; i--) {
+		gv->trails[player][i] = gv->trails[player][i - 1];
+	}
+
+	gv->trails[player][CURR_PLACE] = place;
+}
+
+// Check if the hunter is dead
+static int isDead(GameView gv, Player player)
+{
+	return gv->health[player] <= 0; 
+}
+
+// Extract the four character encounter code
+static char *getCmd(char *pastPlays, int index) 
+{
+	char *cmd = malloc(4 * sizeof(char));
+	for (int i = 0; i < 4; i++) 
+	{
+		cmd[i] = pastPlays[index + 3 + i];
+	}
+	return cmd;
+}
+
+// Reset the life point, shift the trail to hospital and decrease the score
+static void goToHospital(GameView gv, Player player) 
+{
+	gv->health[player] = 0;
+	for (int i = TRAIL_SIZE; i > 0; i--) 
+	{
+		gv->trails[player][i] = gv->trails[player][i - 1];
+	}
+	gv->trails[player][CURR_PLACE] = ST_JOSEPH_AND_ST_MARY;
+
+	gv->score -= SCORE_LOSS_HUNTER_HOSPITAL;
+}
+
+// Deal with hunter's encounter
+static void performHunterAction(GameView gv, Player player, char cmd[4], PlaceId location)
+{
+	for (int i = 0; i < 4; i++) {
+		switch (cmd[i])
+		{
+		case 'T':
+			removeTrap(gv, location);
+			gv->health[player] -= LIFE_LOSS_TRAP_ENCOUNTER;
+			if (isDead(gv, player)) 
+			{
+				goToHospital(gv, player);
+				goto exit_forloop;
+			}
+			break;
+		case 'V':
+			gv->vampireLocation = NOWHERE;
+			break;
+		case 'D':
+			gv->health[player] -= LIFE_LOSS_DRACULA_ENCOUNTER;
+			gv->health[PLAYER_DRACULA] -= LIFE_LOSS_HUNTER_ENCOUNTER;
+			if (isDead(gv, player)) 
+			{
+				goToHospital(gv, player);
+				goto exit_forloop;
+			}
+			break;
+		case '.':
+			break;
+		default:
+			fprintf(stderr, "Hunter encounter character is incorrent exp: TVD act: %c\n", cmd[i]);
+        	exit(EXIT_FAILURE);
+			break;
+		}
+	}
+	exit_forloop: ;
+}
+
+// Check if the hunter performed rest
+static void haveRest(GameView gv, Player player) {
+	if (gv->trails[player][CURR_PLACE + 1] == gv->trails[player][CURR_PLACE]) {
+		gv->health[player] += LIFE_GAIN_REST;
+		if (gv->health[player] >= GAME_START_HUNTER_LIFE_POINTS) gv->health[player] = GAME_START_HUNTER_LIFE_POINTS;
+	}
+}
+// Add a trap
+static void addTrap(GameView gv, PlaceId location)
+{
+	for (int i = 0; i < TRAIL_SIZE; i++) {
+		if (gv->trapLocations[i] == NOWHERE)
+		{
+			gv->trapLocations[i] = location;
+			break;
+		}
+	}
+
+	gv->numTrap += 1;
+}
+
+// Remove a trap
+static void removeTrap(GameView gv, PlaceId location)
+{
+	for (int i = 0; i < TRAIL_SIZE; i++) {
+		if (gv->trapLocations[i] == location)
+		{
+			gv->trapLocations[i] = NOWHERE;
+			break;
+		}
+	}
+
+	gv->numTrap -= 1;
+}
 
 // Place encounter at Dracula's location
 static void performDraculaAction(GameView gv, char firstCmd, char secondCmd, PlaceId draculaLocation) 
 {	
-	int N = gv->numTrap;
 	switch(firstCmd) {
 		case '.': break;
 		case 'T':
-			for (int i = N; i > 0; i--) {
-				gv->trapLocations[N] = gv->trapLocations[N];
-			}
-			gv->trapLocations[CURR_PLACE] = draculaLocation;
-			gv->numTrap += 1;
+			addTrap(gv, draculaLocation);
 			break;
 	}
 	
@@ -553,11 +618,56 @@ static void updateEncounters(GameView gv, char cmd)
 	switch(cmd) {
 		case '.': break;
 		case 'M':
-			// TODO: Remove the last trap in the trails;
+			removeTrap(gv, gv->draculaDroppedTrail);
 			break;
 		case 'V':
-			gv->score -= SCORE_LOSS_DRACULA_TURN;
+			gv->score -= SCORE_LOSS_VAMPIRE_MATURES;
 			gv->vampireLocation = NOWHERE;
 			break;
 	}
+}
+
+// Trace what place hide refer to
+static PlaceId traceHide(GameView gv)
+{	
+	PlaceId location = gv->trails[PLAYER_DRACULA][1];
+	if (!(location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5)) return location;
+	int backIndex = location - 102;
+	// If HIDE refers to D5
+	if (backIndex == 5) return gv->draculaDroppedTrail;
+	return gv->trails[PLAYER_DRACULA][backIndex + 1];
+}
+
+// Trace what place DB refer to
+static PlaceId traceDoubleBack(GameView gv)
+{	
+	PlaceId doubleBack = gv->trails[PLAYER_DRACULA][0];
+	int backIndex = doubleBack - 102;
+	PlaceId location = gv->trails[PLAYER_DRACULA][backIndex];
+	if (location != HIDE) return location;
+	// If D5 refers to HIDE
+	if (backIndex == 5) return gv->draculaDroppedTrail;
+	return gv->trails[PLAYER_DRACULA][backIndex + 1];
+}
+
+// Check if Dracula is in sea or Castle
+static void updateLifePoint(GameView gv, PlaceId location) 
+{	
+	int atSea = FALSE;
+	// If the location is at sea
+	if (placeIdToType(location) == SEA) atSea = TRUE;
+	// If the location is castle dracula or dracula performed TP
+	else if (location == CASTLE_DRACULA || location == TELEPORT) gv->health[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
+	// If dracula performed hide and the dest is a sea
+	else if (location == HIDE)
+	{	
+		if (placeIdToType(traceHide(gv)) == SEA) atSea = TRUE;
+	} 
+	// If Dracula performed double back and dest is a sea
+	else if (location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5)
+	{
+		if (placeIdToType(traceDoubleBack(gv)) == SEA) atSea = TRUE;
+	}
+
+	if (atSea) gv->health[PLAYER_DRACULA] -= LIFE_LOSS_SEA;
 }
