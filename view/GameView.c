@@ -23,6 +23,8 @@
 #include <string.h>
 #include <ctype.h>
 
+#define TRUE			1
+#define FALSE			0
 #define TURNS_PER_ROUND	5
 #define CURR_PLACE		0
 #define CHARS_PER_PLAY	8
@@ -54,6 +56,9 @@ static void performDraculaAction(GameView gv, char firstCmd, char secondCmd, Pla
 static void updateEncounters(GameView gv, char cmd);
 static void addTrap(GameView gv, PlaceId location);
 static void removeTrap(GameView gv, PlaceId location);
+static void updateLifePoint(GameView gv, PlaceId location);
+static PlaceId traceHide(GameView gv);
+static PlaceId traceDoubleBack(GameView gv);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -71,7 +76,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	int length = strlen(pastPlays);
 	int i = 0;
 	while (i < length) {
-		// TODO: consider TP C? HIDE
+		// TODO: consider C? S? HI D1 TP
 		PlaceId location = getLocation(pastPlays[i + 1], pastPlays[i + 2]);
 		updatePlayerLocation(new, pastPlays[i], location);	
 		Player player = new->currentPlayer; 
@@ -89,8 +94,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			performDraculaAction(new, pastPlays[i + 3], pastPlays[i + 4], location);
 
 			// Update score and life points
-			if (placeIdToType(location) == SEA) new->health[PLAYER_DRACULA] -= LIFE_LOSS_SEA;
-			if (location == CASTLE_DRACULA) new->health[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
+			updateLifePoint(new, location);
 			new->score -= SCORE_LOSS_DRACULA_TURN;
 			break;
 		default:
@@ -400,16 +404,21 @@ static PlaceId getLocation(char firstLetter, char secondLetter)
 	abbrev[1] = secondLetter;
 	abbrev[2] = '\0';
 
-	if (!strcmp("C?", abbrev)) {
+	if (!strcmp("C?", abbrev)) 
+	{
 		return CITY_UNKNOWN;
-	} else if (!strcmp("S?", abbrev)) {
+	} else if (!strcmp("S?", abbrev)) 
+	{
 		return SEA_UNKNOWN;
-	} else if(!strcmp("HI", abbrev)) {
+	} else if(!strcmp("HI", abbrev)) 
+	{
 		return HIDE;
-	} else if (!strcmp("TP", abbrev)) {
+	} else if (!strcmp("TP", abbrev)) 
+	{
 		return TELEPORT;
-	} else if(abbrev[0] == 'D' && isdigit(abbrev[1])) {
-		int i = (int) abbrev[i] - '0';
+	} else if (abbrev[0] == 'D' && isdigit(abbrev[1])) 
+	{
+		int i = abbrev[i] - '0';
 		return (102 + i);
 	}
 	return placeAbbrevToId(abbrev);
@@ -585,4 +594,49 @@ static void updateEncounters(GameView gv, char cmd)
 			gv->vampireLocation = NOWHERE;
 			break;
 	}
+}
+
+// Trace what place hide refer to
+static PlaceId traceHide(GameView gv)
+{	
+	PlaceId location = gv->trails[PLAYER_DRACULA][1];
+	if (!(location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5)) return location;
+	int backIndex = location - 102;
+	// If HIDE refers to D5
+	if (backIndex == 5) return gv->draculaDroppedTrail;
+	return gv->trails[PLAYER_DRACULA][backIndex + 1];
+}
+
+// Trace what place DB refer to
+static PlaceId traceDoubleBack(GameView gv)
+{	
+	PlaceId doubleBack = gv->trails[PLAYER_DRACULA][0];
+	int backIndex = doubleBack - 102;
+	PlaceId location = gv->trails[PLAYER_DRACULA][backIndex];
+	if (location != HIDE) return location;
+	// If D5 refers to HIDE
+	if (backIndex == 5) return gv->draculaDroppedTrail;
+	return gv->trails[PLAYER_DRACULA][backIndex + 1];
+}
+
+// Check if Dracula is in sea or Castle
+static void updateLifePoint(GameView gv, PlaceId location) 
+{	
+	int atSea = FALSE;
+	// If the location is at sea
+	if (placeIdToType(location) == SEA) atSea = TRUE;
+	// If the location is castle dracula or dracula performed TP
+	else if (location == CASTLE_DRACULA || location == TELEPORT) gv->health[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
+	// If dracula performed hide and the dest is a sea
+	else if (location == HIDE)
+	{	
+		if (placeIdToType(traceHide(gv)) == SEA) atSea = TRUE;
+	} 
+	// If Dracula performed double back and dest is a sea
+	else if (location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5)
+	{
+		if (placeIdToType(traceDoubleBack(gv)) == SEA) atSea = TRUE;
+	}
+
+	if (atSea) gv->health[PLAYER_DRACULA] -= LIFE_LOSS_SEA;
 }
