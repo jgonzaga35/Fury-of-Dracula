@@ -404,25 +404,49 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 		return NULL;
 	}
 
-	// Create dynamically allocated PlaceId array.
-	// *** I DONT KNOW IF THIS WORKS YET ***
+	// for hunters, GvGetMoveHistory = GvGetLocationHistory;
 	PlaceId *pastMoves = GvGetMoveHistory(gv, player, numReturnedLocs, canFree);
+	// assuming GvGetMoveHistory changes value of numReturnedLocs to numReturnedMoves...
+	if (player >= PLAYER_LORD_GODALMING && player <= PLAYER_MINA_HARKER) {
+		*canFree = true;
+		return pastMoves;
+	} 
+
+	// For Dracula:
 	PlaceId *pastLocs = (PlaceId *)malloc(sizeof(PlaceId)*100);
 	assert(pastLocs != NULL);
 	int i = 0;
-	int j = 0;
+
+	// messy, will fix later
+	// might be bug if i + 6 exceeds array index.
 	while (i < *numReturnedLocs) {
-		// Ignore Hide or BackTrack moves from Dracula.
-		if (pastMoves[i] >= HIDE && pastLocs[i] <= TELEPORT) {
-			
+		if (pastMoves[i] == HIDE) {
+			pastLocs[i] = pastMoves[i + 1];
+		} 
+		else if (pastMoves[i] == DOUBLE_BACK_1) {
+			pastLocs[i] = pastMoves[i + 2];
+		}
+		else if (pastMoves[i] == DOUBLE_BACK_2) {
+			pastLocs[i] = pastMoves[i + 3];
+		}
+		else if (pastMoves[i] == DOUBLE_BACK_3) {
+			pastLocs[i] = pastMoves[i + 4];
+		}
+		else if (pastMoves[i] == DOUBLE_BACK_4) {
+			pastLocs[i] = pastMoves[i + 5];
+		}
+		else if (pastMoves[i] == DOUBLE_BACK_5) {
+			pastLocs[i] = pastMoves[i + 6];
+		}
+		else if (pastMoves[i] == TELEPORT) {
+			pastLocs[i] = CASTLE_DRACULA;
 		} else {
-			pastLocs[j] = pastMoves[i];
-			j++;
+			pastLocs[i] = pastMoves[i];
 		}
 		i++;
 	}
 
-	*numReturnedLocs = j;
+	*numReturnedLocs = i;
 	*canFree = true;
 	free(pastMoves);
 	return pastLocs;
