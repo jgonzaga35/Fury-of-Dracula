@@ -304,16 +304,12 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 PlaceId *GvGetMoveHistory(GameView gv, Player player,
                           int *numReturnedMoves, bool *canFree)
 {
-
 	// Return NULL if no history yet?
 	if (gv->pastPlays == NULL) {
 		*numReturnedMoves = 0;
 		*canFree = false;
 		return NULL;
 	}
-
-	// Dynamically allocate array of PlaceIds
-	PlaceId *pastMoves;
 
 	char playerName = '\0';
 	switch (player) {
@@ -328,9 +324,12 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 		case 4: playerName = 'D'; // Dracula
 				break;
 	}
+	// error handling
 	assert(playerName != '\0');
+
+	// Dynamically allocate array of PlaceIds
 	// How many PlaceIds to allocate?? Unsure...
-	pastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
+	PlaceId *pastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
 
 	// Fill in PlaceId array with move history of given player.
 	// Loop through pastPlays string...
@@ -346,11 +345,6 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 			i++; 
 		}
 	}
-	*numReturnedMoves = i;
-
-	// once the caller of this function is finished using this data
-	// they can free it
-	*canFree = true;
 
 	// Reverse order of array so the most recent moves
 	// are in the lowest value indexes of array. 
@@ -364,6 +358,13 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 		start++;
 		end--;
 	}
+
+	// numReturnedMoves = no. of iterations through pastPlays.
+	*numReturnedMoves = i;
+
+	// caller of this function should free this afterwards.
+	*canFree = true;
+
 	// pastMoves returns an array filled with moves from oldest to newest.
 	return pastMoves;
 
@@ -387,6 +388,10 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 		LastMoves[i] = MoveHistory[i];
 		i++;
 	}
+	// don't know if this is correct
+	free(MoveHistory);
+
+	// return answer
 	*canFree = true;
 	return LastMoves;
 
@@ -401,18 +406,69 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 
-	*numReturnedLocs = 0;
-	*canFree = false;
-	return NULL;
+	// Error handling
+	assert(gv != NULL);
+
+	// Special Case: empty pastPlays string
+	if (gv->pastPlays == NULL) {
+		*numReturnedLocs = 0;
+		*canFree = true;
+		return NULL;
+	}
+
+	// Create dynamically allocated PlaceId array.
+	// *** I DONT KNOW IF THIS WORKS YET ***
+	PlaceId *pastMoves = GvGetMoveHistory(gv, player, numReturnedLocs, canFree);
+	PlaceId *pastLocs = (PlaceId *)malloc(sizeof(PlaceId)*100);
+	assert(pastLocs != NULL);
+	int i = 0;
+	int j = 0;
+	while (i < *numReturnedLocs) {
+		// Ignore Hide or BackTrack moves from Dracula.
+		if (pastMoves[i] >= HIDE && pastLocs[i] <= TELEPORT) {
+			
+		} else {
+			pastLocs[j] = pastMoves[i];
+			j++;
+		}
+		i++;
+	}
+
+	*numReturnedLocs = j;
+	*canFree = true;
+	free(pastMoves);
+	return pastLocs;
+
+	// *numReturnedLocs = 0;
+	// *canFree = false;
+	// return NULL;
 }
 
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
                             int *numReturnedLocs, bool *canFree)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	*canFree = false;
-	return 0;
+	PlaceId *LocHistory = GvGetLocationHistory(gv, player, numReturnedLocs, canFree);
+	if (LocHistory == NULL) return NULL;
+
+	PlaceId *LastLocs = (PlaceId *)malloc(sizeof(PlaceId)*100);
+	int i = 0;
+	while (i < numLocs && i < *numReturnedLocs) {
+		// Put moves from entire history from most recent to oldest
+		// into LastMoves
+		LastLocs[i] = LocHistory[i];
+		i++;
+	}
+	// don't know if this is correct
+	free(LocHistory);
+
+	// return answer
+	*canFree = true;
+	return LastLocs;
+
+	// *numReturnedLocs = 0;
+	// *canFree = false;
+	// return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////
