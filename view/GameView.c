@@ -21,7 +21,7 @@
 
 // add your own #includes here
 #include <string.h>
-
+#include <ctype.h>
 
 #define TURNS_PER_ROUND	5
 #define CURR_PLACE		0
@@ -71,6 +71,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	int length = strlen(pastPlays);
 	int i = 0;
 	while (i < length) {
+		// TODO: consider TP C? HIDE
 		PlaceId location = getLocation(pastPlays[i + 1], pastPlays[i + 2]);
 		updatePlayerLocation(new, pastPlays[i], location);	
 		Player player = new->currentPlayer; 
@@ -87,7 +88,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			updateEncounters(new, pastPlays[i + 5]);
 			performDraculaAction(new, pastPlays[i + 3], pastPlays[i + 4], location);
 
-			// Update score and life point
+			// Update score and life points
 			if (placeIdToType(location) == SEA) new->health[PLAYER_DRACULA] -= LIFE_LOSS_SEA;
 			if (location == CASTLE_DRACULA) new->health[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
 			new->score -= SCORE_LOSS_DRACULA_TURN;
@@ -394,11 +395,24 @@ static void initializeHealthScoreTurnsLocation(GameView gv)
 // Return the place represent by the abbreviation
 static PlaceId getLocation(char firstLetter, char secondLetter)
 {
-	char name[3];
-	name[0] = firstLetter;
-	name[1] = secondLetter;
-	name[2] = '\0';
-	return placeAbbrevToId(name);
+	char abbrev[3];
+	abbrev[0] = firstLetter;
+	abbrev[1] = secondLetter;
+	abbrev[2] = '\0';
+
+	if (!strcmp("C?", abbrev)) {
+		return CITY_UNKNOWN;
+	} else if (!strcmp("S?", abbrev)) {
+		return SEA_UNKNOWN;
+	} else if(!strcmp("HI", abbrev)) {
+		return HIDE;
+	} else if (!strcmp("TP", abbrev)) {
+		return TELEPORT;
+	} else if(abbrev[0] == 'D' && isdigit(abbrev[1])) {
+		int i = (int) abbrev[i] - '0';
+		return (102 + i);
+	}
+	return placeAbbrevToId(abbrev);
 }
 
 // Update the currentPlayer and their respective location
@@ -447,12 +461,12 @@ static int isDead(GameView gv, Player player)
 // Extract the four character encounter code
 static char *getCmd(char *pastPlays, int index) 
 {
-	char cmd[4];
+	char *cmd = malloc(4 * sizeof(char));
 	for (int i = 0; i < 4; i++) 
 	{
 		cmd[i] = pastPlays[index + 3];
 	}
-	return cmd[0];
+	return cmd;
 }
 
 // Reset the life point, shift the trail to hospital and decrease the score
