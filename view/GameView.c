@@ -455,28 +455,23 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
                             int *numReturnedLocs, bool *canFree)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	PlaceId *LocHistory = GvGetLocationHistory(gv, player, numReturnedLocs, canFree);
-	if (LocHistory == NULL) return NULL;
+	PlaceId *pastLocs = GvGetLocationHistory(gv, player, numReturnedLocs, canFree);
+	if (pastLocs == NULL) {
+		*canFree = true;
+		*numReturnedLocs = 0;	
+		return NULL;
+	}
 
 	PlaceId *LastLocs = (PlaceId *)malloc(sizeof(PlaceId)*100);
 	int i = 0;
 	while (i < numLocs && i < *numReturnedLocs) {
-		// Put moves from entire history from most recent to oldest
-		// into LastMoves
-		LastLocs[i] = LocHistory[i];
+		LastLocs[i] = pastLocs[i];
 		i++;
 	}
-	// don't know if this is correct
-	free(LocHistory);
 
-	// return answer
+	free(pastLocs);
 	*canFree = true;
 	return LastLocs;
-
-	// *numReturnedLocs = 0;
-	// *canFree = false;
-	// return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////
