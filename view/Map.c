@@ -196,7 +196,7 @@ ConnList MapGetConnections(Map m, PlaceId p)
 ////////////////////////////////////////////////////////////////////////
 
 static void ensureNoDup(PlaceId *allowable CNC, PlaceId p) {
-	
+
 }
 
 // bfs search to find "shortest" distance of length
@@ -209,7 +209,7 @@ static int findRailDistanceFromCurr(PlaceId p) {
  * scan through linked list, simultaneously adding
  * "type" connection to allowableCNC array.
  * Update number of unique locations added to array through numReturnedLocs */
-void getRoadCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
+void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
 	ConnList curr = CNC;
 	for (int i = *numReturnedLocs; curr != NULL || i != MAX_REAL_PLACE; i += 1) {
 		// start adding road CNC from numReturnedLocs position in array
@@ -222,7 +222,7 @@ void getRoadCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
 }
 
 // round num required for 
-void getRailCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs, Round round, Player player, PlaceId p) {
+void getRailCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Round round, Player player, PlaceId p) {
 	ConnList curr = CNC;
 	int sum = (round + player) % 4; // max allowable station distances
 	for (int i = *numReturnedLocs; curr != NULL || i != MAX_REAL_PLACE; i += 1) {
@@ -237,7 +237,7 @@ void getRailCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs, Roun
 		}
 	}
 }
-void getBoatCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
+void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
 	ConnList curr = CNC;
 	for (int i = *numReturnedLocs; curr != NULL || i != MAX_REAL_PLACE; i += 1) {
 		// start adding road CNC from numReturnedLocs position in array

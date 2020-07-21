@@ -54,8 +54,8 @@ ConnList MapGetConnections(Map m, PlaceId p);
  * scan through linked list, simultaneously adding
  * "type" connection to allowableCNC array.
  * Update number of unique locations added to array through numReturnedLocs */
-static void getRoadCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs);
-static void getRailCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs, Round round);
-static void getBoatCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs);
+void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs);
+void getRailCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Round round, Player player, PlaceId p);
+void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs);
 
 #endif // !defined(FOD__MAP_H_)

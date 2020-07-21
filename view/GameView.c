@@ -62,9 +62,6 @@ static PlaceId traceHide(GameView gv);
 static PlaceId traceDoubleBack(GameView gv);
 // ---------------------Making a move helper functions--------------------------
 static int validPlayer(Player player);
-static void getRoadCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs);
-static void getRailCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs);
-static void getBoatCNC(ConnList *CNC, PlaceId *allowableCNC, int *numReturnedLocs);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -385,15 +382,15 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                               bool boat, int *numReturnedLocs)
 {
 	if (gv == NULL) return NULL;
-	if (!isValidPlayer(player)) return NULL;
+	if (!validPlayer)return NULL;
 	if (!(numReturnedLocs >= 0)) *numReturnedLocs = 0;
 	
 	PlaceId *allowableCNC = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
 	ConnList CNC = MapGetConnections(gv->map, from); // reachable connections
 	
-	if (road) getRoadCN(CNC, allowableCNC, numReturnedLocs);
-	if (rail) getRailCNC(CNN, allowableCNC, numReturnedLocs, round, player, from);
-	if (b at) getBoatCNC(CNN, allowableCNC, numReturnedLocs);
+	if (road) getRoadCNC(CNC, allowableCNC, numReturnedLocs);
+	if (rail) getRailCNC(CNC, allowableCNC, numReturnedLocs, round, player, from);
+	if (boat) getBoatCNC(CNC, allowableCNC, numReturnedLocs);
 
 	return NULL;
 }
