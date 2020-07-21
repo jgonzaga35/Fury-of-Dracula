@@ -32,7 +32,7 @@ struct gameView {
 	Round numTurn;
 	int score;
 	int health[NUM_PLAYERS];
-
+	char *pastPlays;
 	Player currentPlayer;
 	PlaceId trails[NUM_PLAYERS][TRAIL_SIZE];	// Never null
 	PlaceId vampireLocation;					// Never null
@@ -304,41 +304,66 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 PlaceId *GvGetMoveHistory(GameView gv, Player player,
                           int *numReturnedMoves, bool *canFree)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-/**
- * Gets  the complete move history, in chronological order, of the given
- * player as shown in the play string.
- *
- * This  function  should  return  the  moves in a dynamically allocated
- * array, and set *numReturnedMoves to the number of moves returned.
- *
- * This  function can decide whether the caller is allowed to  modify or
- * free the returned array. (If the array is part of the  GameView  data
- * structure,  you may not want the caller to modify or free it.) If the
- * returned array can be modified/freed, set *canFree to true  to  avoid
- * memory leaks. Otherwise, set it to false.
- */
 	/* 
-	// Dynamically allocate array of PlaceIds
-	PlaceId *history;
-
-	// How many PlaceIds to allocate?? Unsure...
-	history = (PlaceId *)malloc(sizeof(PlaceId)*TRAIL_SIZE);
-
-	// To count numReturnedMoves:
-	// 1. Initialise history array with -1.
-	// 2. Fill in history array with move history.
-	// 3. Count elements in array until history[i] == -1.
-
-	// Fill in PlaceId array with move history of given player.
-	// How to find move history of given player???
-	for (int i = 0; i < TRAIL_SIZE; i++) {
-		history[i] = 
-
+	// Return NULL if no history yet?
+	if (gv->pastPlays == NULL) {
+		*numReturnedMoves = 0;
+		*canFree = false;
+		return NULL;
 	}
 
-	// When should the caller of this function be allowed
-	// to modify or free the array?? 
+	// Dynamically allocate array of PlaceIds
+	PlaceId *pastMoves;
+
+	char playerName = '\0';
+	switch (player) {
+		case 0: playerName = 'G'; // Lord Godalming
+				break;
+		case 1: playerName = 'S': // Dr Seward
+				break;
+		case 2: playerName = 'H'; // Van Helsing
+				break;
+		case 3: playerName = 'M'; // Mina Harker
+				break;
+		case 4: playerName = 'D'; // Dracula
+				break;
+	}
+	assert(playerName != '\0');
+	// How many PlaceIds to allocate?? Unsure...
+	pastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
+
+	// Fill in PlaceId array with move history of given player.
+	// Loop through pastPlays string...
+	char *pastPlays = strdup(gv->pastPlays);
+	int i = 0;
+	for (char *move = strtok(pastPlays, " "); move != NULL; move = strtok(NULL, " ")) {
+		if (move[0] == playerName) {
+			// Doesnt work. move is a char * but pastMoves[i] is 
+			// of type PlaceId.
+			pastMoves[i] = move;
+			i++; 
+		}
+	}
+	*numReturnedMoves = i;
+
+	// once the caller of this function is finished using this data
+	// they can free it
+	*canFree = false; 
+
+	// Reverse order of array so the most recent moves
+	// are in the lowest value indexes of array. 
+	int start = 0;
+	int end = i;
+	char temp;
+	while (start < end) {
+		temp = pastMoves[start];
+		pastMoves[start] = pastMoves[end];
+		pastMoves[end] = temp;
+		start++;
+		end--;
+	}
+	// pastMoves returns an array filled with moves from oldest to newest.
+	return pastMoves;
 	*/
 	
 	*numReturnedMoves = 0;
@@ -349,7 +374,22 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
                         int *numReturnedMoves, bool *canFree)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	/*
+	PlaceId *MoveHistory = GvGetMoveHistory(gv, player, numReturnedMoves, true);
+	if (MoveHistory == NULL) return NULL;
+
+	PlaceId *LastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
+	int i = 0;
+	while (i < numMoves && i < numReturnedMoves) {
+		// Put moves from entire history from most recent to oldest
+		// into LastMoves
+		LastMoves[i] = MoveHistory[i];
+		i++;
+	}
+	*canFree = true;
+	return LastMoves;
+
+	*/
 	*numReturnedMoves = 0;
 	*canFree = false;
 	return NULL;
@@ -359,6 +399,7 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
                               int *numReturnedLocs, bool *canFree)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+
 	*numReturnedLocs = 0;
 	*canFree = false;
 	return NULL;
