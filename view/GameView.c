@@ -105,12 +105,13 @@ GameView GvNew(char *pastPlays, Message messages[])
 		i += CHARS_PER_PLAY;
 	}
 
+	new->currentPlayer = new->numTurn % NUM_PLAYERS;
+
 	return new;
 }
 
 void GvFree(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	free(gv);
 }
 
@@ -148,16 +149,7 @@ int GvGetHealth(GameView gv, Player player)
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-
-	// If the player hasn't had a turn (The id doesn't apear in the first four play)
-
-	// If hunter, reuturn last play's location
-
-	// If Dracula, 
-	
-
-	return NOWHERE;
+	return gv->trails[player][CURR_PLACE];
 }
 
 PlaceId GvGetVampireLocation(GameView gv)
