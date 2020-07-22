@@ -72,7 +72,6 @@ int HvGetHealth(HunterView hv, Player player)
 
 PlaceId HvGetPlayerLocation(HunterView hv, Player player)
 {
-	//Still TODO: if(player == PLAYER_DRACULA) ????
 	return GvGetPlayerLocation(hv->gv, player);
 }
 
@@ -105,14 +104,17 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	Player currHunter = HvGetPlayer(hv);
+	PlaceId currLoc = GvGetPlayerLocation(hv, currHunter);
+	PlaceId *availableLocs = GvGetReachable(hv, currHunter, hv->numTurn, currLoc, *numReturnedLocs);
+	return availableLocs;
 }
 
 PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
                              bool boat, int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+
 	*numReturnedLocs = 0;
 	return NULL;
 }
