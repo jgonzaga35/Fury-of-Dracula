@@ -104,8 +104,9 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	PlaceId currLoc = GvGetPlayerLocation(dv, PLAYER_DRACULA);
+	PlaceId *availableLocs = GvGetReachable(dv, PLAYER_DRACULA, dv->numTurn, currLoc, *numReturnedLocs);
+	return availableLocs;
 }
 
 PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
