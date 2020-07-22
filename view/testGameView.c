@@ -409,6 +409,35 @@ int main(void)
 			assert(locs[5] == CITY_UNKNOWN);
 			if (canFree) free(locs);
 		}
+
+		// Dracula's last 3 moves/locations
+		{
+			int numMoves = 5; bool canFree = false;
+			int numReturnedMoves = 0;
+			PlaceId *lastMoves = GvGetLastMoves(gv, PLAYER_DRACULA, numMoves,
+			                                  &numReturnedMoves, &canFree);
+			assert(numReturnedMoves == 5);
+			assert(lastMoves[0] == STRASBOURG);
+			assert(lastMoves[1] == CITY_UNKNOWN);
+			assert(lastMoves[2] == CITY_UNKNOWN);
+			assert(lastMoves[3] == DOUBLE_BACK_3);
+			assert(lastMoves[4] == HIDE);
+			if (canFree) free(lastMoves);
+		}
+
+		{
+			int numMoves = 5; bool canFree = false;
+			int numReturnedMoves = 0;
+			PlaceId *lastLocs = GvGetLastLocations(gv, PLAYER_DRACULA, numMoves,
+			                                  &numReturnedMoves, &canFree);
+			assert(numReturnedMoves == 5);
+			assert(lastLocs[0] == STRASBOURG);
+			assert(lastLocs[1] == CITY_UNKNOWN);
+			assert(lastLocs[2] == CITY_UNKNOWN);
+			assert(lastLocs[3] == STRASBOURG);
+			assert(lastLocs[4] == STRASBOURG);
+			if (canFree) free(lastLocs);
+		}
 		
 		GvFree(gv);
 		printf("Test passed!\n");

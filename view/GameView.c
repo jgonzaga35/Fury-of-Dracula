@@ -109,7 +109,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 		new->numTurn += 1;
 		i += CHARS_PER_PLAY;
 	}
-
+	new->pastPlays = pastPlays;
 	new->currentPlayer = new->numTurn % NUM_PLAYERS;
 
 	// Fix blooad point if they fall below 0
@@ -236,24 +236,11 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	for (char *move = strtok(pastPlays, " "); move != NULL; move = strtok(NULL, " ")) {
 		if (move[0] == playerName) {
 			// Store each move by their PlaceId.
-			char abbreviation[] = {move[1], move[2]};
+			char abbreviation[] = {move[1], move[2], '\0'};
 			placeAbbrev = strdup(abbreviation);
 			pastMoves[i] = placeAbbrevToId(placeAbbrev);
 			i++; 
 		}
-	}
-
-	// Reverse order of array so the most recent moves
-	// are in the lowest value indexes of array. 
-	PlaceId start = 0;
-	PlaceId end = i;
-	PlaceId temp;
-	while (start < end) {
-		temp = pastMoves[start];
-		pastMoves[start] = pastMoves[end];
-		pastMoves[end] = temp;
-		start++;
-		end--;
 	}
 
 	// numReturnedMoves = no. of iterations through pastPlays.
@@ -270,20 +257,21 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
                         int *numReturnedMoves, bool *canFree)
 {
 	PlaceId *MoveHistory = GvGetMoveHistory(gv, player, numReturnedMoves, canFree);
-	if (MoveHistory == NULL) return NULL;
+	if (MoveHistory == NULL) {
+		*canFree = true;
+		*numReturnedMoves = 0;
+		return NULL;
+	}
 
 	PlaceId *LastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
 	int i = 0;
 	while (i < numMoves && i < *numReturnedMoves) {
-		// Put moves from entire history from most recent to oldest
-		// into LastMoves
 		LastMoves[i] = MoveHistory[i];
 		i++;
 	}
-	// don't know if this is correct
-	free(MoveHistory);
 
-	// return answer
+	free(MoveHistory);
+	*numReturnedMoves = i;
 	*canFree = true;
 	return LastMoves;
 }
@@ -313,27 +301,43 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 	PlaceId *pastLocs = (PlaceId *)malloc(sizeof(PlaceId)*100);
 	assert(pastLocs != NULL);
 	int i = 0;
-
 	// messy, will fix later
 	// might be bug if i + 6 exceeds array index.
 	while (i < *numReturnedLocs) {
 		if (pastMoves[i] == HIDE) {
-			pastLocs[i] = pastMoves[i + 1];
+			pastLocs[i] = pastMoves[i - 1];
+			while (pastLocs[i] >= HIDE && pastLocs[i] <= DOUBLE_BACK_5) {
+				if (pastLocs[i] == DOUBLE_BACK_1) {
+					pastLocs[i] = pastMoves[i - 2];
+				}
+				else if (pastLocs[i] == DOUBLE_BACK_2) {
+					pastLocs[i] = pastLocs[i - 3];
+				}
+				else if (pastLocs[i] == DOUBLE_BACK_3) {
+					pastLocs[i] = pastMoves[i - 4];
+				}
+				else if (pastLocs[i] == DOUBLE_BACK_4) {
+					pastLocs[i] = pastMoves[i - 5];
+				}
+				else if (pastLocs[i] == DOUBLE_BACK_5) {
+					pastLocs[i] = pastMoves[i - 6];
+				}
+			}
 		} 
 		else if (pastMoves[i] == DOUBLE_BACK_1) {
-			pastLocs[i] = pastMoves[i + 2];
+			pastLocs[i] = pastMoves[i - 1];
 		}
 		else if (pastMoves[i] == DOUBLE_BACK_2) {
-			pastLocs[i] = pastMoves[i + 3];
+			pastLocs[i] = pastMoves[i - 2];
 		}
 		else if (pastMoves[i] == DOUBLE_BACK_3) {
-			pastLocs[i] = pastMoves[i + 4];
+			pastLocs[i] = pastMoves[i - 3];
 		}
 		else if (pastMoves[i] == DOUBLE_BACK_4) {
-			pastLocs[i] = pastMoves[i + 5];
+			pastLocs[i] = pastMoves[i - 4];
 		}
 		else if (pastMoves[i] == DOUBLE_BACK_5) {
-			pastLocs[i] = pastMoves[i + 6];
+			pastLocs[i] = pastMoves[i - 5];
 		}
 		else if (pastMoves[i] == TELEPORT) {
 			pastLocs[i] = CASTLE_DRACULA;
@@ -359,16 +363,17 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 		return NULL;
 	}
 
-	PlaceId *LastLocs = (PlaceId *)malloc(sizeof(PlaceId)*100);
+	PlaceId *lastLocs = (PlaceId *)malloc(sizeof(PlaceId)*100);
 	int i = 0;
 	while (i < numLocs && i < *numReturnedLocs) {
-		LastLocs[i] = pastLocs[i];
+		lastLocs[i] = pastLocs[i];
 		i++;
 	}
 
 	free(pastLocs);
+	*numReturnedLocs = i;
 	*canFree = true;
-	return LastLocs;
+	return lastLocs;
 }
 
 ////////////////////////////////////////////////////////////////////////
