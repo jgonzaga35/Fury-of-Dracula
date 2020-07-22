@@ -233,20 +233,21 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
                         int *numReturnedMoves, bool *canFree)
 {
 	PlaceId *MoveHistory = GvGetMoveHistory(gv, player, numReturnedMoves, canFree);
-	if (MoveHistory == NULL) return NULL;
+	if (MoveHistory == NULL) {
+		*canFree = true;
+		*numReturnedMoves = 0;
+		return NULL;
+	}
 
 	PlaceId *LastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
 	int i = 0;
 	while (i < numMoves && i < *numReturnedMoves) {
-		// Put moves from entire history from most recent to oldest
-		// into LastMoves
 		LastMoves[i] = MoveHistory[i];
 		i++;
 	}
-	// don't know if this is correct
-	free(MoveHistory);
 
-	// return answer
+	free(MoveHistory);
+	*numReturnedMoves = i;
 	*canFree = true;
 	return LastMoves;
 }
@@ -338,16 +339,17 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 		return NULL;
 	}
 
-	PlaceId *LastLocs = (PlaceId *)malloc(sizeof(PlaceId)*100);
+	PlaceId *lastLocs = (PlaceId *)malloc(sizeof(PlaceId)*100);
 	int i = 0;
 	while (i < numLocs && i < *numReturnedLocs) {
-		LastLocs[i] = pastLocs[i];
+		lastLocs[i] = pastLocs[i];
 		i++;
 	}
 
 	free(pastLocs);
+	*numReturnedLocs = i;
 	*canFree = true;
-	return LastLocs;
+	return lastLocs;
 }
 
 ////////////////////////////////////////////////////////////////////////
