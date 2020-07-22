@@ -23,7 +23,13 @@
 // TODO: ADD YOUR OWN STRUCTS HERE
 
 struct draculaView {
-	// TODO: ADD FIELDS HERE
+	// not yet finished adding variables to this struct
+	Round numTurn;
+	int score;
+	int health[NUM_PLAYERS];
+	PlaceId trails[NUM_PLAYERS][TRAIL_SIZE];	// Never null
+	PlaceId vampireLocation;					// Never null
+	PlaceId trapLocations[TRAIL_SIZE];	
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -52,39 +58,37 @@ void DvFree(DraculaView dv)
 
 Round DvGetRound(DraculaView dv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetRound(dv);
 }
 
 int DvGetScore(DraculaView dv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetScore(dv);
 }
 
 int DvGetHealth(DraculaView dv, Player player)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetHealth(dv, player);
 }
 
 PlaceId DvGetPlayerLocation(DraculaView dv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	// Dracula knows current locations of all players, so
+	// same as GvGetPlayerLocation.
+	return GvGetPlayerLocation(dv, player);
 }
 
 PlaceId DvGetVampireLocation(DraculaView dv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	return GvGetVampireLocation(dv);
 }
 
 PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numTraps = 0;
-	return NULL;
+	return GvGetTrapLocations(dv, *numTraps);
 }
 
 ////////////////////////////////////////////////////////////////////////
