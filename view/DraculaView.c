@@ -24,7 +24,7 @@
 
 struct draculaView {
 	// not yet finished adding variables to this struct
-	gameView gv;
+	GameView gv;
 	Round numTurn;
 	int score;
 	int health[NUM_PLAYERS];
