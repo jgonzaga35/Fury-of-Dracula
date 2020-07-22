@@ -292,19 +292,19 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 			pastLocs[i] = pastMoves[i + 1];
 		} 
 		else if (pastMoves[i] == DOUBLE_BACK_1) {
-			pastLocs[i] = pastMoves[i + 2];
+			pastLocs[i] = pastMoves[i + 1];
 		}
 		else if (pastMoves[i] == DOUBLE_BACK_2) {
-			pastLocs[i] = pastMoves[i + 3];
+			pastLocs[i] = pastMoves[i + 2];
 		}
 		else if (pastMoves[i] == DOUBLE_BACK_3) {
-			pastLocs[i] = pastMoves[i + 4];
+			pastLocs[i] = pastMoves[i + 3];
 		}
 		else if (pastMoves[i] == DOUBLE_BACK_4) {
-			pastLocs[i] = pastMoves[i + 5];
+			pastLocs[i] = pastMoves[i + 4];
 		}
 		else if (pastMoves[i] == DOUBLE_BACK_5) {
-			pastLocs[i] = pastMoves[i + 6];
+			pastLocs[i] = pastMoves[i + 5];
 		}
 		else if (pastMoves[i] == TELEPORT) {
 			pastLocs[i] = CASTLE_DRACULA;
