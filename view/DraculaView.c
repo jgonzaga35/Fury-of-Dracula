@@ -44,6 +44,7 @@ DraculaView DvNew(char *pastPlays, Message messages[])
 		fprintf(stderr, "Couldn't allocate DraculaView\n");
 		exit(EXIT_FAILURE);
 	}
+	new->gv = GvNew(pastPlays, messages);
 
 	return new;
 }
@@ -59,43 +60,43 @@ void DvFree(DraculaView dv)
 
 Round DvGetRound(DraculaView dv)
 {
-	//return GvGetRound(dv);
-	return 0;
+	return GvGetRound(dv->gv);
+	//return 0;
 }
 
 int DvGetScore(DraculaView dv)
 {
-	//return GvGetScore(dv);
-	return 0;
+	return GvGetScore(dv->gv);
+	//return 0;
 }
 
 int DvGetHealth(DraculaView dv, Player player)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	//return GvGetHealth(dv, player);
-	return 0;
+	return GvGetHealth(dv->gv, player);
+	//return 0;
 }
 
 PlaceId DvGetPlayerLocation(DraculaView dv, Player player)
 {
 	// Dracula knows current locations of all players, so
 	// same as GvGetPlayerLocation.
-	//return GvGetPlayerLocation(dv, player);
-	return 1;
+	return GvGetPlayerLocation(dv->gv, player);
+	//return 1;
 }
 
 PlaceId DvGetVampireLocation(DraculaView dv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	//return GvGetVampireLocation(dv);
-	return 1;
+	return GvGetVampireLocation(dv->gv);
+	//return 1;
 }
 
 PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	//return GvGetTrapLocations(dv, *numTraps);
-	return NULL;
+	return GvGetTrapLocations(dv->gv, numTraps);
+	//return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////
