@@ -101,14 +101,14 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 ////////////////////////////////////////////////////////////////////////
 // Making a Move
 
-PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
-{
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	Player currHunter = HvGetPlayer(hv);
-	PlaceId currLoc = GvGetPlayerLocation(hv, currHunter);
-	PlaceId *availableLocs = GvGetReachable(hv, currHunter, hv->numTurn, currLoc, *numReturnedLocs);
-	return availableLocs;
-}
+// PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
+// {
+// 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+// 	Player currHunter = HvGetPlayer(hv);
+// 	PlaceId currLoc = GvGetPlayerLocation(hv, currHunter);
+// 	PlaceId *availableLocs = GvGetReachable(hv, currHunter, hv->gv->numTurn, currLoc, *numReturnedLocs);
+// 	return availableLocs;
+// }
 
 PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
                              bool boat, int *numReturnedLocs)

@@ -195,15 +195,14 @@ ConnList MapGetConnections(Map m, PlaceId p)
 
 ////////////////////////////////////////////////////////////////////////
 
-static void ensureNoDup(PlaceId *allowable CNC, PlaceId p) {
+static void ensureNoDup(PlaceId *allowableCNC, PlaceId p) {
 
 }
 
 // bfs search to find "shortest" distance of length
-static int findRailDistanceFromCurr(PlaceId p) {
-
-
-}
+// static int findRailDistanceFromCurr(PlaceId p) {
+// 
+// }
 
 /** From list of connections (provided by MapGetconnections function),
  * scan through linked list, simultaneously adding
@@ -214,9 +213,9 @@ void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
 	for (int i = *numReturnedLocs; curr != NULL || i != MAX_REAL_PLACE; i += 1) {
 		// start adding road CNC from numReturnedLocs position in array
 		if (curr->type == ROAD) {
-			visited[curr->p]
-			allowableCNC[i] = curr->p;
-			*numReturnedLocs += 1;
+			// visited[curr->p]
+			// allowableCNC[i] = curr->p;
+			// *numReturnedLocs += 1;
 		}
 	}
 }
@@ -229,11 +228,11 @@ void getRailCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Round
 		// start adding road CNC from numReturnedLocs position in array
 		if (sum == 0) break; // cannot move from rail at all
 		if (curr->type == RAIL) {
-			int dist = findRailDistanceFromCurr(from);
-			if (dist =< sum) { // add all distances less than max allowable dist
-				allowableCNC[i] = curr->p; 
-				*newReturnedLocs += 1;
-			}
+			// int dist = findRailDistanceFromCurr(from);
+			// if (dist <= sum) { // add all distances less than max allowable dist
+			// 	allowableCNC[i] = curr->p; 
+			// 	(*numReturnedLocs) += 1;
+			// }
 		}
 	}
 }

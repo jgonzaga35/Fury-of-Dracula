@@ -58,37 +58,43 @@ void DvFree(DraculaView dv)
 
 Round DvGetRound(DraculaView dv)
 {
-	return GvGetRound(dv);
+	//return GvGetRound(dv);
+	return 0;
 }
 
 int DvGetScore(DraculaView dv)
 {
-	return GvGetScore(dv);
+	//return GvGetScore(dv);
+	return 0;
 }
 
 int DvGetHealth(DraculaView dv, Player player)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return GvGetHealth(dv, player);
+	//return GvGetHealth(dv, player);
+	return 0;
 }
 
 PlaceId DvGetPlayerLocation(DraculaView dv, Player player)
 {
 	// Dracula knows current locations of all players, so
 	// same as GvGetPlayerLocation.
-	return GvGetPlayerLocation(dv, player);
+	//return GvGetPlayerLocation(dv, player);
+	return 1;
 }
 
 PlaceId DvGetVampireLocation(DraculaView dv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return GvGetVampireLocation(dv);
+	//return GvGetVampireLocation(dv);
+	return 1;
 }
 
 PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return GvGetTrapLocations(dv, *numTraps);
+	//return GvGetTrapLocations(dv, *numTraps);
+	return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -104,16 +110,17 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	PlaceId currLoc = GvGetPlayerLocation(dv, PLAYER_DRACULA);
-	PlaceId *availableLocs = GvGetReachable(dv, PLAYER_DRACULA, dv->numTurn, currLoc, *numReturnedLocs);
-	return availableLocs;
+	//PlaceId currLoc = GvGetPlayerLocation(dv, PLAYER_DRACULA);
+	//PlaceId *availableLocs = GvGetReachable(dv, PLAYER_DRACULA, dv->numTurn, currLoc, *numReturnedLocs);
+	//return availableLocs;
+	return NULL;
 }
 
 PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
                              int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
+	// *numReturnedLocs = 0;
 	return NULL;
 }
 
