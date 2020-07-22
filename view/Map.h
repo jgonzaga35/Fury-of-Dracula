@@ -14,6 +14,7 @@
 #include <stdlib.h>
 
 #include "Places.h"
+#include "Game.h"
 
 #ifndef FOD__MAP_H_
 #define FOD__MAP_H_

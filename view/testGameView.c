@@ -161,6 +161,7 @@ int main(void)
 		GameView gv = GvNew(trail, messages);
 
 		printf("Dracula is at %d\n", GvGetPlayerLocation(gv, PLAYER_DRACULA));
+		printf("Dracula has blood of %d\n", GvGetHealth(gv, PLAYER_DRACULA));
 
 		assert(GvGetRound(gv) == 2);
 		assert(GvGetPlayer(gv) == PLAYER_LORD_GODALMING);

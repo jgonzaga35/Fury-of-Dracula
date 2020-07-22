@@ -89,11 +89,6 @@ GameView GvNew(char *pastPlays, Message messages[])
 		case 'G': case 'S' : case 'H' : case 'M' :
 			if (isDead(new, player)) new->health[player] = GAME_START_HUNTER_LIFE_POINTS;
 			char *cmd = getCmd(pastPlays, i);
-			// char cmd[4];
-			// for (int j = 0; j < 4; j++) {
-			// 	cmd[j] = pastPlays[i + 3];
-			// }
-
 			performHunterAction(new, player, cmd, location); 
 			haveRest(new, player);
 			break;
@@ -445,8 +440,10 @@ static PlaceId getLocation(char firstLetter, char secondLetter)
 	{
 		return TELEPORT;
 	} else if (abbrev[0] == 'D' && isdigit(abbrev[1])) 
-	{
-		int i = abbrev[i] - '0';
+	{	
+		// TODO:Issue here
+		int i = abbrev[1] - '0';
+		printf("Reach D %d\n", &i);
 		return (102 + i);
 	}
 	return placeAbbrevToId(abbrev);
@@ -638,9 +635,12 @@ static PlaceId traceHide(GameView gv)
 // Trace what place DB refer to
 static PlaceId traceDoubleBack(GameView gv)
 {	
+	// Get the backIndex
 	PlaceId doubleBack = gv->trails[PLAYER_DRACULA][0];
 	int backIndex = doubleBack - 102;
+	printf("The backIndex is %d\n", backIndex);
 	PlaceId location = gv->trails[PLAYER_DRACULA][backIndex];
+	printf("The location returned for DB is %d\n", location);
 	if (location != HIDE) return location;
 	// If D5 refers to HIDE
 	if (backIndex == 5) return gv->draculaDroppedTrail;
@@ -651,6 +651,7 @@ static PlaceId traceDoubleBack(GameView gv)
 static void updateLifePoint(GameView gv, PlaceId location) 
 {	
 	int atSea = FALSE;
+
 	// If the location is at sea
 	if (placeIdToType(location) == SEA) atSea = TRUE;
 	// If the location is castle dracula or dracula performed TP
@@ -662,7 +663,8 @@ static void updateLifePoint(GameView gv, PlaceId location)
 	} 
 	// If Dracula performed double back and dest is a sea
 	else if (location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5)
-	{
+	{	
+		printf("Reach updateLifePoint DB part\n");
 		if (placeIdToType(traceDoubleBack(gv)) == SEA) atSea = TRUE;
 	}
 
