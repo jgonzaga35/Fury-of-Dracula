@@ -186,14 +186,16 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
                           int *numReturnedMoves, bool *canFree)
 {
 	// Return NULL if no history yet?
-	if (gv->pastPlays == NULL) {
+	if (gv->pastPlays == NULL) 
+	{
 		*numReturnedMoves = 0;
 		*canFree = false;
 		return NULL;
 	}
 
 	char playerName = '\0';
-	switch (player) {
+	switch (player) 
+	{
 		case PLAYER_LORD_GODALMING: playerName = 'G'; 
 				break;
 		case PLAYER_DR_SEWARD: playerName = 'S'; 
@@ -209,7 +211,7 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	assert(playerName != '\0');
 
 	// Dynamically allocate array of PlaceIds
-	// How many PlaceIds to allocate?? Unsure...
+	// TODO: How many PlaceIds to allocate?? Unsure... Maybe the number of rounds?
 	PlaceId *pastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
 
 	// Fill in PlaceId array with move history of given player.
@@ -217,8 +219,10 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	char *pastPlays = strdup(gv->pastPlays);
 	int i = 0;
 	char *placeAbbrev;
-	for (char *move = strtok(pastPlays, " "); move != NULL; move = strtok(NULL, " ")) {
-		if (move[0] == playerName) {
+	for (char *move = strtok(pastPlays, " "); move != NULL; move = strtok(NULL, " ")) 
+	{
+		if (move[0] == playerName) 
+		{
 			// Store each move by their PlaceId.
 			char abbreviation[] = {move[1], move[2], '\0'};
 			placeAbbrev = strdup(abbreviation);
@@ -241,15 +245,18 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
                         int *numReturnedMoves, bool *canFree)
 {
 	PlaceId *MoveHistory = GvGetMoveHistory(gv, player, numReturnedMoves, canFree);
-	if (MoveHistory == NULL) {
+	if (MoveHistory == NULL) 
+	{
 		*canFree = true;
 		*numReturnedMoves = 0;
 		return NULL;
 	}
 
+	// TODO: Maybe numMoves instead of magic 100? Not too sure
 	PlaceId *LastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
 	int i = 0;
-	while (i < numMoves && i < *numReturnedMoves) {
+	while (i < numMoves && i < *numReturnedMoves) 
+	{
 		LastMoves[i] = MoveHistory[i];
 		i++;
 	}
@@ -276,7 +283,7 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 	// for hunters, GvGetMoveHistory = GvGetLocationHistory;
 	PlaceId *pastMoves = GvGetMoveHistory(gv, player, numReturnedLocs, canFree);
 	// assuming GvGetMoveHistory changes value of numReturnedLocs to numReturnedMoves...
-	if (player >= PLAYER_LORD_GODALMING && player <= PLAYER_MINA_HARKER) {
+	if (isHunter(player)) {
 		*canFree = true;
 		return pastMoves;
 	} 
@@ -290,6 +297,12 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 	while (i < *numReturnedLocs) {
 		if (pastMoves[i] == HIDE) {
 			pastLocs[i] = pastMoves[i - 1];
+			// TODO: Maybe this will work
+			// if (isDoubleBack(pastLocs[i]))
+			// {
+			// 	int backIndex = pastLocs - 102;
+			// 	pastLocs[i] = pastMoves[i - 1 - backIndex];
+			// }
 			while (pastLocs[i] >= HIDE && pastLocs[i] <= DOUBLE_BACK_5) {
 				if (pastLocs[i] == DOUBLE_BACK_1) {
 					pastLocs[i] = pastMoves[i - 2];
@@ -379,7 +392,7 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 	Map europe = MapNew();
 	ConnList CNN;
 	
-	if (PLAYER_LORD_GODALMING <= player && player <= PLAYER_MINA_HARKER) {
+	if (isHunter(player)) {
 		// Player is a hunter
 		int maxByRail = (GvGetRound(gv) + player) % 4;
 	} else if (player == PLAYER_DRACULA) { // Player is dracula
@@ -689,10 +702,16 @@ static void updateLifePoint(GameView gv, PlaceId location)
 }
 
 // Return the actual location
-static PlaceId trueLocation(GameView gv, PlaceId location) {
+static PlaceId trueLocation(GameView gv, PlaceId location) 
+{
 	if (location == TELEPORT) return CASTLE_DRACULA;
 	else if (location == HIDE) return traceHide(gv);
 	else if (isDoubleBack(location)) return traceDoubleBack(gv);
 	return location;
 }
 
+// Return whether a play is a hunter
+static int isHunter(Player player)
+{
+	return (player >= PLAYER_LORD_GODALMING && player <= PLAYER_MINA_HARKER);
+}
