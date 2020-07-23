@@ -23,7 +23,16 @@
 // TODO: ADD YOUR OWN STRUCTS HERE
 
 struct draculaView {
-	// TODO: ADD FIELDS HERE
+	// not yet finished adding variables to this struct
+	GameView gv;
+	Round numTurn;
+	// not sure if we need these variables - maybe
+	// we can just get them using Gv functions?
+	//int score;
+	//int health[NUM_PLAYERS];
+	//PlaceId trails[NUM_PLAYERS][TRAIL_SIZE];	// Never null
+	//PlaceId vampireLocation;					// Never null
+	//PlaceId trapLocations[TRAIL_SIZE];	
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -31,19 +40,22 @@ struct draculaView {
 
 DraculaView DvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+
 	DraculaView new = malloc(sizeof(*new));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate DraculaView\n");
 		exit(EXIT_FAILURE);
 	}
 
+	new->gv = GvNew(pastPlays, messages);
+	new->numTurn = GvGetRound(new->gv);
+
 	return new;
 }
 
 void DvFree(DraculaView dv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	free(dv->gv);
 	free(dv);
 }
 
@@ -52,39 +64,32 @@ void DvFree(DraculaView dv)
 
 Round DvGetRound(DraculaView dv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetRound(dv->gv);
 }
 
 int DvGetScore(DraculaView dv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetScore(dv->gv);
 }
 
 int DvGetHealth(DraculaView dv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetHealth(dv->gv, player);
 }
 
 PlaceId DvGetPlayerLocation(DraculaView dv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	return GvGetPlayerLocation(dv->gv, player);
 }
 
 PlaceId DvGetVampireLocation(DraculaView dv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	return GvGetVampireLocation(dv->gv);
 }
 
 PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numTraps = 0;
-	return NULL;
+	return GvGetTrapLocations(dv->gv, numTraps);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -92,7 +97,24 @@ PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 
 PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+/**
+ * Gets all the moves that Dracula can validly make this turn.
+ *
+ * This  function  should  return  the  moves in a dynamically allocated
+ * array, and set *numReturnedMoves to the number of moves returned. The
+ * array can be in any order but must contain unique entries.
+ *
+ * If  Dracula  has  no valid moves (other than TELEPORT), this function
+ * should set *numReturnedMoves to 0 and return  an  empty  array  (NULL
+ * will suffice).
+ *
+ * If  Dracula  hasn't  made  a move yet, set *numReturnedMoves to 0 and
+ * return NULL.
+ */
+
+	PlaceId *validMoves = (PlaceId *)malloc(sizeof(PlaceId)*20);
+	
+
 	*numReturnedMoves = 0;
 	return NULL;
 }
@@ -100,8 +122,9 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	PlaceId currLoc = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
+	PlaceId *availableLocs = GvGetReachable(dv->gv, PLAYER_DRACULA, dv->numTurn, currLoc, numReturnedLocs);
+	return availableLocs;
 }
 
 PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,

@@ -14,6 +14,7 @@
 #include <stdlib.h>
 
 #include "Places.h"
+#include "Game.h"
 
 #ifndef FOD__MAP_H_
 #define FOD__MAP_H_
@@ -48,5 +49,14 @@ int MapNumConnections(Map m, TransportType type);
  *  The returned list should NOT be modified or freed.
  */
 ConnList MapGetConnections(Map m, PlaceId p);
+
+
+/** From list of connections (provided by MapGetconnections function),
+ * scan through linked list, simultaneously adding
+ * "type" connection to allowableCNC array.
+ * Update number of unique locations added to array through numReturnedLocs */
+void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs);
+void getRailCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Round round, Player player, PlaceId p);
+void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs);
 
 #endif // !defined(FOD__MAP_H_)

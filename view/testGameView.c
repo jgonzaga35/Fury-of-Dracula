@@ -160,6 +160,9 @@ int main(void)
 		
 		GameView gv = GvNew(trail, messages);
 
+		// printf("Dracula is at %d\n", GvGetPlayerLocation(gv, PLAYER_DRACULA));
+		// printf("Dracula has blood of %d\n", GvGetHealth(gv, PLAYER_DRACULA));
+
 		assert(GvGetRound(gv) == 2);
 		assert(GvGetPlayer(gv) == PLAYER_LORD_GODALMING);
 		assert(GvGetScore(gv) == GAME_START_SCORE - 2 * SCORE_LOSS_DRACULA_TURN);
@@ -360,7 +363,7 @@ int main(void)
 		assert(GvGetHealth(gv, PLAYER_DR_SEWARD) ==
 				GAME_START_HUNTER_LIFE_POINTS - 2 * LIFE_LOSS_TRAP_ENCOUNTER);
 		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CITY_UNKNOWN);
-		assert(GvGetVampireLocation(gv) == STRASBOURG);
+		assert(GvGetVampireLocation(gv) == NOWHERE);
 		
 		// Lord Godalming's move/location history
 		{
@@ -405,6 +408,35 @@ int main(void)
 			assert(locs[4] == STRASBOURG);
 			assert(locs[5] == CITY_UNKNOWN);
 			if (canFree) free(locs);
+		}
+
+		// Dracula's last 3 moves/locations
+		{
+			int numMoves = 5; bool canFree = false;
+			int numReturnedMoves = 0;
+			PlaceId *lastMoves = GvGetLastMoves(gv, PLAYER_DRACULA, numMoves,
+			                                  &numReturnedMoves, &canFree);
+			assert(numReturnedMoves == 5);
+			assert(lastMoves[0] == STRASBOURG);
+			assert(lastMoves[1] == CITY_UNKNOWN);
+			assert(lastMoves[2] == CITY_UNKNOWN);
+			assert(lastMoves[3] == DOUBLE_BACK_3);
+			assert(lastMoves[4] == HIDE);
+			if (canFree) free(lastMoves);
+		}
+
+		{
+			int numMoves = 5; bool canFree = false;
+			int numReturnedMoves = 0;
+			PlaceId *lastLocs = GvGetLastLocations(gv, PLAYER_DRACULA, numMoves,
+			                                  &numReturnedMoves, &canFree);
+			assert(numReturnedMoves == 5);
+			assert(lastLocs[0] == STRASBOURG);
+			assert(lastLocs[1] == CITY_UNKNOWN);
+			assert(lastLocs[2] == CITY_UNKNOWN);
+			assert(lastLocs[3] == STRASBOURG);
+			assert(lastLocs[4] == STRASBOURG);
+			if (canFree) free(lastLocs);
 		}
 		
 		GvFree(gv);
@@ -469,7 +501,7 @@ int main(void)
 			assert(numLocs == 7);
 			sortPlaces(locs, numLocs);
 			assert(locs[0] == BORDEAUX);
-			assert(locs[1] == BUCHAREST);
+			assert(locs[1] == BRUSSELS);
 			assert(locs[2] == COLOGNE);
 			assert(locs[3] == LE_HAVRE);
 			assert(locs[4] == MARSEILLES);
