@@ -365,8 +365,8 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 
 // returns ture if valid player, else returns false
 static int validPlayer(Player player) {
-	if (PLAYER_LORD_GODALMING <= player && player <= PLAYER_DRACULA) return 1;
-	else return 0;
+	if (PLAYER_LORD_GODALMING <= player && player <= PLAYER_DRACULA) return TRUE;
+	else return FALSE;
 }
 
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
@@ -381,9 +381,9 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 	
 	if (PLAYER_LORD_GODALMING <= player && player <= PLAYER_MINA_HARKER) {
 		// Player is a hunter
-
+		int maxByRail = (GvGetRound(gv) + player) % 4;
 	} else if (player == PLAYER_DRACULA) { // Player is dracula
-
+		// No rail, no hospital
 	}
 
 	MapFree(europe);

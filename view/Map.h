@@ -57,7 +57,7 @@ ConnList MapGetConnections(Map m, PlaceId p);
 void printConnList(ConnList L);
 
 // returns shortest "edge" distance from one city to another
-// using breadt first search
+// using breadth first search
 int bfsPathDist(Map m, ConnList src, PlaceId dest);
 
 /** From list of connections (provided by MapGetconnections function),
