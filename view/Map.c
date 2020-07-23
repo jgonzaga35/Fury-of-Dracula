@@ -199,13 +199,13 @@ ConnList MapGetConnections(Map m, PlaceId p)
 // Currently replaces any duplicates with the value of 'from' from
 // MapGetConnections.
 static void ensureNoDup(PlaceId *allowableCNC, PlaceId p, int *numReturnedLocs) {
-	for (int i = 0; i < *numReturnedLocs - 1; i++) {
-		for (int j = i + 1; j < *numReturnedLocs; j++) {
-			if (allowableCNC[i] == allowableCNC[j]) {
-				allowableCNC[i] = p;
-			}
-		}
-	}
+	// for (int i = 0; i < *numReturnedLocs - 1; i++) {
+	// 	for (int j = i + 1; j < *numReturnedLocs; j++) {
+	// 		if (allowableCNC[i] == allowableCNC[j]) {
+	// 			allowableCNC[i] = p;
+	// 		}
+	// 	}
+	// }
 
 }
 
@@ -219,6 +219,13 @@ static void ensureNoDup(PlaceId *allowableCNC, PlaceId p, int *numReturnedLocs) 
  * "type" connection to allowableCNC array.
  * Update number of unique locations added to array through numReturnedLocs */
 void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
+	/* hey peter do you know how to implement this function?
+	i am having a bit of trouble because it processes the connection type
+	between Galatz and Bucharest as RAIL when there is also a ROAD connection
+	between them. ConnList only stores one type so im not sure how to make it
+	so that the function can detect if there are multiple types of connections
+	between 2 locations. thanks - justin*/
+	
 	ConnList curr = CNC;
 	printf("curr->p is %s\n", placeIdToAbbrev(curr->p));
 	int j = 0;
@@ -235,7 +242,6 @@ void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
 		if (curr == NULL) break;
 	}
 	*numReturnedLocs = j;
-	ensureNoDup(allowableCNC, GALATZ, numReturnedLocs);
 	
 }
 
