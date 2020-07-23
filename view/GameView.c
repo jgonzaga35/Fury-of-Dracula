@@ -112,7 +112,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	new->pastPlays = pastPlays;
 	new->currentPlayer = new->numTurn % NUM_PLAYERS;
 
-	// Fix blood point if they fall below 0
+	// Fix blood point if they fall below 0, so that GvGetHealth is always >= 0
 	for (int i = 0; i < NUM_PLAYERS; i++)
 	{
 		if (new->health[i] < 0) new->health[i] = 0;
@@ -145,18 +145,8 @@ int GvGetScore(GameView gv)
 }
 
 int GvGetHealth(GameView gv, Player player)
-{ // -------- not sure if this is right until we compile --------
+{ 
 	return gv->health[player];
-	// int h = gv->health[player];
-	// if 
-	// (	
-	// 	0 <= player && player <= 3 && // hunter
-	// 	0 <= h && h <= GAME_START_HUNTER_LIFE_POINTS // health allowable
-	// ) return h;
-	
-	// if (player == 4 && h >= 0) return h; // Dracula
-
-	// return -1; // error
 }
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
@@ -176,20 +166,13 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 	// printf("Trap 1 is at %d\n", gv->trapLocations[0]);
 	// printf("Trap 2 is at %d\n", gv->trapLocations[1]);
 	// printf("Trap 3 is at %d\n", gv->trapLocations[2]);
+	// printf("Trap 4 is at %d\n", gv->trapLocations[3]);
 	*numTraps = gv->numTrap;
 	PlaceId *trapLocation = malloc(*numTraps * sizeof(PlaceId));
 
-	// for (int i = 0, j = 0; i < TRAIL_SIZE; i++) {
-	// 	if (gv->trapLocations[i] != NOWHERE)
-	// 	{
-	// 		trapLocation[j] = gv->trapLocations[i];
-	// 		j++;
-	// 	}
-	// }
-
-	for (int i = 0; i < *numTraps; i++)
+	for (int i = *numTraps - 1, j = 0; i >= 0; i--, j++)
 	{
-		trapLocation[i] = gv->trapLocations[i];
+		trapLocation[j] = gv->trapLocations[i];
 	}
 
 	return trapLocation;
@@ -598,6 +581,7 @@ static void haveRest(GameView gv, Player player) {
 		if (gv->health[player] >= GAME_START_HUNTER_LIFE_POINTS) gv->health[player] = GAME_START_HUNTER_LIFE_POINTS;
 	}
 }
+
 // Add a trap
 static void addTrap(GameView gv, PlaceId location)
 {
@@ -627,7 +611,6 @@ static void performDraculaAction(GameView gv, char firstCmd, char secondCmd, Pla
 	switch(firstCmd) {
 		case '.': break;
 		case 'T':
-			// TODO: still not sure whether use ture location
 			addTrap(gv, trueLocation(gv, draculaLocation));
 			break;
 	}
@@ -635,6 +618,7 @@ static void performDraculaAction(GameView gv, char firstCmd, char secondCmd, Pla
 	switch(secondCmd) {
 		case '.': break;
 		case 'V':
+			// TODO: For hunter's view, this should be dependent on dracula's location
 			gv->vampireLocation = trueLocation(gv, draculaLocation);
 			break;
 	}
