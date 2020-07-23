@@ -51,6 +51,11 @@ int MapNumConnections(Map m, TransportType type);
  */
 ConnList MapGetConnections(Map m, PlaceId p);
 
+
+///////////////////////////////////////////////////////////////////////////////////
+// prints all nodes in connection list
+void printConnList(ConnList L);
+
 // returns shortest "edge" distance from one city to another
 // using breadt first search
 int bfsPathDist(Map m, ConnList src, PlaceId dest);
