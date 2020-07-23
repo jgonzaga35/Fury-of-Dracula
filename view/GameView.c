@@ -414,11 +414,9 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	if (!validPlayer(player)) return NULL;	
 	//TODO:Justin could you check if this is corret, I add the (player) so that it can compile
 	if (!(numReturnedLocs >= 0)) *numReturnedLocs = 0;
-	//printf("HELLO\n");
 	PlaceId *allowableCNC = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
-	//printf("whats cooking\n");
 	ConnList CNC = MapGetConnections(gv->map, from); // reachable connections
-	//printf("END\n");
+	// THESE FUNCTIONS BELOW ARE NOT FINISHED AND CAUSE INFINITE LOOP
 	if (road) getRoadCNC(CNC, allowableCNC, numReturnedLocs);
 	if (rail) getRailCNC(CNC, allowableCNC, numReturnedLocs, round, player, from);
 	if (boat) getBoatCNC(CNC, allowableCNC, numReturnedLocs);
@@ -451,6 +449,7 @@ static void initializeHealthScoreTurnsLocation(GameView gv)
 
 	gv->draculaDroppedTrail = NOWHERE;
 	gv->vampireLocation = NOWHERE;
+	gv->map = MapNew();
 
 	return;
 }
