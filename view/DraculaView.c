@@ -40,13 +40,13 @@ struct draculaView {
 
 DraculaView DvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+
 	DraculaView new = malloc(sizeof(*new));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate DraculaView\n");
 		exit(EXIT_FAILURE);
 	}
-	//printf("hi\n");
+
 	new->gv = GvNew(pastPlays, messages);
 	new->numTurn = GvGetRound(new->gv);
 
@@ -55,7 +55,6 @@ DraculaView DvNew(char *pastPlays, Message messages[])
 
 void DvFree(DraculaView dv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	free(dv->gv);
 	free(dv);
 }
@@ -75,26 +74,21 @@ int DvGetScore(DraculaView dv)
 
 int DvGetHealth(DraculaView dv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	return GvGetHealth(dv->gv, player);
 }
 
 PlaceId DvGetPlayerLocation(DraculaView dv, Player player)
 {
-	// Dracula knows current locations of all players, so
-	// same as GvGetPlayerLocation.
 	return GvGetPlayerLocation(dv->gv, player);
 }
 
 PlaceId DvGetVampireLocation(DraculaView dv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	return GvGetVampireLocation(dv->gv);
 }
 
 PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	return GvGetTrapLocations(dv->gv, numTraps);
 }
 
@@ -103,7 +97,24 @@ PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 
 PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+/**
+ * Gets all the moves that Dracula can validly make this turn.
+ *
+ * This  function  should  return  the  moves in a dynamically allocated
+ * array, and set *numReturnedMoves to the number of moves returned. The
+ * array can be in any order but must contain unique entries.
+ *
+ * If  Dracula  has  no valid moves (other than TELEPORT), this function
+ * should set *numReturnedMoves to 0 and return  an  empty  array  (NULL
+ * will suffice).
+ *
+ * If  Dracula  hasn't  made  a move yet, set *numReturnedMoves to 0 and
+ * return NULL.
+ */
+
+	PlaceId *validMoves = (PlaceId *)malloc(sizeof(PlaceId)*20);
+	
+
 	*numReturnedMoves = 0;
 	return NULL;
 }

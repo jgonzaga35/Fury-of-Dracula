@@ -411,7 +411,8 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                               bool boat, int *numReturnedLocs)
 {
 	if (gv == NULL) return NULL;
-	if (!validPlayer(player))return NULL;	//TODO:Justin could you check if this is corret, I add the (player) so that it can compile
+	if (!validPlayer(player)) return NULL;	
+	//TODO:Justin could you check if this is corret, I add the (player) so that it can compile
 	if (!(numReturnedLocs >= 0)) *numReturnedLocs = 0;
 	
 	PlaceId *allowableCNC = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
