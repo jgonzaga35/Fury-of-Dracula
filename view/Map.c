@@ -19,6 +19,7 @@
 
 #include "Map.h"
 #include "Places.h"
+#include "Queue.h"
 
 struct map {
 	int nV; // number of vertices
@@ -245,26 +246,67 @@ void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
 	
 }
 
+// returns the distance in terms of edge length from one src to dest
+int bfsPathDist(Map m, ConnList src, PlaceId dest) {
+	assert(m != NULL);
+	PlaceId *visited = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
+	// initalise visited array
+	for (PlaceId i = 0; i < MAX_REAL_PLACE; i += 1) visited[i] = -1;
+
+	Queue q = newQueue();
+	QueueJoin(q, src->p);
+	visited[src->p] = 1;
+
+	int destFound = 0; // flag
+
+	PlaceId i, left; // i is iterator & left is most recent item in q that left
+	while (!destFound && !QueueIsEmpty(q)) {
+		left = QueueLeave(q);
+		for (src; src != NULL; src = src->next) { // loop through all adj nodes to curr
+			if (left == dest) {destFound = 1; break;}
+			visited[src->p] = left;
+			QueueJoin(q, src->p);
+		}
+	}
+
+	// calculate distance in terms of edge length from src to dest
+	int length = 1;
+	PlaceId j = dest;
+	while (j != src->p) {
+		j = visited[j];
+		length += 1;
+	}
+
+	dropQueue(q);
+	free(visited);
+	
+}
+
 // round num required for 
-void getRailCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Round round, Player player, PlaceId p) {
+void getRailCNC
+	(	ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Round round, 
+		Player player, PlaceId p, Map m
+	) {
+
 	ConnList curr = CNC;
 	int sum = (round + player) % 4; // max allowable station distances
 	for (int i = *numReturnedLocs; curr != NULL || i != MAX_REAL_PLACE; i += 1) {
-		// start adding road CNC from numReturnedLocs position in array
+		// start adding rail CNC from numReturnedLocs position in array
 		if (sum == 0) break; // cannot move from rail at all
 		if (curr->type == RAIL) {
-			// int dist = findRailDistanceFromCurr(from);
-			// if (dist <= sum) { // add all distances less than max allowable dist
-			// 	allowableCNC[i] = curr->p; 
-			// 	(*numReturnedLocs) += 1;
-			// }
+			int dist = bfsPathDist(m, CNC, curr->p);
+			if (dist <= sum) { // add all distances less than max allowable dist
+				allowableCNC[i] = curr->p; 
+				(*numReturnedLocs) += 1;
+			}
 		}
 	}
 }
+
 void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
 	ConnList curr = CNC;
 	for (int i = *numReturnedLocs; curr != NULL || i != MAX_REAL_PLACE; i += 1) {
-		// start adding road CNC from numReturnedLocs position in array
+		// start adding bot CNC from numReturnedLocs position in array
 		if (curr->type == BOAT) {
 			allowableCNC[i] = curr->p;
 			*numReturnedLocs += 1;
