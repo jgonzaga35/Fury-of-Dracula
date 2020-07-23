@@ -112,8 +112,10 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
  * return NULL.
  */
 
-	PlaceId *validMoves = (PlaceId *)malloc(sizeof(PlaceId)*20);
-	
+	//PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
+	//This only accounts for location moves and not HIDE or DOUBLEBACK
+	//PlaceId *validMoves = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, 
+									//from, true, false, true, numReturnedMoves);
 
 	*numReturnedMoves = 0;
 	return NULL;
