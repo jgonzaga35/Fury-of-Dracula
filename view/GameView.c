@@ -112,8 +112,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 	new->pastPlays = pastPlays;
 	new->currentPlayer = new->numTurn % NUM_PLAYERS;
 
-	// Fix blooad point if they fall below 0
-	for (int i; i < NUM_PLAYERS; i++)
+	// Fix blood point if they fall below 0
+	for (int i = 0; i < NUM_PLAYERS; i++)
 	{
 		if (new->health[i] < 0) new->health[i] = 0;
 	}
@@ -414,10 +414,11 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	if (!validPlayer(player)) return NULL;	
 	//TODO:Justin could you check if this is corret, I add the (player) so that it can compile
 	if (!(numReturnedLocs >= 0)) *numReturnedLocs = 0;
-	
+	//printf("HELLO\n");
 	PlaceId *allowableCNC = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
+	//printf("whats cooking\n");
 	ConnList CNC = MapGetConnections(gv->map, from); // reachable connections
-	
+	//printf("END\n");
 	if (road) getRoadCNC(CNC, allowableCNC, numReturnedLocs);
 	if (rail) getRailCNC(CNC, allowableCNC, numReturnedLocs, round, player, from);
 	if (boat) getBoatCNC(CNC, allowableCNC, numReturnedLocs);
