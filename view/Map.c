@@ -33,6 +33,7 @@ static inline bool isSentinelEdge(Connection c);
 
 static ConnList connListInsert(ConnList l, PlaceId v, TransportType type);
 static bool connListContains(ConnList l, PlaceId v, TransportType type);
+static int Dup(PlaceId *allowableCNC, PlaceId p, int *numReturedLocs);
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -195,7 +196,7 @@ ConnList MapGetConnections(Map m, PlaceId p)
 }
 
 ////////////////////////////////////////////////////////////////////////
-
+/*
 // May bug if there are more than 2 duplicates.
 // Currently replaces any duplicates with the value of 'from' from
 // MapGetConnections.
@@ -208,42 +209,15 @@ static void ensureNoDup(PlaceId *allowableCNC, PlaceId p, int *numReturnedLocs) 
 	// 	}
 	// }
 
-}
+}*/
 
-// bfs search to find "shortest" distance of length
-// static int findRailDistanceFromCurr(PlaceId p) {
-// 
-// }
-
-/** From list of connections (provided by MapGetconnections function),
- * scan through linked list, simultaneously adding
- * "type" connection to allowableCNC array.
- * Update number of unique locations added to array through numReturnedLocs */
-void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
-	/* hey peter do you know how to implement this function?
-	i am having a bit of trouble because it processes the connection type
-	between Galatz and Bucharest as RAIL when there is also a ROAD connection
-	between them. ConnList only stores one type so im not sure how to make it
-	so that the function can detect if there are multiple types of connections
-	between 2 locations. thanks - justin*/
-	
-	ConnList curr = CNC;
-	printf("curr->p is %s\n", placeIdToAbbrev(curr->p));
-	int j = 0;
-	for (int i = 0; curr != NULL || i != MAX_REAL_PLACE; i++) {
-		// There is a road from Bucharest to Galatz.
-		// There is also a rail from Bucharest to Galatz.
-		if (connListContains(curr, curr->p, ROAD) || curr->type == ROAD) {
-			allowableCNC[i] = curr->p;
-			printf("allowableCNC[%d] is %s\n", i, placeIdToAbbrev(curr->p));
-			j++;
-		}
-		curr = curr->next;
-		// For some reason if I do not include this I get a segmentation fault
-		if (curr == NULL) break;
+// checks that p is not present in allowable CNC
+// returns 1 if dup, 0 if no dup
+static int Dup(PlaceId *allowableCNC, PlaceId p, int *numReturedLocs) {
+	for (PlaceId i = 0; i < *numReturedLocs; i += 1) {
+		if (p == allowableCNC[i]) return 1;
 	}
-	*numReturnedLocs = j;
-	
+	return 0;
 }
 
 // returns the distance in terms of edge length from one src to dest
@@ -269,6 +243,8 @@ int bfsPathDist(Map m, ConnList src, PlaceId dest) {
 		}
 	}
 
+	if (visited[dest] == -1) return 0; // no route found (not possible)
+
 	// calculate distance in terms of edge length from src to dest
 	int length = 1;
 	PlaceId j = dest;
@@ -280,14 +256,62 @@ int bfsPathDist(Map m, ConnList src, PlaceId dest) {
 	dropQueue(q);
 	free(visited);
 	
+	return length;
 }
 
-// round num required for 
-void getRailCNC
-	(	ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Round round, 
-		Player player, PlaceId p, Map m
-	) {
+/** From list of connections (provided by MapGetconnections function),
+ * scan through linked list, simultaneously adding
+ * "type" connection to allowableCNC array.
+ * Update number of unique locations added to array through numReturnedLocs */
+/*
+void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
+	/* hey peter do you know how to implement this function?
+	i am having a bit of trouble because it processes the connection type
+	between Galatz and Bucharest as RAIL when there is also a ROAD connection
+	between them. ConnList only stores one type so im not sure how to make it
+	so that the function can detect if there are multiple types of connections
+	between 2 locations. thanks - justin
+	
+	ConnList curr = CNC;
+	printf("curr->p is %s\n", placeIdToAbbrev(curr->p));
+	int j = 0;
+	for (int i = 0; curr != NULL || i != MAX_REAL_PLACE; i++) {
+		// There is a road from Bucharest to Galatz.
+		// There is also a rail from Bucharest to Galatz.
+		if (connListContains(curr, curr->p, ROAD) || curr->type == ROAD) {
+			allowableCNC[i] = curr->p;
+			printf("allowableCNC[%d] is %s\n", i, placeIdToAbbrev(curr->p));
+			j++;
+		}
+		curr = curr->next;
+		// For some reason if I do not include this I get a segmentation fault
+		if (curr == NULL) break;
+	}
+	*numReturnedLocs = j;
+	
+}*/
 
+void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
+	if (CNC == NULL) return;
+	ConnList curr = CNC;
+	for (int i = *numReturnedLocs; curr != NULL && i != MAX_REAL_PLACE; i += 1) {
+		// start adding road CNC from numReturnedLocs position in array
+		if (curr->type == ROAD) {
+			if (Dup(allowableCNC, curr->p, numReturnedLocs)) 
+				continue; // do not add if already present in array
+			allowableCNC[i] = curr->p;
+			*numReturnedLocs += 1;
+			printf("allowableCNC[%d] is %s\n", i, placeIdToAbbrev(curr->p));
+		}
+		curr = curr->next;
+	}
+	printf("value of numReturedLocs is : %d\n", *numReturnedLocs);
+}
+
+void getRailCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Round round, 
+				Player player, Map m)
+	{
+	if (CNC == NULL) return;
 	ConnList curr = CNC;
 	int sum = (round + player) % 4; // max allowable station distances
 	for (int i = *numReturnedLocs; curr != NULL || i != MAX_REAL_PLACE; i += 1) {
@@ -304,9 +328,10 @@ void getRailCNC
 }
 
 void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
+	if (CNC == NULL) return;
 	ConnList curr = CNC;
 	for (int i = *numReturnedLocs; curr != NULL || i != MAX_REAL_PLACE; i += 1) {
-		// start adding bot CNC from numReturnedLocs position in array
+		// start adding boat CNC from numReturnedLocs position in array
 		if (curr->type == BOAT) {
 			allowableCNC[i] = curr->p;
 			*numReturnedLocs += 1;
