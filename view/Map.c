@@ -34,6 +34,7 @@ static inline bool isSentinelEdge(Connection c);
 static ConnList connListInsert(ConnList l, PlaceId v, TransportType type);
 static bool connListContains(ConnList l, PlaceId v, TransportType type);
 static int Dup(PlaceId *allowableCNC, PlaceId p, int *numReturedLocs);
+static int EdgeDistLen(PlaceId *visited, PlaceId src, PlaceId dest);
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -214,43 +215,50 @@ static int Dup(PlaceId *allowableCNC, PlaceId p, int *numReturedLocs) {
 	return 0;
 }
 
-// returns the distance in terms of edge length from one src to dest
-int bfsPathDist(Map m, ConnList src, PlaceId dest) {
-	assert(m != NULL);
-	PlaceId *visited = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
-	// initalise visited array
-	for (PlaceId i = 0; i < MAX_REAL_PLACE; i += 1) visited[i] = -1;
-
-	Queue q = newQueue();
-	QueueJoin(q, src->p);
-	visited[src->p] = 1;
-
-	int destFound = 0; // flag
-
-	PlaceId i, left; // i is iterator & left is most recent item in q that left
-	while (!destFound && !QueueIsEmpty(q)) {
-		left = QueueLeave(q);
-		for (src; src != NULL; src = src->next) { // loop through all adj nodes to curr
-			if (left == dest) {destFound = 1; break;}
-			visited[src->p] = left;
-			QueueJoin(q, src->p);
-		}
-	}
-
-	if (visited[dest] == -1) return 0; // no route found (not possible)
-
+static int EdgeDistLen(PlaceId *visited, PlaceId src, PlaceId dest) {
+	if (visited[dest] == -1) return 0; // No route found (not possible)
 	// calculate distance in terms of edge length from src to dest
-	int length = 1;
+	int length = 0;
 	PlaceId j = dest;
-	while (j != src->p) {
+	while (j != src) {
+		if (j == -1) return 0;
 		j = visited[j];
 		length += 1;
 	}
+	j = visited[j];
+
+	return length;
+}
+
+// returns the distance in terms of edge length from src to all edges of "type"
+int bfsPathDist(Map m, PlaceId *visited, PlaceId from, 
+				bool road, bool rail, bool boat) 
+{
+	assert(m != NULL);
+	Queue q = newQueue();
+	QueueJoin(q, from);
+	visited[from] = from;
+
+	PlaceId left; // left is most recent item in q that left
+	ConnList curr; // iterator
+
+	while (!QueueIsEmpty(q)) {
+		left = QueueLeave(q);
+		for (ConnList curr = m->connections[left]; curr != NULL; curr = curr->next) { 
+			// loop through all adj nodes to "left"
+			if (left != curr->p && visited[curr->p] == -1) { 
+				// curr not visited, join q + visit
+				if (road && curr->type == ROAD) 
+					{visited[curr->p] = left; QueueJoin(q, curr->p);}
+				if (rail && curr->type == RAIL) 
+					{visited[curr->p] = left; QueueJoin(q, curr->p);}
+				if (boat && curr->type == SEA) 
+					{visited[curr->p] = left; QueueJoin(q, curr->p);}
+			}
+		}
+	}
 
 	dropQueue(q);
-	free(visited);
-	
-	return length;
 }
 
 /** From list of connections (provided by MapGetconnections function),
@@ -276,24 +284,37 @@ void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
 	}
 }
 
-void getRailCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Round round, 
+void getRailCNC(ConnList CNC, PlaceId from,PlaceId *allowableCNC, int *numReturnedLocs, Round round, 
 				Player player, Map m)
 	{
+
 	if (CNC == NULL) return;
 	ConnList curr = CNC;
+
+	// initalise visited array
+	PlaceId *visited = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
+	for (PlaceId i = 0; i < MAX_REAL_PLACE; i += 1) visited[i] = -1;
+	bfsPathDist(m, visited, from, false, true, false); // type rail path array
+
 	int sum = (round + player) % 4; // max allowable station distances
-	for (int i = *numReturnedLocs; curr != NULL && i != MAX_REAL_PLACE; i += 1) {
-		// start adding ONLY rail CNC from numReturnedLocs position in array
-		if (sum == 0) break; // cannot move from rail at all
-		if (curr->type == RAIL) {
-			int dist = bfsPathDist(m, CNC, curr->p);
-			if (dist <= sum) { // add all distances less than max allowable dist
-				allowableCNC[*numReturnedLocs] = curr->p; 
-				(*numReturnedLocs) += 1;
+
+	if (sum == 0) return; // cannot move from rail at all
+
+	for (int i = 0; i < m->nV; i++) {
+		for (ConnList curr = m->connections[i]; curr != NULL; curr = curr->next) {
+			if (curr->type == RAIL) {
+				if (Dup(allowableCNC, curr->p, numReturnedLocs)) 
+					continue; // do not add if already present in array
+				int dist = EdgeDistLen(visited, from, curr->p);
+				if (0 < dist && dist <= sum) { // add all distances less than max allowable dist
+					allowableCNC[*numReturnedLocs] = curr->p; 
+					*numReturnedLocs += 1;
+				}
 			}
 		}
-		curr = curr->next;
 	}
+	
+	free(visited);
 }
 
 void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {

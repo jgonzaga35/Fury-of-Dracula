@@ -407,7 +407,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 
 	// add specific types of connections
 	if (road) getRoadCNC(CNC, allowableCNC, numReturnedLocs);
-	// if (rail) getRailCNC(CNC, allowableCNC, numReturnedLocs, round, player, gv->map);
+	if (rail) getRailCNC(CNC, from, allowableCNC, numReturnedLocs, round, player, gv->map);
 	if (boat) getBoatCNC(CNC, allowableCNC, numReturnedLocs);
 	return allowableCNC;
 	return NULL;
