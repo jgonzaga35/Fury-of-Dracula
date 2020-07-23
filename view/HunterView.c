@@ -122,6 +122,27 @@ static int isRealLocation(PlaceId location)
 	return (location != CITY_UNKNOWN && location != SEA_UNKNOWN 
 			&& !isDoubleBack(location) && location != HIDE && location != UNKNOWN);
 }
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	// if dracula's location has been revealed in the playstring sets *round to 
+	// the number of the  latest  round  in  which Dracula moved there
+	
+	// *round = 0;
+	// PlaceId location = NOWHERE;
+	// PlaceId dracLocation = GvGetPlayerLocation(hv->gv, PLAYER_DRACULA);
+
+	// if (GvGetVampireLocation(hv->gv) == CITY_UNKNOWN) {
+	// 	return location;
+	// }
+
+	// if (dracLocation != NOWHERE) {
+	// 	Round roundNum = GvGetRound(hv->gv);
+	// 	for (Round i = 0; i < roundNum; i++) {
+	// 		*round = i;
+	// 	}
+	// 	location = dracLocation;
+	// }
+	
+	// return location;
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)

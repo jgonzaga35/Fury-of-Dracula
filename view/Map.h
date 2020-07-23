@@ -15,6 +15,7 @@
 
 #include "Places.h"
 #include "Game.h"
+#include "Queue.h"
 
 #ifndef FOD__MAP_H_
 #define FOD__MAP_H_
@@ -51,12 +52,20 @@ int MapNumConnections(Map m, TransportType type);
 ConnList MapGetConnections(Map m, PlaceId p);
 
 
+///////////////////////////////////////////////////////////////////////////////////
+// prints all nodes in connection list
+void printConnList(ConnList L);
+
+// returns shortest "edge" distance from one city to another
+// using breadt first search
+int bfsPathDist(Map m, ConnList src, PlaceId dest);
+
 /** From list of connections (provided by MapGetconnections function),
  * scan through linked list, simultaneously adding
  * "type" connection to allowableCNC array.
  * Update number of unique locations added to array through numReturnedLocs */
 void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs);
-void getRailCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Round round, Player player, PlaceId p);
+void getRailCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Round round, Player player, Map m);
 void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs);
 
 #endif // !defined(FOD__MAP_H_)

@@ -160,9 +160,6 @@ int main(void)
 		
 		GameView gv = GvNew(trail, messages);
 
-		printf("Dracula is at %d\n", GvGetPlayerLocation(gv, PLAYER_DRACULA));
-		// printf("Dracula has blood of %d\n", GvGetHealth(gv, PLAYER_DRACULA));
-
 		assert(GvGetRound(gv) == 2);
 		assert(GvGetPlayer(gv) == PLAYER_LORD_GODALMING);
 		assert(GvGetScore(gv) == GAME_START_SCORE - 2 * SCORE_LOSS_DRACULA_TURN);
@@ -185,7 +182,7 @@ int main(void)
 			"GST.... SST.... HST.... MST.... DD1.... "
 			"GFR.... SFR.... HFR.... MFR....";
 		
-		Message messages[] = {
+		Message messages[14] = {
 			"Hello", "Rubbish", "Stuff", "", "Mwahahah",
 			"Aha!", "", "", "", "Back I go"};
 		
@@ -213,7 +210,7 @@ int main(void)
 		Message messages[6] = {};
 		GameView gv = GvNew(trail, messages);
 	
-		assert(GvGetHealth(gv, GAME_START_HUNTER_LIFE_POINTS));
+		assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) == GAME_START_HUNTER_LIFE_POINTS);
 		
 		GvFree(gv);
 		printf("Test passed!\n");
@@ -273,7 +270,7 @@ int main(void)
 			"GSZ.... SGE.... HGE.... MGE.... DGAT... "
 			"GSZ.... SGE.... HGE.... MGE....";
 		
-		Message messages[15] = {};
+		Message messages[19] = {};
 		GameView gv = GvNew(trail, messages);
 		
 		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == GALATZ);
@@ -318,75 +315,6 @@ int main(void)
 		printf("Test passed!\n");
 	}
 	
-	{///////////////////////////////////////////////////////////////////
-		// Own Test
-		printf("Testing trap locations after one drop of the trail\n");
-		
-		char *trail =
-			"GED.... SGE.... HZU.... MCA.... DCF.V.. "
-			"GMN.... SCFVD.. HGE.... MLS.... DBOT... "
-			"GLO.... SMR.... HCF.... MMA.... DTOT... "
-			"GPL.... SMS.... HMR.... MGR.... DBAT... "
-			"GLO.... SBATD.. HMS.... MMA.... DSRT... "
-			"GPL.... SSJ.... HBA.... MGR.... DALT... "
-			"GPL.... SSJ.... HBA.... MGR.... DMAT... "
-			"GLO.... SBE.... HMS.... MMATD.. DHIT.M. ";
-		
-		Message messages[24] = {};
-		GameView gv = GvNew(trail, messages);
-		
-		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == MADRID);
-		assert(GvGetHealth(gv, PLAYER_DR_SEWARD) == GAME_START_HUNTER_LIFE_POINTS);
-		assert(GvGetVampireLocation(gv) == NOWHERE);
-		assert(GvGetScore(gv) == GAME_START_SCORE - 8 * SCORE_LOSS_DRACULA_TURN 
-				- SCORE_LOSS_HUNTER_HOSPITAL);
-
-		int numTraps = 0;
-		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
-		assert(numTraps == 4);
-		sortPlaces(traps, numTraps);
-		// printf("Trap 1 is at %d\n", traps[0]);
-		// printf("Trap 2 is at %d\n", traps[1]);
-		// printf("Trap 3 is at %d\n", traps[2]);
-		// printf("Trap 4 is at %d\n", traps[3]);
-		assert(traps[0] == ALICANTE && traps[1] == MADRID && traps[2] == SARAGOSSA && traps[3] == TOULOUSE);
-		free(traps);
-		
-		GvFree(gv);
-		printf("Test passed!\n");
-	}
-
-	{///////////////////////////////////////////////////////////////////
-		// Own Test
-		printf("Testing Hide refer to Double back\n");
-		
-		char *trail =
-			"GED.... SGE.... HZU.... MCA.... DBE.V.. "
-			"GMN.... SCF.... HGE.... MLS.... DSZT... "
-			"GLO.... SMR.... HCF.... MMA.... DKLT... "
-			"GPL.... SMS.... HMR.... MGR.... DGAT... "
-			"GLO.... SBA.... HMS.... MMA.... DBCT... "
-			"GPL.... SSJ.... HBA.... MGR.... DD5T... "
-			"GPL.... SSJ.... HBA.... MGR.... DHIT... ";
-		
-		Message messages[24] = {};
-		GameView gv = GvNew(trail, messages);
-		
-		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == BELGRADE);
-		assert(GvGetScore(gv) == GAME_START_SCORE - 7 * SCORE_LOSS_DRACULA_TURN);
-		
-		int numTraps = 0;
-		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
-		assert(numTraps == 6);
-		sortPlaces(traps, numTraps);
-		assert(traps[0] == BELGRADE && traps[1] == BELGRADE && traps[2] == BUCHAREST 
-				&& traps[3] == GALATZ && traps[4] == KLAUSENBURG && traps[5] == SZEGED);
-		free(traps);
-		
-		GvFree(gv);
-		printf("Test passed!\n");
-	}
-
 	{///////////////////////////////////////////////////////////////////
 	
 		printf("Testing a vampire maturing\n");
@@ -477,35 +405,6 @@ int main(void)
 			assert(locs[4] == STRASBOURG);
 			assert(locs[5] == CITY_UNKNOWN);
 			if (canFree) free(locs);
-		}
-
-		// Dracula's last 3 moves/locations
-		{
-			int numMoves = 5; bool canFree = false;
-			int numReturnedMoves = 0;
-			PlaceId *lastMoves = GvGetLastMoves(gv, PLAYER_DRACULA, numMoves,
-			                                  &numReturnedMoves, &canFree);
-			assert(numReturnedMoves == 5);
-			assert(lastMoves[0] == STRASBOURG);
-			assert(lastMoves[1] == CITY_UNKNOWN);
-			assert(lastMoves[2] == CITY_UNKNOWN);
-			assert(lastMoves[3] == DOUBLE_BACK_3);
-			assert(lastMoves[4] == HIDE);
-			if (canFree) free(lastMoves);
-		}
-
-		{
-			int numMoves = 5; bool canFree = false;
-			int numReturnedMoves = 0;
-			PlaceId *lastLocs = GvGetLastLocations(gv, PLAYER_DRACULA, numMoves,
-			                                  &numReturnedMoves, &canFree);
-			assert(numReturnedMoves == 5);
-			assert(lastLocs[0] == STRASBOURG);
-			assert(lastLocs[1] == CITY_UNKNOWN);
-			assert(lastLocs[2] == CITY_UNKNOWN);
-			assert(lastLocs[3] == STRASBOURG);
-			assert(lastLocs[4] == STRASBOURG);
-			if (canFree) free(lastLocs);
 		}
 		
 		GvFree(gv);
