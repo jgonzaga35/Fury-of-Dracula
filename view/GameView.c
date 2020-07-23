@@ -60,6 +60,7 @@ static void updateLifePoint(GameView gv, PlaceId location);
 static PlaceId traceHide(GameView gv);
 static PlaceId traceDoubleBack(GameView gv);
 static PlaceId trueLocation(GameView gv, PlaceId location);
+static int isHunter(Player player);
 // ---------------------Making a move helper functions--------------------------
 static int validPlayer(Player player);
 
