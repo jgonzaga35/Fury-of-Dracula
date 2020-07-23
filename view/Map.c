@@ -195,7 +195,17 @@ ConnList MapGetConnections(Map m, PlaceId p)
 
 ////////////////////////////////////////////////////////////////////////
 
-static void ensureNoDup(PlaceId *allowableCNC, PlaceId p) {
+// May bug if there are more than 2 duplicates.
+// Currently replaces any duplicates with the value of 'from' from
+// MapGetConnections.
+static void ensureNoDup(PlaceId *allowableCNC, PlaceId p, int *numReturnedLocs) {
+	for (int i = 0; i < *numReturnedLocs - 1; i++) {
+		for (int j = i + 1; j < *numReturnedLocs; j++) {
+			if (allowableCNC[i] == allowableCNC[j]) {
+				allowableCNC[i] = p;
+			}
+		}
+	}
 
 }
 
@@ -210,14 +220,23 @@ static void ensureNoDup(PlaceId *allowableCNC, PlaceId p) {
  * Update number of unique locations added to array through numReturnedLocs */
 void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
 	ConnList curr = CNC;
-	for (int i = *numReturnedLocs; curr != NULL || i != MAX_REAL_PLACE; i += 1) {
-		// start adding road CNC from numReturnedLocs position in array
-		if (curr->type == ROAD) {
-			// visited[curr->p]
-			// allowableCNC[i] = curr->p;
-			// *numReturnedLocs += 1;
+	printf("curr->p is %s\n", placeIdToAbbrev(curr->p));
+	int j = 0;
+	for (int i = 0; curr != NULL || i != MAX_REAL_PLACE; i++) {
+		// There is a road from Bucharest to Galatz.
+		// There is also a rail from Bucharest to Galatz.
+		if (connListContains(curr, curr->p, ROAD) || curr->type == ROAD) {
+			allowableCNC[i] = curr->p;
+			printf("allowableCNC[%d] is %s\n", i, placeIdToAbbrev(curr->p));
+			j++;
 		}
+		curr = curr->next;
+		// For some reason if I do not include this I get a segmentation fault
+		if (curr == NULL) break;
 	}
+	*numReturnedLocs = j;
+	ensureNoDup(allowableCNC, GALATZ, numReturnedLocs);
+	
 }
 
 // round num required for 
