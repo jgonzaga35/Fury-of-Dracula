@@ -30,7 +30,6 @@
 #define CHARS_PER_PLAY	8
 
 struct gameView {
-	// Explicit variables
 	Map map;
 	Round numTurn;
 	int score;
@@ -38,9 +37,9 @@ struct gameView {
 	char *pastPlays;
 	Player currentPlayer;
 	PlaceId draculaDroppedTrail;				// The location of the place that drop from dracula's trail
-	PlaceId trails[NUM_PLAYERS][TRAIL_SIZE];	// Never null
-	PlaceId vampireLocation;					// Never null
-	PlaceId trapLocations[TRAIL_SIZE];			// Null at sometimes, will be fixed later
+	PlaceId trails[NUM_PLAYERS][TRAIL_SIZE];	
+	PlaceId vampireLocation;					
+	PlaceId trapLocations[TRAIL_SIZE];			// Always true location, shouldn't be known to hunters
 	int numTrap;
 };
 
@@ -49,7 +48,7 @@ static void initializeHealthScoreTurnsLocation(GameView gv);
 static PlaceId getLocation(char firstLetter, char secondLetter);
 static void updatePlayerLocation(GameView gv, char playerAbbrev, PlaceId place);
 static int isDead(GameView gv, Player player);
-static char * getCmd(char *pastPlays, int index);
+static char *getCmd(char *pastPlays, int index);
 static void performHunterAction(GameView gv, Player player, char cmd[4], PlaceId location);
 static void goToHospital(GameView gv, Player player);
 static void haveRest(GameView gv, Player player);
@@ -81,7 +80,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	int length = strlen(pastPlays);
 	int i = 0;
 	while (i < length) {
-		PlaceId location = getLocation(pastPlays[i + 1], pastPlays[i + 2]);
+		PlaceId location = getLocation(pastPlays[i + 1], pastPlays[i + 2]);	// Contains C? S? TP HI D5
 		updatePlayerLocation(new, pastPlays[i], location);	
 		Player player = new->currentPlayer; 
 
@@ -149,17 +148,20 @@ int GvGetHealth(GameView gv, Player player)
 	return gv->health[player];
 }
 
+// Safe to be called by Hunters
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {	
-	PlaceId location = gv->trails[player][CURR_PLACE];
-	return trueLocation(gv, location);
+	if (player != CASTLE_DRACULA && isDead(gv, player)) return ST_JOSEPH_AND_ST_MARY;
+	return trueLocation(gv, gv->trails[player][CURR_PLACE]);
 }
 
+// Return the real location, shouldn't be called by hunters
 PlaceId GvGetVampireLocation(GameView gv)
 {
 	return gv->vampireLocation;
 }
 
+// Return the real location, doesn't contain C? S? TP
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {	
 	// printf("Number of trap is %d\n", gv->numTrap);
@@ -440,7 +442,7 @@ static void initializeHealthScoreTurnsLocation(GameView gv)
 	return;
 }
 
-// Return the place represent by the abbreviation
+// Return the place represent by the abbreviation. include C? S? HI D4 TP
 static PlaceId getLocation(char firstLetter, char secondLetter)
 {
 	char abbrev[3];
@@ -523,16 +525,10 @@ static char *getCmd(char *pastPlays, int index)
 	return cmd;
 }
 
-// Reset the life point, shift the trail to hospital and decrease the score
+// Reset the life point, and decrease the score
 static void goToHospital(GameView gv, Player player) 
 {
 	gv->health[player] = 0;
-	for (int i = TRAIL_SIZE; i > 0; i--) 
-	{
-		gv->trails[player][i] = gv->trails[player][i - 1];
-	}
-	gv->trails[player][CURR_PLACE] = ST_JOSEPH_AND_ST_MARY;
-
 	gv->score -= SCORE_LOSS_HUNTER_HOSPITAL;
 }
 
@@ -618,7 +614,6 @@ static void performDraculaAction(GameView gv, char firstCmd, char secondCmd, Pla
 	switch(secondCmd) {
 		case '.': break;
 		case 'V':
-			// TODO: For hunter's view, this should be dependent on dracula's location
 			gv->vampireLocation = trueLocation(gv, draculaLocation);
 			break;
 	}
@@ -638,7 +633,7 @@ static void updateEncounters(GameView gv, char cmd)
 	}
 }
 
-// Trace what place hide refer to
+// Trace what place hide refer to, Hunter can call
 static PlaceId traceHide(GameView gv)
 {	
 	PlaceId location = gv->trails[PLAYER_DRACULA][1];
@@ -647,17 +642,19 @@ static PlaceId traceHide(GameView gv)
 	if (!isDoubleBack(location)) return location;
 
 	int backIndex = location - 102;
-	// If HIDE refers to D5
+
+	// If HIDE refers to D5, we return the trail that's dropped
 	if (backIndex == 5) return gv->draculaDroppedTrail;
 	return gv->trails[PLAYER_DRACULA][backIndex + 1];
 }
 
-// Trace what place DB refer to
+// Trace what place DB refer to, work for TP, HI, Hunter can call
 static PlaceId traceDoubleBack(GameView gv)
 {	
 	// Get the backIndex
 	PlaceId doubleBack = gv->trails[PLAYER_DRACULA][0];
 	int backIndex = doubleBack - 102;
+
 	//printf("The backIndex is %d\n", backIndex);
 	PlaceId location = gv->trails[PLAYER_DRACULA][backIndex];
 	//printf("The location returned for DB is %d\n", location);

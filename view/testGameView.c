@@ -160,7 +160,7 @@ int main(void)
 		
 		GameView gv = GvNew(trail, messages);
 
-		// printf("Dracula is at %d\n", GvGetPlayerLocation(gv, PLAYER_DRACULA));
+		printf("Dracula is at %d\n", GvGetPlayerLocation(gv, PLAYER_DRACULA));
 		// printf("Dracula has blood of %d\n", GvGetHealth(gv, PLAYER_DRACULA));
 
 		assert(GvGetRound(gv) == 2);
@@ -338,7 +338,8 @@ int main(void)
 		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == MADRID);
 		assert(GvGetHealth(gv, PLAYER_DR_SEWARD) == GAME_START_HUNTER_LIFE_POINTS);
 		assert(GvGetVampireLocation(gv) == NOWHERE);
-		assert(GvGetScore(gv) == GAME_START_SCORE - 8 * SCORE_LOSS_DRACULA_TURN);
+		assert(GvGetScore(gv) == GAME_START_SCORE - 8 * SCORE_LOSS_DRACULA_TURN 
+				- SCORE_LOSS_HUNTER_HOSPITAL);
 
 		int numTraps = 0;
 		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);

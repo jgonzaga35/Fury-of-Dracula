@@ -71,7 +71,7 @@ int HvGetHealth(HunterView hv, Player player)
 }
 
 PlaceId HvGetPlayerLocation(HunterView hv, Player player)
-{
+{	
 	return GvGetPlayerLocation(hv->gv, player);
 }
 

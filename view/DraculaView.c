@@ -78,7 +78,7 @@ int DvGetHealth(DraculaView dv, Player player)
 }
 
 PlaceId DvGetPlayerLocation(DraculaView dv, Player player)
-{
+{	
 	return GvGetPlayerLocation(dv->gv, player);
 }
 
