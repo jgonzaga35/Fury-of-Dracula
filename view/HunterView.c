@@ -21,12 +21,13 @@
 #include "Places.h"
 // add your own #includes here
 
-// TODO: ADD YOUR OWN STRUCTS HERE
-
 struct hunterView {
 	GameView  gv;
+	Message *message;
 };
 
+// Function prototypes
+static int isRealLocation(PlaceId location);
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
@@ -37,13 +38,23 @@ HunterView HvNew(char *pastPlays, Message messages[])
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
 		exit(EXIT_FAILURE);
 	}
+	
 	new->gv = GvNew(pastPlays, messages);
+
+	int numTurns = numTurnsPassed(new->gv);
+	new->message = malloc(numTurns * sizeof(Message));
+	   
+	for (int i = 0; i < numTurns; i++) {
+		strncpy(new->message[i], messages[i], MESSAGE_SIZE);
+	}
+	
 	return new;
 }
 
 void HvFree(HunterView hv)
 {
 	GvFree(hv->gv);
+	free(hv->message);
 	free(hv);
 }
 
@@ -85,9 +96,31 @@ PlaceId HvGetVampireLocation(HunterView hv)
 
 PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*round = 0;
-	return NOWHERE;
+	int numReturnedLocs = 0;
+	bool canFree = false;
+	PlaceId *trails = GvGetLocationHistory(hv->gv, PLAYER_DRACULA, &numReturnedLocs, &canFree);
+	
+	int i;
+	PlaceId location;
+	for (i = 0; i < numReturnedLocs; i++)
+	{
+		location = trails[i];
+		if (isRealLocation(location)) break;
+	}
+	
+	if (i == 0) return;	// No trail
+	if (!isRealLocation(location)) return NOWHERE;	// No real location exist
+
+	*round = HvGetRound(hv) - i;
+	if (location == TELEPORT) return CASTLE_DRACULA;
+	
+	return location;
+}
+
+static int isRealLocation(PlaceId location)
+{
+	return (location != CITY_UNKNOWN && location != SEA_UNKNOWN 
+			&& !isDoubleBack(location) && location != HIDE && location != UNKNOWN);
 }
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,

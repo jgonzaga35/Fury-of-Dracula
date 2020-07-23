@@ -59,7 +59,6 @@ static void removeTrap(GameView gv, PlaceId location);
 static void updateLifePoint(GameView gv, PlaceId location);
 static PlaceId traceHide(GameView gv);
 static PlaceId traceDoubleBack(GameView gv);
-static int isDoubleBack(PlaceId location);
 static PlaceId trueLocation(GameView gv, PlaceId location);
 // ---------------------Making a move helper functions--------------------------
 static int validPlayer(Player player);
@@ -397,7 +396,6 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 {
 	if (gv == NULL) return NULL;
 	if (!validPlayer(player)) return NULL;	
-	//TODO:Justin could you check if this is corret, I add the (player) so that it can compile
 	if (!(numReturnedLocs >= 0)) *numReturnedLocs = 0;
 	PlaceId *allowableCNC = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
 	ConnList CNC = MapGetConnections(gv->map, from); // reachable connections
@@ -414,6 +412,18 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
+
+// Return the number of turns passed
+int numTurnsPassed(GameView gv)
+{
+	return gv->numTurn;
+}
+
+// Check if the location is Double back
+int isDoubleBack(PlaceId location) 
+{
+	return (location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5);
+}
 
 // Helper functions
 
@@ -675,12 +685,6 @@ static void updateLifePoint(GameView gv, PlaceId location)
 	else if (realLocation == CASTLE_DRACULA) gv->health[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
 }
 
-// Check if the location is Double back
-static int isDoubleBack(PlaceId location) 
-{
-	return (location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5);
-}
-
 // Return the actual location
 static PlaceId trueLocation(GameView gv, PlaceId location) {
 	if (location == TELEPORT) return CASTLE_DRACULA;
@@ -688,3 +692,4 @@ static PlaceId trueLocation(GameView gv, PlaceId location) {
 	else if (isDoubleBack(location)) return traceDoubleBack(gv);
 	return location;
 }
+
