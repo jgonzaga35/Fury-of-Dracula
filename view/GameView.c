@@ -59,8 +59,8 @@ static void removeTrap(GameView gv, PlaceId location);
 static void updateLifePoint(GameView gv, PlaceId location);
 static PlaceId traceHide(GameView gv);
 static PlaceId traceDoubleBack(GameView gv);
-static int isDoubleBack(PlaceId location);
 static PlaceId trueLocation(GameView gv, PlaceId location);
+static int isHunter(Player player);
 // ---------------------Making a move helper functions--------------------------
 static int validPlayer(Player player);
 
@@ -187,14 +187,16 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
                           int *numReturnedMoves, bool *canFree)
 {
 	// Return NULL if no history yet?
-	if (gv->pastPlays == NULL) {
+	if (gv->pastPlays == NULL) 
+	{
 		*numReturnedMoves = 0;
 		*canFree = false;
 		return NULL;
 	}
 
 	char playerName = '\0';
-	switch (player) {
+	switch (player) 
+	{
 		case PLAYER_LORD_GODALMING: playerName = 'G'; 
 				break;
 		case PLAYER_DR_SEWARD: playerName = 'S'; 
@@ -210,7 +212,7 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	assert(playerName != '\0');
 
 	// Dynamically allocate array of PlaceIds
-	// How many PlaceIds to allocate?? Unsure...
+	// TODO: How many PlaceIds to allocate?? Unsure... Maybe the number of rounds?
 	PlaceId *pastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
 
 	// Fill in PlaceId array with move history of given player.
@@ -218,8 +220,10 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	char *pastPlays = strdup(gv->pastPlays);
 	int i = 0;
 	char *placeAbbrev;
-	for (char *move = strtok(pastPlays, " "); move != NULL; move = strtok(NULL, " ")) {
-		if (move[0] == playerName) {
+	for (char *move = strtok(pastPlays, " "); move != NULL; move = strtok(NULL, " ")) 
+	{
+		if (move[0] == playerName) 
+		{
 			// Store each move by their PlaceId.
 			char abbreviation[] = {move[1], move[2], '\0'};
 			placeAbbrev = strdup(abbreviation);
@@ -242,15 +246,18 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
                         int *numReturnedMoves, bool *canFree)
 {
 	PlaceId *MoveHistory = GvGetMoveHistory(gv, player, numReturnedMoves, canFree);
-	if (MoveHistory == NULL) {
+	if (MoveHistory == NULL) 
+	{
 		*canFree = true;
 		*numReturnedMoves = 0;
 		return NULL;
 	}
 
+	// TODO: Maybe numMoves instead of magic 100? Not too sure
 	PlaceId *LastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
 	int i = 0;
-	while (i < numMoves && i < *numReturnedMoves) {
+	while (i < numMoves && i < *numReturnedMoves) 
+	{
 		LastMoves[i] = MoveHistory[i];
 		i++;
 	}
@@ -277,7 +284,7 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 	// for hunters, GvGetMoveHistory = GvGetLocationHistory;
 	PlaceId *pastMoves = GvGetMoveHistory(gv, player, numReturnedLocs, canFree);
 	// assuming GvGetMoveHistory changes value of numReturnedLocs to numReturnedMoves...
-	if (player >= PLAYER_LORD_GODALMING && player <= PLAYER_MINA_HARKER) {
+	if (isHunter(player)) {
 		*canFree = true;
 		return pastMoves;
 	} 
@@ -291,6 +298,12 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 	while (i < *numReturnedLocs) {
 		if (pastMoves[i] == HIDE) {
 			pastLocs[i] = pastMoves[i - 1];
+			// TODO: Maybe this will work
+			// if (isDoubleBack(pastLocs[i]))
+			// {
+			// 	int backIndex = pastLocs - 102;
+			// 	pastLocs[i] = pastMoves[i - 1 - backIndex];
+			// }
 			while (pastLocs[i] >= HIDE && pastLocs[i] <= DOUBLE_BACK_5) {
 				if (pastLocs[i] == DOUBLE_BACK_1) {
 					pastLocs[i] = pastMoves[i - 2];
@@ -366,8 +379,8 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 
 // returns ture if valid player, else returns false
 static int validPlayer(Player player) {
-	if (PLAYER_LORD_GODALMING <= player && player <= PLAYER_DRACULA) return 1;
-	else return 0;
+	if (PLAYER_LORD_GODALMING <= player && player <= PLAYER_DRACULA) return TRUE;
+	else return FALSE;
 }
 
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
@@ -380,11 +393,11 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 	Map europe = MapNew();
 	ConnList CNN;
 	
-	if (PLAYER_LORD_GODALMING <= player && player <= PLAYER_MINA_HARKER) {
+	if (isHunter(player)) {
 		// Player is a hunter
-
+		int maxByRail = (GvGetRound(gv) + player) % 4;
 	} else if (player == PLAYER_DRACULA) { // Player is dracula
-
+		// No rail, no hospital
 	}
 
 	MapFree(europe);
@@ -397,6 +410,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 {
 	if (gv == NULL) return NULL;
 	if (!validPlayer(player)) return NULL;	
+	//if (!(numReturnedLocs >= 0)) *numReturnedLocs = 0;
 	*numReturnedLocs = 0;
 	PlaceId *allowableCNC = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
 	ConnList CNC = MapGetConnections(gv->map, from); // reachable connections
@@ -415,6 +429,18 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
+
+// Return the number of turns passed
+int numTurnsPassed(GameView gv)
+{
+	return gv->numTurn;
+}
+
+// Check if the location is Double back
+int isDoubleBack(PlaceId location) 
+{
+	return (location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5);
+}
 
 // Helper functions
 
@@ -676,16 +702,17 @@ static void updateLifePoint(GameView gv, PlaceId location)
 	else if (realLocation == CASTLE_DRACULA) gv->health[PLAYER_DRACULA] += LIFE_GAIN_CASTLE_DRACULA;
 }
 
-// Check if the location is Double back
-static int isDoubleBack(PlaceId location) 
-{
-	return (location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5);
-}
-
 // Return the actual location
-static PlaceId trueLocation(GameView gv, PlaceId location) {
+static PlaceId trueLocation(GameView gv, PlaceId location) 
+{
 	if (location == TELEPORT) return CASTLE_DRACULA;
 	else if (location == HIDE) return traceHide(gv);
 	else if (isDoubleBack(location)) return traceDoubleBack(gv);
 	return location;
+}
+
+// Return whether a play is a hunter
+static int isHunter(Player player)
+{
+	return (player >= PLAYER_LORD_GODALMING && player <= PLAYER_MINA_HARKER);
 }
