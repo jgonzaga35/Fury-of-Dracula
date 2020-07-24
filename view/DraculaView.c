@@ -46,7 +46,6 @@ DraculaView DvNew(char *pastPlays, Message messages[])
 		fprintf(stderr, "Couldn't allocate DraculaView\n");
 		exit(EXIT_FAILURE);
 	}
-
 	new->gv = GvNew(pastPlays, messages);
 	new->numTurn = GvGetRound(new->gv);
 
@@ -106,6 +105,10 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	bool canFree = true;
 	int numReturnedLocs = 0;
 	PlaceId curr = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
+	if (curr == NOWHERE) {
+		*numReturnedMoves = 0;
+		return NULL;
+	}
 	PlaceId *validLocs = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, curr, true, false, true, &numReturnedLocs);
 	PlaceId *trail = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 6, numReturnedMoves, &canFree);
 
@@ -201,12 +204,12 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
 	PlaceId *availableLocs = DvGetValidMoves(dv, numReturnedLocs);
-	// for (int i = 0; i < *numReturnedLocs; i++) {
-	// 	printf("availableLocs[i] is %s\n", placeIdToAbbrev(availableLocs[i]));
-	// }
-	bool canFree = true;
-	// printf("*numReturnedLocs is %d\n", *numReturnedLocs);
+	if (availableLocs == NULL) {
+		*numReturnedLocs = 0;
+		return NULL;
+	}
 
+	bool canFree = true;
 	int length = 0;
 	for (int i = 0; i < *numReturnedLocs; i++) {
 		if (isDoubleBack(availableLocs[i]) || availableLocs[i] == HIDE) {
@@ -223,9 +226,41 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
                              int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	PlaceId *availableLocs = DvWhereCanIGo(dv, numReturnedLocs);
+	if (availableLocs == NULL) {
+		*numReturnedLocs = 0;
+		return NULL;
+	}
+	
+	int availableNum = *numReturnedLocs;
+	PlaceId currentLoc = DvGetPlayerLocation(dv, PLAYER_DRACULA);
+	PlaceId *reachableLocs = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, currentLoc, road, false, boat, numReturnedLocs);
+	int reachableNum = *numReturnedLocs;
+	
+	*numReturnedLocs = availableNum;
+
+	bool canGo = false;
+	int numRemoved = 0;
+	for (int i = 0; i < availableNum; i++) {
+		canGo = false;
+		for (int j = 0; j < reachableNum; j++) {
+			if (availableLocs[i] == reachableLocs[j]) {
+				canGo = true;
+			}
+		}
+		// Delete non-reachable Locs from availableLocs.
+		if (!canGo) {
+			for (int c = i; c < availableNum - 1; c++) {
+				availableLocs[c] = availableLocs[c + 1];
+			}
+			numRemoved++;
+		
+		}
+	}
+	*numReturnedLocs -= numRemoved;
+	free(reachableLocs);
+
+	return availableLocs;	
 }
 
 PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
