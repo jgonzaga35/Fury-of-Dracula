@@ -316,6 +316,75 @@ int main(void)
 	}
 	
 	{///////////////////////////////////////////////////////////////////
+		// Own Test
+		printf("Own Test: Testing trap locations after one drop of the trail\n");
+		
+		char *trail =
+			"GED.... SGE.... HZU.... MCA.... DCF.V.. "
+			"GMN.... SCFVD.. HGE.... MLS.... DBOT... "
+			"GLO.... SMR.... HCF.... MMA.... DTOT... "
+			"GPL.... SMS.... HMR.... MGR.... DBAT... "
+			"GLO.... SBATD.. HMS.... MMA.... DSRT... "
+			"GPL.... SSJ.... HBA.... MGR.... DALT... "
+			"GPL.... SSJ.... HBA.... MGR.... DMAT... "
+			"GLO.... SBE.... HMS.... MMATD.. DHIT.M. ";
+		
+		Message messages[24] = {};
+		GameView gv = GvNew(trail, messages);
+		
+		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == MADRID);
+		assert(GvGetHealth(gv, PLAYER_DR_SEWARD) == GAME_START_HUNTER_LIFE_POINTS);
+		assert(GvGetVampireLocation(gv) == NOWHERE);
+		assert(GvGetScore(gv) == GAME_START_SCORE - 8 * SCORE_LOSS_DRACULA_TURN 
+				- SCORE_LOSS_HUNTER_HOSPITAL);
+
+		int numTraps = 0;
+		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
+		assert(numTraps == 4);
+		sortPlaces(traps, numTraps);
+		// printf("Trap 1 is at %d\n", traps[0]);
+		// printf("Trap 2 is at %d\n", traps[1]);
+		// printf("Trap 3 is at %d\n", traps[2]);
+		// printf("Trap 4 is at %d\n", traps[3]);
+		assert(traps[0] == ALICANTE && traps[1] == MADRID && traps[2] == SARAGOSSA && traps[3] == TOULOUSE);
+		free(traps);
+		
+		GvFree(gv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	// Own test
+		printf("Own Test: Testing Hide refer to Double back\n");
+		
+		char *trail =
+			"GED.... SGE.... HZU.... MCA.... DBE.V.. "
+			"GMN.... SCF.... HGE.... MLS.... DSZT... "
+			"GLO.... SMR.... HCF.... MMA.... DKLT... "
+			"GPL.... SMS.... HMR.... MGR.... DGAT... "
+			"GLO.... SBA.... HMS.... MMA.... DBCT... "
+			"GPL.... SSJ.... HBA.... MGR.... DD5T... "
+			"GPL.... SSJ.... HBA.... MGR.... DHIT... ";
+		
+		Message messages[24] = {};
+		GameView gv = GvNew(trail, messages);
+		
+		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == BELGRADE);
+		assert(GvGetScore(gv) == GAME_START_SCORE - 7 * SCORE_LOSS_DRACULA_TURN);
+		
+		int numTraps = 0;
+		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
+		assert(numTraps == 6);
+		sortPlaces(traps, numTraps);
+		assert(traps[0] == BELGRADE && traps[1] == BELGRADE && traps[2] == BUCHAREST 
+				&& traps[3] == GALATZ && traps[4] == KLAUSENBURG && traps[5] == SZEGED);
+		free(traps);
+		
+		GvFree(gv);
+		printf("Test passed!\n");
+	}
+
+	{///////////////////////////////////////////////////////////////////
 	
 		printf("Testing a vampire maturing\n");
 		
