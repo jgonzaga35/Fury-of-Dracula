@@ -50,3 +50,16 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+view/.vscode/settings.json
+.gitignore
+.DS_Store
+view/draft.c
+.gitignore
+view/testDraculaView
+view/testDraculaView
+view/testGameView
+view/testMap
+view/testDraculaView
+view/testGameView
+view/testHunterView
+view/testMap

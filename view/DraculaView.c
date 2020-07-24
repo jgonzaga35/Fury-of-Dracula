@@ -103,7 +103,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	PlaceId *trail = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 6, numReturnedMoves, &canFree);
 	for (int i = 0; i < *numReturnedMoves; i++) {
 		printf("trail[%d] is %s\n", i, placeIdToAbbrev(trail[i]));
-		if (isDoubleBack(trail[i]));
+		if (isDoubleBack(trail[i])) {};
 	}
 
 	if (*numReturnedMoves == 0) {
@@ -211,7 +211,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 			canDoubleBack_4 = false;
 			extraMoves++;
 		} else if (canDoubleBack_5 == true) {
-			validMoves[i] == DOUBLE_BACK_5;
+			validMoves[i] = DOUBLE_BACK_5;
 			canDoubleBack_5 = false;
 			extraMoves++;
 		}

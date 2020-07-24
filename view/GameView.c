@@ -294,8 +294,8 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 	while (i < *numReturnedLocs) {
 		PlaceId location = pastMoves[i];
 		if (location == TELEPORT) pastLocs[i] = CASTLE_DRACULA;
-		else if (location == HIDE) pastLocs[i] = traceDoubleBackByIndex(pastMoves, i);
-		else if (isDoubleBack(location)) pastLocs[i] = traceHideByIndex(pastMoves, i);
+		else if (location == HIDE) pastLocs[i] = traceHideByIndex(pastMoves, i);
+		else if (isDoubleBack(location)) pastLocs[i] = traceDoubleBackByIndex(pastMoves, i);
 		else pastLocs[i] = location;
 		// if (pastMoves[i] == HIDE) {
 		// 	pastLocs[i] = pastMoves[i - 1];
