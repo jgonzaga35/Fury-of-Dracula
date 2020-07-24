@@ -162,20 +162,27 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	*pathLength = 0;
 	//printf("%d\n", numReturnedLocs);
 	
+	// initially have not looked at possible paths to different cities yet,
+	// so initialised all visited value for each city to -1 
 	PlaceId visited[numReturnedLocs];
 	for (int i = 0; i < numReturnedLocs; i++) {
 		visited[i] = -1;
 	}
 	
+	// already at source so have visited source i.e. change visited value for src
 	visited[src] = src;
 
-	Queue locations = newQueue();
-	QueueJoin(locations, src);
+	// initialise a new queue to store cities
+	Queue locationQ = newQueue();
+	QueueJoin(locationQ, src);
 	
-	int found = 0; // boolean
+	// boolean to indicate whether a path from src to dest has been found
+	int found = 0; 
 	
-	while (!QueueIsEmpty(locations)) {
-	   	PlaceId v = QueueLeave(locations);
+	// while loop that checks every visitable city from source to see if it matches
+	// the destination of interest
+	while (!QueueIsEmpty(locationQ)) {
+	   	PlaceId v = QueueLeave(locationQ);
 	   	if (v == dest) {
 			found = 1;
 			break;
@@ -183,31 +190,34 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	   	for (int w = 0; w < numReturnedLocs; w++) {
 	      	if (visited[w] == -1) {
 	        	visited[w] = v;
-	        	QueueJoin(locations, w);
+	        	QueueJoin(locationQ, w);
 	    	}
 	    }
 	}
-	 
+	
+	// if path to dest is found, want to path array to be in source to destination order
 	if (found == 0) {
 		// printf("hello\n"); // check if entering if condition
-		int length = 1; 
+		int length = 0; 
 		PlaceId currLocation = dest;
 		PlaceId *path;
 		PlaceId temp[numReturnedLocs];
 		// DEBUG: Segmentation fault caused by something down here
-		/*while (currLocation != src) {
+		while (currLocation != src) {
+			printf("Hi\n");
 			temp[length] = currLocation;
 			length++;
 			currLocation = visited[currLocation];
 		}
-		
-		int index = length;
-		for(int j = 0; j < length; j++) {
+		/*
+		// store locations 
+		int index = length - 1;
+		for(int j = 0; j < length - 1; j++) {
 			path[j] = temp[index];
 			index--;
-		}
-		printf("%d\n", length);*/
-		*pathLength = length;
+		}*/
+		//printf("%d\n", length);
+		*pathLength = length - 1;
 		return path; 
 	}
 
