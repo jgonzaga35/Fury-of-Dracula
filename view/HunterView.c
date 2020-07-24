@@ -126,14 +126,15 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 	int i;
 	for (i = 0; i < numReturnedLocs; i++) 
 	{
-		if (isRealLocation(trails[i])) {
+		if (isRealLocation(trails[i])) 
+		{
 			*round = i;
 			location = trails[i];
 			break;
 		}
 	}
 
-	if (!isRealLocation(location) || round == 0) return NOWHERE;	// No real location exist
+	//if (!isRealLocation(location) || round == 0) return NOWHERE;	// No real location exist
 
 	if (location == TELEPORT) return CASTLE_DRACULA;
 
