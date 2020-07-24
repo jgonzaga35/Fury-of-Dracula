@@ -20,6 +20,7 @@
 #include "Map.h"
 #include "Places.h"
 // add your own #includes here
+#include <string.h>
 
 struct hunterView {
 	GameView  gv;
@@ -108,8 +109,7 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 		if (isRealLocation(location)) break;
 	}
 	
-	if (i == 0) return;	// No trail
-	if (!isRealLocation(location)) return NOWHERE;	// No real location exist
+	if (!isRealLocation(location) || i == 0) return NOWHERE;	// No real location exist
 
 	*round = HvGetRound(hv) - i;
 	if (location == TELEPORT) return CASTLE_DRACULA;

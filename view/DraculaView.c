@@ -150,7 +150,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 		if (trail[i] == HIDE) {
 			canHide = false;
 		}
-		else if (trail[i] <= DOUBLE_BACK_5 && trail[i] >= DOUBLE_BACK_1) {
+		else if (isDoubleBack(trail[i])) {
 			canDoubleBack_1 = false;
 			canDoubleBack_2 = false;
 			canDoubleBack_3 = false;

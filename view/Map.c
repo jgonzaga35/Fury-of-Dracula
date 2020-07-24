@@ -11,11 +11,11 @@
 ////////////////////////////////////////////////////////////////////////
 
 #include <assert.h>
-#include <err.h>
+//#include <err.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sysexits.h>
+//#include <sysexits.h>
 
 #include "Map.h"
 #include "Places.h"
