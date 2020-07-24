@@ -209,11 +209,17 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	if (draculaNotRevealed(hv)) *numReturnedLocs = 0; return NULL;
+	return GvGetReachableByType(hv->gv, player, HvGetRound(hv), HvGetPlayerLocation(hv, player), 
+						road, rail, boat, numReturnedLocs);
 }
 
+static int draculaNotRevealed(HunterView hv)
+{
+	PlaceId location = HvGetPlayerLocation(hv, CASTLE_DRACULA);
+	return (location == CITY_UNKNOWN || location == SEA_UNKNOWN 
+			|| location == NOWHERE);
+}
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
