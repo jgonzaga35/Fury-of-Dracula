@@ -232,7 +232,7 @@ static int EdgeDistLen(PlaceId *visited, PlaceId src, PlaceId dest) {
 
 // returns the distance in terms of edge length from src to all edges of "type"
 int bfsPathDist(Map m, PlaceId *visited, PlaceId from, 
-				bool road, bool rail, bool boat) 
+				bool road, bool rail, bool boat, Player p) 
 {
 	assert(m != NULL);
 	Queue q = newQueue();
@@ -246,7 +246,8 @@ int bfsPathDist(Map m, PlaceId *visited, PlaceId from,
 		left = QueueLeave(q);
 		for (ConnList curr = m->connections[left]; curr != NULL; curr = curr->next) { 
 			// loop through all adj nodes to "left"
-			if (left != curr->p && visited[curr->p] == -1) { 
+			if (left != curr->p && visited[curr->p] == -1) {
+				if (p == PLAYER_DRACULA && curr->p == ST_JOSEPH_AND_ST_MARY) continue;
 				// curr not visited, join q + visit
 				if (road && curr->type == ROAD) 
 					{visited[curr->p] = left; QueueJoin(q, curr->p);}
@@ -294,7 +295,7 @@ void getRailCNC(ConnList CNC, PlaceId from,PlaceId *allowableCNC, int *numReturn
 	// initalise visited array
 	PlaceId *visited = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
 	for (PlaceId i = 0; i < MAX_REAL_PLACE; i += 1) visited[i] = -1;
-	bfsPathDist(m, visited, from, false, true, false); // type rail path array
+	bfsPathDist(m, visited, from, false, true, false, player); // type rail path array
 
 	int sum = (round + player) % 4; // max allowable station distances
 

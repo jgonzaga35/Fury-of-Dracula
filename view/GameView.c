@@ -411,17 +411,14 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 	if (!validPlayer(player)) return NULL;
 
 	*numReturnedLocs = 0;
-	Map europe = MapNew();
 	ConnList CNN;
 	
 	if (isHunter(player)) {
-		// Player is a hunter
-		int maxByRail = (GvGetRound(gv) + player) % 4;
-	} else if (player == PLAYER_DRACULA) { // Player is dracula
-		// No rail, no hospital
+		return GvGetReachableByType(gv, player, round, from, true, true, true, numReturnedLocs);
+	} else if (player == PLAYER_DRACULA) { // No rail, no hospital
+		return GvGetReachableByType(gv, player, round, from, true, false, true, numReturnedLocs);
 	}
 
-	MapFree(europe);
 	return NULL;
 }
 

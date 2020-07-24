@@ -101,11 +101,25 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	*numReturnedMoves = 0;
 	bool canFree = true;
 	PlaceId *trail = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 6, numReturnedMoves, &canFree);
+	for (int i = 0; i < *numReturnedMoves; i++) {
+		printf("trail[%d] is %s\n", i, placeIdToAbbrev(trail[i]));
+		if (isDoubleBack(trail[i]));
+	}
 
 	if (*numReturnedMoves == 0) {
+		trail[0] = TELEPORT;
 		return NULL;
 	}
 
+	int lastMoves = *numReturnedMoves;
+	PlaceId *visited = GvGetLastLocations(dv->gv, PLAYER_DRACULA, 5, numReturnedMoves, &canFree);
+	int pastLocLength = *numReturnedMoves;
+
+	// if there is a HIDE or DOUBLE BACK MOVE in 
+	// Dracula's Trail:
+	// Trace the HIDE/DOUBLE BACK to a location.
+	// Dracula CANNOT move to a location 
+	// in the last 5 rounds.
 	// always true for *numReturnedMoves >= 1
 	int canHide = true;
 	int canDoubleBack_1 = true;
@@ -148,15 +162,30 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	*numReturnedMoves = 0;
 	PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
 
-	//This only accounts for location moves and not HIDE or DOUBLEBACK
+	// Get all locations reachable by road and sea.
 	PlaceId *validMoves = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, 
 									from, true, false, true, numReturnedMoves);
 
 	// validMoves[0] contains the current city, we need to remove this first.
 	for (int i = 0; i < *numReturnedMoves; i++) {
-		validMoves[i] = validMoves[i + 1];
+		if (i + 1 != *numReturnedMoves) {
+			validMoves[i] = validMoves[i + 1];
+		}
 	}
 	*numReturnedMoves -= 1;
+	printf("right now numReturnedMoves is %d\n", *numReturnedMoves);
+
+	// Remove any locations in the array that are in Dracula's location trail.
+	for (int i = 0; i < *numReturnedMoves; i++) {
+		for (int j = 0; j < pastLocLength; j++) {
+			if (validMoves[i] == visited[j]) {
+				for (int c = i; c < *numReturnedMoves - 1; c++) {
+					validMoves[c] = validMoves[c + 1]; 
+				}
+			}
+		}	
+	}
+	free(visited);
 
 	// Add any HIDE or DOUBLE BACK moves.
 	int extraMoves = 0;
@@ -202,31 +231,16 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	//PlaceId *availableLocs = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, from, true, false, true, numReturnedLocs);
 
 	// 1. Get List of Valid Moves.
-	// PlaceId *availableLocs = DvGetValidMoves(dv, numReturnedLocs);
-	// for (int i = 0; i < *numReturnedLocs; i++) {
-	// 	printf("availableLocs[%d] is %s\n", i, placeIdToAbbrev(availableLocs[i]));
+	PlaceId *availableLocs = DvGetValidMoves(dv, numReturnedLocs);
+	for (int i = 0; i < *numReturnedLocs; i++) {
+		printf("availableLocs[%d] is %s\n", i, placeIdToAbbrev(availableLocs[i]));
+	}
+	printf("*numReturnedLocs is %d\n", *numReturnedLocs);
 
-	// }
-
-	// 2. Convert any non-location moves to locations.
-
-	// bool canFree = true;
-	// printf("Getting Location History\n");
-	// PlaceId *pastLocs = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, numReturnedLocs, &canFree);
-	// for (int i = 0; i < *numReturnedLocs; i++) {
-	// 	printf("pastLocs[%d] is %s\n", i, placeIdToAbbrev(pastLocs[i]));
-
-	// }
-
-
-
-	// for (int i = 0; i < *numReturnedLocs; i++) {
-	// 	printf("availableLocs[%d] is %s\n", i, placeIdToAbbrev(availableLocs[i]));
-	// }
-
-	// return availableLocs;
-	*numReturnedLocs = 0;
-	return NULL;
+	bool canFree = true;
+	PlaceId *pastLocs = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, numReturnedLocs, &canFree);
+		printf("*numReturnedLocs is %d\n", *numReturnedLocs);
+	return availableLocs;
 }
 
 PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
