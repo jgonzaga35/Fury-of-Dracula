@@ -212,8 +212,7 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	assert(playerName != '\0');
 
 	// Dynamically allocate array of PlaceIds
-	// TODO: How many PlaceIds to allocate?? Unsure... Maybe the number of rounds?
-	PlaceId *pastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
+	PlaceId *pastMoves = malloc(sizeof(PlaceId)*MAX_REAL_PLACE);
 
 	// Fill in PlaceId array with move history of given player.
 	// Loop through pastPlays string...
@@ -253,8 +252,8 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 		return NULL;
 	}
 
-	// TODO: Maybe numMoves instead of magic 100? Not too sure
-	PlaceId *LastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
+	// TODO: Maybe numMoves instead of magic 100? Not too sure - done
+	PlaceId *LastMoves = malloc(sizeof(PlaceId)*numMoves);
 	int i = 0;
 	while (i < numMoves && i < *numReturnedMoves) 
 	{
@@ -290,7 +289,7 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 	} 
 
 	// For Dracula:
-	PlaceId *pastLocs = (PlaceId *)malloc(sizeof(PlaceId)*100);
+	PlaceId *pastLocs = malloc(sizeof(PlaceId)*MAX_REAL_PLACE);
 	assert(pastLocs != NULL);
 	int i = 0;
 	// messy, will fix later
@@ -361,7 +360,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 		return NULL;
 	}
 
-	PlaceId *lastLocs = (PlaceId *)malloc(sizeof(PlaceId)*100);
+	PlaceId *lastLocs = malloc(sizeof(PlaceId)*numLocs);
 	int i = 0;
 	while (i < numLocs && i < *numReturnedLocs) {
 		lastLocs[i] = pastLocs[i];

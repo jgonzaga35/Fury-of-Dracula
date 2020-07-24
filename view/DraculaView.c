@@ -97,20 +97,6 @@ PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 
 PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 {
-/**
- * Gets all the moves that Dracula can validly make this turn.
- *
- * This  function  should  return  the  moves in a dynamically allocated
- * array, and set *numReturnedMoves to the number of moves returned. The
- * array can be in any order but must contain unique entries.
- *
- * If  Dracula  has  no valid moves (other than TELEPORT), this function
- * should set *numReturnedMoves to 0 and return  an  empty  array  (NULL
- * will suffice).
- *
- * If  Dracula  hasn't  made  a move yet, set *numReturnedMoves to 0 and
- * return NULL.
- */
 
 	*numReturnedMoves = 0;
 	bool canFree = true;
@@ -202,6 +188,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 		}
 	}
 	*numReturnedMoves += extraMoves;
+	free(trail);
 
 	return validMoves;
 }
@@ -209,9 +196,23 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	PlaceId currLoc = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
-	PlaceId *availableLocs = GvGetReachable(dv->gv, PLAYER_DRACULA, dv->numTurn, currLoc, numReturnedLocs);
-	return availableLocs;
+	//PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
+	//PlaceId *availableLocs = GvGetReachable(dv->gv, PLAYER_DRACULA, dv->numTurn, from, numReturnedLocs);
+	// for some reason GvGetReachable() does not work - availableLocs is still NULL.
+	//PlaceId *availableLocs = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, from, true, false, true, numReturnedLocs);
+
+	// PlaceId *availableLocs = DvGetValidMoves(dv, numReturnedLocs);
+	// int *numReturnedMoves = 0;
+	// bool canFree = true;
+	// PlaceId *pastMoves = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, numReturnedMoves, &canFree);
+
+	// for (int i = 0; i < *numReturnedLocs; i++) {
+	// 	printf("availableLocs[%d] is %s\n", i, placeIdToAbbrev(availableLocs[i]));
+	// }
+
+	// return availableLocs;
+	*numReturnedLocs = 0;
+	return NULL;
 }
 
 PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
