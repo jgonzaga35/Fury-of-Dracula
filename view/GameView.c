@@ -383,10 +383,8 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 {
 	if (gv == NULL) return NULL;
 	if (!validPlayer(player)) return NULL;
-
 	*numReturnedLocs = 0;
-	ConnList CNN;
-	
+
 	if (isHunter(player)) {
 		return GvGetReachableByType(gv, player, round, from, true, true, true, numReturnedLocs);
 	} else if (player == PLAYER_DRACULA) { // No rail, no hospital
@@ -412,11 +410,11 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	*numReturnedLocs += 1;
 
 	// add specific types of connections
-	if (road) getRoadCNC(CNC, allowableCNC, numReturnedLocs);
-	if (rail) getRailCNC(CNC, from, allowableCNC, numReturnedLocs, round, player, gv->map);
-	if (boat) getBoatCNC(CNC, allowableCNC, numReturnedLocs);
+	if (road) getRoadCNC(CNC, allowableCNC, numReturnedLocs, player);
+	if (rail && player != PLAYER_DRACULA) // Dracula cannot move by rail
+		getRailCNC(CNC, from, allowableCNC, numReturnedLocs, round, player, gv->map);
+	if (boat) getBoatCNC(CNC, allowableCNC, numReturnedLocs, player);
 	return allowableCNC;
-	return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////

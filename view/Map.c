@@ -266,16 +266,20 @@ int bfsPathDist(Map m, PlaceId *visited, PlaceId from,
  * scan through linked list, simultaneously adding
  * "type" connection to allowableCNC array.
  * Update number of unique locations added to array through numReturnedLocs 
- * Note :: 'i' is iterated over in the followign for loops to stop 
+ * Note :: 'i' is iterated over in the following for loops to stop 
  * buffer overflow in allowableCNC array. otherwise, it serves no other
  * purpose in the function.*/
 
-void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
+void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p) {
 	if (CNC == NULL) return;
 	ConnList curr = CNC;
 	for (int i = *numReturnedLocs; curr != NULL && i != MAX_REAL_PLACE; i += 1) {
 		// start adding ONLY road CNC from numReturnedLocs position in array
 		if (curr->type == ROAD) {
+			if (curr->p == ST_JOSEPH_AND_ST_MARY && p == PLAYER_DRACULA) {
+				curr = curr->next;
+				continue; // Dracula cannot visit hospital
+			}
 			if (Dup(allowableCNC, curr->p, numReturnedLocs)) 
 				continue; // do not add if already present in array
 			allowableCNC[*numReturnedLocs] = curr->p;
@@ -289,6 +293,7 @@ void getRailCNC(ConnList CNC, PlaceId from,PlaceId *allowableCNC, int *numReturn
 				Player player, Map m)
 	{
 
+	if (player == PLAYER_DRACULA) return; // Dracula not allowed to travel by rail
 	if (CNC == NULL) return;
 	ConnList curr = CNC;
 
@@ -318,12 +323,13 @@ void getRailCNC(ConnList CNC, PlaceId from,PlaceId *allowableCNC, int *numReturn
 	free(visited);
 }
 
-void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs) {
+void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p) {
 	if (CNC == NULL) return;
 	ConnList curr = CNC;
 	for (int i = *numReturnedLocs; curr != NULL && i != MAX_REAL_PLACE; i += 1) {
 		// start adding ONLY boat CNC from numReturnedLocs position in array
 		if (curr->type == BOAT) {
+			if (p == PLAYER_DRACULA && curr->p == ST_JOSEPH_AND_ST_MARY) continue;
 			if (Dup(allowableCNC, curr->p, numReturnedLocs)) 
 				continue; // do not add if already present in array
 			allowableCNC[*numReturnedLocs] = curr->p;
