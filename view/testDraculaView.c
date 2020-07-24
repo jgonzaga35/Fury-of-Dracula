@@ -249,5 +249,63 @@ int main(void)
 		DvFree(dv);
 	}
 
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Test for DvWhereCanTheyGo: Lord Godalming from GENEVA\n");
+		
+		char *trail =
+			"GGE.... SGE.... HGE.... MGE.... DBI.V.. "
+			"GGE.... SGE.... HGE.... MGE.... DNPT... "
+			"GGE.... SGE.... HGE.... MGE.... DROT... "
+			"GGE.... SGE.... HGE.... MGE.... DHIT... "
+			"GGE.... SGE.... HGE.... MGE....";
+		
+		Message messages[24] = {};
+		DraculaView dv = DvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = DvWhereCanTheyGo(dv, PLAYER_LORD_GODALMING, &numLocs);
+		assert(numLocs == 6);
+		sortPlaces(locs, numLocs);
+		assert(locs[0] == CLERMONT_FERRAND);
+		assert(locs[1] == GENEVA);
+		assert(locs[2] == MARSEILLES);
+		assert(locs[3] == PARIS);
+		assert(locs[4] == STRASBOURG);
+		assert(locs[5] == ZURICH);
+		free(locs);
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	
+		printf("Test for DvWhereCanTheyGoByType: Lord Godalming from GENEVA : Boat\n");
+		
+		char *trail =
+			"GGE.... SGE.... HGE.... MGE.... DBI.V.. "
+			"GGE.... SGE.... HGE.... MGE.... DNPT... "
+			"GGE.... SGE.... HGE.... MGE.... DROT... "
+			"GGE.... SGE.... HGE.... MGE.... DHIT... "
+			"GGE.... SGE.... HGE.... MGE....";
+		
+		Message messages[24] = {};
+		DraculaView dv = DvNew(trail, messages);
+		
+		int numLocs = -1;
+		bool road = false;
+		bool rail = true;
+		bool boat = false;
+		PlaceId *locs = DvWhereCanTheyGoByType(dv, PLAYER_LORD_GODALMING, road, rail, boat, &numLocs);
+		// There is no rail connection from GENEVA to GENEVA, so should I include it? not sure...
+		assert(numLocs == 1);
+		assert(locs[0] == GENEVA);
+		free(locs);
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+
 	return EXIT_SUCCESS;
 }

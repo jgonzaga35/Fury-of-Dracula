@@ -231,7 +231,7 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 		*numReturnedLocs = 0;
 		return NULL;
 	}
-	
+
 	int availableNum = *numReturnedLocs;
 	PlaceId currentLoc = DvGetPlayerLocation(dv, PLAYER_DRACULA);
 	PlaceId *reachableLocs = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, currentLoc, road, false, boat, numReturnedLocs);
@@ -267,8 +267,13 @@ PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
                           int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	PlaceId current = GvGetPlayerLocation(dv->gv, player);
+	PlaceId *availableLocs = GvGetReachable(dv->gv, player, dv->numTurn, current, numReturnedLocs);
+	if (availableLocs == NULL) {
+		*numReturnedLocs = 0;
+		return NULL;
+	}
+	return availableLocs;
 }
 
 PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
@@ -276,8 +281,13 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
                                 int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	PlaceId current = GvGetPlayerLocation(dv->gv, player);
+	PlaceId *availableLocs = GvGetReachableByType(dv->gv, player, dv->numTurn, current, road, rail, boat, numReturnedLocs);
+	if (availableLocs == NULL) {
+		*numReturnedLocs = 0;
+		return NULL;
+	}
+	return availableLocs;
 }
 
 ////////////////////////////////////////////////////////////////////////
