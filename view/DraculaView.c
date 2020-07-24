@@ -201,10 +201,25 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	// for some reason GvGetReachable() does not work - availableLocs is still NULL.
 	//PlaceId *availableLocs = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, from, true, false, true, numReturnedLocs);
 
-	// PlaceId *availableLocs = DvGetValidMoves(dv, numReturnedLocs);
-	// int *numReturnedMoves = 0;
-	// bool canFree = true;
-	// PlaceId *pastMoves = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, numReturnedMoves, &canFree);
+	// 1. Get List of Valid Moves.
+	PlaceId *availableLocs = DvGetValidMoves(dv, numReturnedLocs);
+	for (int i = 0; i < *numReturnedLocs; i++) {
+		printf("availableLocs[%d] is %s\n", i, placeIdToAbbrev(availableLocs[i]));
+
+	}
+
+	// 2. Convert any non-location moves to locations.
+
+	bool canFree = true;
+	printf("Getting Location History\n");
+	PlaceId *pastLocs = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, numReturnedLocs, &canFree);
+	if (pastLocs == NULL) {printf("error\n");}
+	for (int i = 0; i < *numReturnedLocs; i++) {
+		printf("pastLocs[%d] is %s\n", i, placeIdToAbbrev(pastLocs[i]));
+
+	}
+
+
 
 	// for (int i = 0; i < *numReturnedLocs; i++) {
 	// 	printf("availableLocs[%d] is %s\n", i, placeIdToAbbrev(availableLocs[i]));

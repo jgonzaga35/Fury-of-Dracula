@@ -212,7 +212,7 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	assert(playerName != '\0');
 
 	// Dynamically allocate array of PlaceIds
-	PlaceId *pastMoves = malloc(sizeof(PlaceId)*MAX_REAL_PLACE);
+	PlaceId *pastMoves = malloc(sizeof(PlaceId *)*MAX_REAL_PLACE);
 
 	// Fill in PlaceId array with move history of given player.
 	// Loop through pastPlays string...
@@ -230,10 +230,8 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 			i++; 
 		}
 	}
-
 	// numReturnedMoves = no. of iterations through pastPlays.
 	*numReturnedMoves = i;
-
 	// caller of this function should free this afterwards.
 	*canFree = true;
 
@@ -272,7 +270,6 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 {
 	// Error handling
 	assert(gv != NULL);
-
 	// Special Case: empty pastPlays string
 	if (gv->pastPlays == NULL) {
 		*numReturnedLocs = 0;
@@ -297,29 +294,29 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 	while (i < *numReturnedLocs) {
 		if (pastMoves[i] == HIDE) {
 			pastLocs[i] = pastMoves[i - 1];
-			// TODO: Maybe this will work
-			// if (isDoubleBack(pastLocs[i]))
-			// {
-			// 	int backIndex = pastLocs - 102;
-			// 	pastLocs[i] = pastMoves[i - 1 - backIndex];
-			// }
-			while (pastLocs[i] >= HIDE && pastLocs[i] <= DOUBLE_BACK_5) {
-				if (pastLocs[i] == DOUBLE_BACK_1) {
-					pastLocs[i] = pastMoves[i - 2];
-				}
-				else if (pastLocs[i] == DOUBLE_BACK_2) {
-					pastLocs[i] = pastLocs[i - 3];
-				}
-				else if (pastLocs[i] == DOUBLE_BACK_3) {
-					pastLocs[i] = pastMoves[i - 4];
-				}
-				else if (pastLocs[i] == DOUBLE_BACK_4) {
-					pastLocs[i] = pastMoves[i - 5];
-				}
-				else if (pastLocs[i] == DOUBLE_BACK_5) {
-					pastLocs[i] = pastMoves[i - 6];
-				}
+			// TODO: Maybe this will work - yeah it works, thx
+			if (isDoubleBack(pastLocs[i]))
+			{
+				int backIndex = pastLocs[i] - 102;
+				pastLocs[i] = pastMoves[i - 1 - backIndex];
 			}
+			// while (pastLocs[i] >= HIDE && pastLocs[i] <= DOUBLE_BACK_5) {
+			// 	if (pastLocs[i] == DOUBLE_BACK_1) {
+			// 		pastLocs[i] = pastMoves[i - 2];
+			// 	}
+			// 	else if (pastLocs[i] == DOUBLE_BACK_2) {
+			// 		pastLocs[i] = pastLocs[i - 3];
+			// 	}
+			// 	else if (pastLocs[i] == DOUBLE_BACK_3) {
+			// 		pastLocs[i] = pastMoves[i - 4];
+			// 	}
+			// 	else if (pastLocs[i] == DOUBLE_BACK_4) {
+			// 		pastLocs[i] = pastMoves[i - 5];
+			// 	}
+			// 	else if (pastLocs[i] == DOUBLE_BACK_5) {
+			// 		pastLocs[i] = pastMoves[i - 6];
+			// 	}
+			// }
 		} 
 		else if (pastMoves[i] == DOUBLE_BACK_1) {
 			pastLocs[i] = pastMoves[i - 1];
