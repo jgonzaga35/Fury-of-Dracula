@@ -15,6 +15,7 @@
 
 #include "Places.h"
 #include "Game.h"
+#include "Queue.h"
 
 #ifndef FOD__MAP_H_
 #define FOD__MAP_H_
@@ -51,12 +52,23 @@ int MapNumConnections(Map m, TransportType type);
 ConnList MapGetConnections(Map m, PlaceId p);
 
 
+///////////////////////////////////////////////////////////////////////////////////
+// prints all nodes in connection list
+void printConnList(ConnList L);
+
+// returns path array from "from" city to all other cities
+// through edges of "type"
+// Player argument to satisfy conditions that Dracula
+// cannot move to the hospital
+// If no condition needed for argument Player enter -1
+int bfsPathDist(Map m, PlaceId *visited, PlaceId from, bool road, bool rail, bool boat, Player p);
+
 /** From list of connections (provided by MapGetconnections function),
  * scan through linked list, simultaneously adding
  * "type" connection to allowableCNC array.
  * Update number of unique locations added to array through numReturnedLocs */
-void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs);
-void getRailCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Round round, Player player, PlaceId p);
-void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs);
+void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p);
+void getRailCNC(ConnList CNC, PlaceId from, PlaceId *allowableCNC, int *numReturnedLocs, Round round, Player player, Map m);
+void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p);
 
 #endif // !defined(FOD__MAP_H_)
