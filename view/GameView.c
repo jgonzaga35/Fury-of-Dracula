@@ -212,8 +212,7 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	assert(playerName != '\0');
 
 	// Dynamically allocate array of PlaceIds
-	// TODO: How many PlaceIds to allocate?? Unsure... Maybe the number of rounds?
-	PlaceId *pastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
+	PlaceId *pastMoves = malloc(sizeof(PlaceId *)*MAX_REAL_PLACE);
 
 	// Fill in PlaceId array with move history of given player.
 	// Loop through pastPlays string...
@@ -231,10 +230,8 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 			i++; 
 		}
 	}
-
 	// numReturnedMoves = no. of iterations through pastPlays.
 	*numReturnedMoves = i;
-
 	// caller of this function should free this afterwards.
 	*canFree = true;
 
@@ -253,8 +250,8 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 		return NULL;
 	}
 
-	// TODO: Maybe numMoves instead of magic 100? Not too sure
-	PlaceId *LastMoves = (PlaceId *)malloc(sizeof(PlaceId)*100);
+	// TODO: Maybe numMoves instead of magic 100? Not too sure - done
+	PlaceId *LastMoves = malloc(sizeof(PlaceId)*numMoves);
 	int i = 0;
 	while (i < numMoves && i < *numReturnedMoves) 
 	{
@@ -273,7 +270,6 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 {
 	// Error handling
 	assert(gv != NULL);
-
 	// Special Case: empty pastPlays string
 	if (gv->pastPlays == NULL) {
 		*numReturnedLocs = 0;
@@ -283,14 +279,13 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 
 	// for hunters, GvGetMoveHistory = GvGetLocationHistory;
 	PlaceId *pastMoves = GvGetMoveHistory(gv, player, numReturnedLocs, canFree);
-	// assuming GvGetMoveHistory changes value of numReturnedLocs to numReturnedMoves...
 	if (isHunter(player)) {
 		*canFree = true;
 		return pastMoves;
 	} 
 
 	// For Dracula:
-	PlaceId *pastLocs = (PlaceId *)malloc(sizeof(PlaceId)*100);
+	PlaceId *pastLocs = malloc(sizeof(PlaceId)*MAX_REAL_PLACE);
 	assert(pastLocs != NULL);
 	int i = 0;
 	// messy, will fix later
@@ -298,29 +293,29 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 	while (i < *numReturnedLocs) {
 		if (pastMoves[i] == HIDE) {
 			pastLocs[i] = pastMoves[i - 1];
-			// TODO: Maybe this will work
-			// if (isDoubleBack(pastLocs[i]))
-			// {
-			// 	int backIndex = pastLocs - 102;
-			// 	pastLocs[i] = pastMoves[i - 1 - backIndex];
-			// }
-			while (pastLocs[i] >= HIDE && pastLocs[i] <= DOUBLE_BACK_5) {
-				if (pastLocs[i] == DOUBLE_BACK_1) {
-					pastLocs[i] = pastMoves[i - 2];
-				}
-				else if (pastLocs[i] == DOUBLE_BACK_2) {
-					pastLocs[i] = pastLocs[i - 3];
-				}
-				else if (pastLocs[i] == DOUBLE_BACK_3) {
-					pastLocs[i] = pastMoves[i - 4];
-				}
-				else if (pastLocs[i] == DOUBLE_BACK_4) {
-					pastLocs[i] = pastMoves[i - 5];
-				}
-				else if (pastLocs[i] == DOUBLE_BACK_5) {
-					pastLocs[i] = pastMoves[i - 6];
-				}
+			// TODO: Maybe this will work - yeah it works, thx
+			if (isDoubleBack(pastLocs[i]))
+			{
+				int backIndex = pastLocs[i] - 102;
+				pastLocs[i] = pastMoves[i - 1 - backIndex];
 			}
+			// while (pastLocs[i] >= HIDE && pastLocs[i] <= DOUBLE_BACK_5) {
+			// 	if (pastLocs[i] == DOUBLE_BACK_1) {
+			// 		pastLocs[i] = pastMoves[i - 2];
+			// 	}
+			// 	else if (pastLocs[i] == DOUBLE_BACK_2) {
+			// 		pastLocs[i] = pastLocs[i - 3];
+			// 	}
+			// 	else if (pastLocs[i] == DOUBLE_BACK_3) {
+			// 		pastLocs[i] = pastMoves[i - 4];
+			// 	}
+			// 	else if (pastLocs[i] == DOUBLE_BACK_4) {
+			// 		pastLocs[i] = pastMoves[i - 5];
+			// 	}
+			// 	else if (pastLocs[i] == DOUBLE_BACK_5) {
+			// 		pastLocs[i] = pastMoves[i - 6];
+			// 	}
+			// }
 		} 
 		else if (pastMoves[i] == DOUBLE_BACK_1) {
 			pastLocs[i] = pastMoves[i - 1];
@@ -361,7 +356,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 		return NULL;
 	}
 
-	PlaceId *lastLocs = (PlaceId *)malloc(sizeof(PlaceId)*100);
+	PlaceId *lastLocs = malloc(sizeof(PlaceId)*numLocs);
 	int i = 0;
 	while (i < numLocs && i < *numReturnedLocs) {
 		lastLocs[i] = pastLocs[i];

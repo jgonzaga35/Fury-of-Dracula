@@ -97,36 +97,136 @@ PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 
 PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 {
-/**
- * Gets all the moves that Dracula can validly make this turn.
- *
- * This  function  should  return  the  moves in a dynamically allocated
- * array, and set *numReturnedMoves to the number of moves returned. The
- * array can be in any order but must contain unique entries.
- *
- * If  Dracula  has  no valid moves (other than TELEPORT), this function
- * should set *numReturnedMoves to 0 and return  an  empty  array  (NULL
- * will suffice).
- *
- * If  Dracula  hasn't  made  a move yet, set *numReturnedMoves to 0 and
- * return NULL.
- */
-
-	//PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
-	//This only accounts for location moves and not HIDE or DOUBLEBACK
-	//PlaceId *validMoves = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, 
-									//from, true, false, true, numReturnedMoves);
 
 	*numReturnedMoves = 0;
-	return NULL;
+	bool canFree = true;
+	PlaceId *trail = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 6, numReturnedMoves, &canFree);
+
+	if (*numReturnedMoves == 0) {
+		return NULL;
+	}
+
+	// always true for *numReturnedMoves >= 1
+	int canHide = true;
+	int canDoubleBack_1 = true;
+
+	int canDoubleBack_2 = false;
+	int canDoubleBack_3 = false;
+	int canDoubleBack_4 = false;
+	int canDoubleBack_5 = false;
+
+	if (*numReturnedMoves == 2) {
+		canDoubleBack_2 = true;
+	} else if (*numReturnedMoves == 3) {
+		canDoubleBack_2 = true;
+		canDoubleBack_3 = true;
+	} else if (*numReturnedMoves == 4) {
+		canDoubleBack_2 = true;
+		canDoubleBack_3 = true;
+		canDoubleBack_4 = true;
+	} else if (*numReturnedMoves >= 5) {
+		canDoubleBack_2 = true;
+		canDoubleBack_3 = true;
+		canDoubleBack_4 = true;
+		canDoubleBack_5 = true;
+	}
+	
+	// Look for HIDE or DOUBLE_BACK in the trail.
+	for (int i = 0; i < *numReturnedMoves; i++) {
+		if (trail[i] == HIDE) {
+			canHide = false;
+		}
+		else if (isDoubleBack(trail[i])) {
+			canDoubleBack_1 = false;
+			canDoubleBack_2 = false;
+			canDoubleBack_3 = false;
+			canDoubleBack_4 = false;
+			canDoubleBack_5 = false;
+		}
+	}
+
+	*numReturnedMoves = 0;
+	PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
+
+	//This only accounts for location moves and not HIDE or DOUBLEBACK
+	PlaceId *validMoves = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, 
+									from, true, false, true, numReturnedMoves);
+
+	// validMoves[0] contains the current city, we need to remove this first.
+	for (int i = 0; i < *numReturnedMoves; i++) {
+		validMoves[i] = validMoves[i + 1];
+	}
+	*numReturnedMoves -= 1;
+
+	// Add any HIDE or DOUBLE BACK moves.
+	int extraMoves = 0;
+	for (int i = *numReturnedMoves; i < *numReturnedMoves + 6; i++) {
+		if (canHide == true) {
+			validMoves[i] = HIDE;
+			canHide = false;
+			extraMoves++;
+		} else if (canDoubleBack_1 == true) {
+			validMoves[i] = DOUBLE_BACK_1;
+			canDoubleBack_1 = false;
+			extraMoves++;
+		} else if (canDoubleBack_2 == true) {
+			validMoves[i] = DOUBLE_BACK_2;
+			canDoubleBack_2 = false;
+			extraMoves++;
+		} else if (canDoubleBack_3 == true) {
+			validMoves[i] = DOUBLE_BACK_3;
+			canDoubleBack_3 = false;
+			extraMoves++;
+		} else if (canDoubleBack_4 == true) {
+			validMoves[i] = DOUBLE_BACK_4;
+			canDoubleBack_4 = false;
+			extraMoves++;
+		} else if (canDoubleBack_5 == true) {
+			validMoves[i] == DOUBLE_BACK_5;
+			canDoubleBack_5 = false;
+			extraMoves++;
+		}
+	}
+	*numReturnedMoves += extraMoves;
+	free(trail);
+
+	return validMoves;
 }
 
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	PlaceId currLoc = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
-	PlaceId *availableLocs = GvGetReachable(dv->gv, PLAYER_DRACULA, dv->numTurn, currLoc, numReturnedLocs);
-	return availableLocs;
+	//PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
+	//PlaceId *availableLocs = GvGetReachable(dv->gv, PLAYER_DRACULA, dv->numTurn, from, numReturnedLocs);
+	// for some reason GvGetReachable() does not work - availableLocs is still NULL.
+	//PlaceId *availableLocs = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, from, true, false, true, numReturnedLocs);
+
+	// 1. Get List of Valid Moves.
+	// PlaceId *availableLocs = DvGetValidMoves(dv, numReturnedLocs);
+	// for (int i = 0; i < *numReturnedLocs; i++) {
+	// 	printf("availableLocs[%d] is %s\n", i, placeIdToAbbrev(availableLocs[i]));
+
+	// }
+
+	// 2. Convert any non-location moves to locations.
+
+	// bool canFree = true;
+	// printf("Getting Location History\n");
+	// PlaceId *pastLocs = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, numReturnedLocs, &canFree);
+	// for (int i = 0; i < *numReturnedLocs; i++) {
+	// 	printf("pastLocs[%d] is %s\n", i, placeIdToAbbrev(pastLocs[i]));
+
+	// }
+
+
+
+	// for (int i = 0; i < *numReturnedLocs; i++) {
+	// 	printf("availableLocs[%d] is %s\n", i, placeIdToAbbrev(availableLocs[i]));
+	// }
+
+	// return availableLocs;
+	*numReturnedLocs = 0;
+	return NULL;
 }
 
 PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
