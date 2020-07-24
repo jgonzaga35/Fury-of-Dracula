@@ -58,7 +58,9 @@ void printConnList(ConnList L);
 
 // returns path array from "from" city to all other cities
 // through edges of "type"
-int bfsPathDist(Map m, PlaceId *visited, PlaceId from, bool road, bool rail, bool boat);
+// Player argument to satisfy conditions that Dracula
+// cannot move to the hospital
+int bfsPathDist(Map m, PlaceId *visited, PlaceId from, bool road, bool rail, bool boat, Player p);
 
 /** From list of connections (provided by MapGetconnections function),
  * scan through linked list, simultaneously adding
