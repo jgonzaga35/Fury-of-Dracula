@@ -610,6 +610,52 @@ int main(void)
 			free(locs);
 		}
 
+		{
+			printf("\tChecking SJSM Hospital road connection from SZEGED "
+					"(Dracula, Round 1)\n");
+			int numLocs = -1;
+			PlaceId *locs = GvGetReachableByType(gv, PLAYER_DRACULA,
+			                                     1, SZEGED, true, false,
+			                                     false, &numLocs);
+			assert(numLocs == 5);
+			sortPlaces(locs, numLocs);
+			assert(locs[0] == BELGRADE);
+			assert(locs[1] == BUDAPEST);
+			assert(locs[2] == KLAUSENBURG);
+			assert(locs[3] == SZEGED);
+			assert(locs[4] == ZAGREB);
+			free(locs);
+		}
+
+		{
+			printf("\tChecking SJSM Hospital road connection from SARAJEVO "
+					"(Dracula, Round 1)\n");
+			int numLocs = -1;
+			PlaceId *locs = GvGetReachableByType(gv, PLAYER_DRACULA,
+			                                     1, SARAJEVO, true, false,
+			                                     false, &numLocs);
+			assert(numLocs == 5);
+			sortPlaces(locs, numLocs);
+			assert(locs[0] == BELGRADE);
+			assert(locs[1] == SARAJEVO);
+			assert(locs[2] == SOFIA);
+			assert(locs[3] == VALONA);
+			assert(locs[4] == ZAGREB);
+			free(locs);
+		}
+		
+		{
+			printf("\tChecking rail restriction from FRANKFURT "
+					"(Dracula, Round 1)\n");
+			int numLocs = -1;
+			PlaceId *locs = GvGetReachableByType(gv, PLAYER_DRACULA,
+			                                     1, FRANKFURT, false, true,
+			                                     false, &numLocs);
+			assert(numLocs == 1);
+			assert(locs[0] == FRANKFURT);
+			free(locs);
+		}
+
 		GvFree(gv);
 		printf("Test passed!\n");
 	}

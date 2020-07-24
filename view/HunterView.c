@@ -29,6 +29,7 @@ struct hunterView {
 
 // Function prototypes
 static int isRealLocation(PlaceId location);
+static int draculaNotRevealed(HunterView hv);
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
@@ -209,9 +210,10 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	if (draculaNotRevealed(hv)) *numReturnedLocs = 0; return NULL;
 	return GvGetReachableByType(hv->gv, player, HvGetRound(hv), HvGetPlayerLocation(hv, player), 
-						road, rail, boat, numReturnedLocs);
+								road, rail, boat, numReturnedLocs);
 }
 
 static int draculaNotRevealed(HunterView hv)
