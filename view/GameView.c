@@ -61,6 +61,8 @@ static PlaceId traceHide(GameView gv);
 static PlaceId traceDoubleBack(GameView gv);
 static PlaceId trueLocation(GameView gv, PlaceId location);
 static int isHunter(Player player);
+static PlaceId traceHideByIndex(PlaceId *pastMoves, int i);
+static PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i);
 // ---------------------Making a move helper functions--------------------------
 static int validPlayer(Player player);
 
@@ -250,8 +252,7 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
 		return NULL;
 	}
 
-	// TODO: Maybe numMoves instead of magic 100? Not too sure - done
-	PlaceId *LastMoves = malloc(sizeof(PlaceId)*numMoves);
+	PlaceId *LastMoves = malloc(sizeof(PlaceId) * numMoves);
 	int i = 0;
 	while (i < numMoves && i < *numReturnedMoves) 
 	{
@@ -291,52 +292,61 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 	// messy, will fix later
 	// might be bug if i + 6 exceeds array index.
 	while (i < *numReturnedLocs) {
-		if (pastMoves[i] == HIDE) {
-			pastLocs[i] = pastMoves[i - 1];
-			// TODO: Maybe this will work - yeah it works, thx
-			if (isDoubleBack(pastLocs[i]))
-			{
-				int backIndex = pastLocs[i] - 102;
-				pastLocs[i] = pastMoves[i - 1 - backIndex];
-			}
-			// while (pastLocs[i] >= HIDE && pastLocs[i] <= DOUBLE_BACK_5) {
-			// 	if (pastLocs[i] == DOUBLE_BACK_1) {
-			// 		pastLocs[i] = pastMoves[i - 2];
-			// 	}
-			// 	else if (pastLocs[i] == DOUBLE_BACK_2) {
-			// 		pastLocs[i] = pastLocs[i - 3];
-			// 	}
-			// 	else if (pastLocs[i] == DOUBLE_BACK_3) {
-			// 		pastLocs[i] = pastMoves[i - 4];
-			// 	}
-			// 	else if (pastLocs[i] == DOUBLE_BACK_4) {
-			// 		pastLocs[i] = pastMoves[i - 5];
-			// 	}
-			// 	else if (pastLocs[i] == DOUBLE_BACK_5) {
-			// 		pastLocs[i] = pastMoves[i - 6];
-			// 	}
-			// }
-		} 
-		else if (pastMoves[i] == DOUBLE_BACK_1) {
-			pastLocs[i] = pastMoves[i - 1];
-		}
-		else if (pastMoves[i] == DOUBLE_BACK_2) {
-			pastLocs[i] = pastMoves[i - 2];
-		}
-		else if (pastMoves[i] == DOUBLE_BACK_3) {
-			pastLocs[i] = pastMoves[i - 3];
-		}
-		else if (pastMoves[i] == DOUBLE_BACK_4) {
-			pastLocs[i] = pastMoves[i - 4];
-		}
-		else if (pastMoves[i] == DOUBLE_BACK_5) {
-			pastLocs[i] = pastMoves[i - 5];
-		}
-		else if (pastMoves[i] == TELEPORT) {
-			pastLocs[i] = CASTLE_DRACULA;
-		} else {
-			pastLocs[i] = pastMoves[i];
-		}
+		PlaceId location = pastMoves[i];
+		if (location == TELEPORT) pastLocs[i] = CASTLE_DRACULA;
+		else if (location == HIDE) pastLocs[i] = traceDoubleBackByIndex(pastMoves, i);
+		else if (isDoubleBack(location)) pastLocs[i] = traceHideByIndex(pastMoves, i);
+		else pastLocs[i] = location;
+		// if (pastMoves[i] == HIDE) {
+		// 	pastLocs[i] = pastMoves[i - 1];
+		// 	if (isDoubleBack(pastLocs[i]))
+		// 	{
+		// 		int backIndex = pastLocs[i] - 102;
+		// 		pastLocs[i] = pastMoves[i - 1 - backIndex];
+		// 	}
+		// 	// while (pastLocs[i] >= HIDE && pastLocs[i] <= DOUBLE_BACK_5) {
+		// 	// 	if (pastLocs[i] == DOUBLE_BACK_1) {
+		// 	// 		pastLocs[i] = pastMoves[i - 2];
+		// 	// 	}
+		// 	// 	else if (pastLocs[i] == DOUBLE_BACK_2) {
+		// 	// 		pastLocs[i] = pastLocs[i - 3];
+		// 	// 	}
+		// 	// 	else if (pastLocs[i] == DOUBLE_BACK_3) {
+		// 	// 		pastLocs[i] = pastMoves[i - 4];
+		// 	// 	}
+		// 	// 	else if (pastLocs[i] == DOUBLE_BACK_4) {
+		// 	// 		pastLocs[i] = pastMoves[i - 5];
+		// 	// 	}
+		// 	// 	else if (pastLocs[i] == DOUBLE_BACK_5) {
+		// 	// 		pastLocs[i] = pastMoves[i - 6];
+		// 	// 	}
+		// 	// }
+		// } 
+		// else if (isDoubleBack(pastLocs[i]))
+		// 	{
+		// 		int backIndex = pastLocs[i] - 102;
+		// 		pastLocs[i] = pastMoves[i - backIndex];
+		// 	}
+		// // else if (pastMoves[i] == DOUBLE_BACK_1) {
+		// // 	pastLocs[i] = pastMoves[i - 1];
+		// // }
+		// // else if (pastMoves[i] == DOUBLE_BACK_2) {
+		// // 	pastLocs[i] = pastMoves[i - 2];
+		// // }
+		// // else if (pastMoves[i] == DOUBLE_BACK_3) {
+		// // 	pastLocs[i] = pastMoves[i - 3];
+		// // }
+		// // else if (pastMoves[i] == DOUBLE_BACK_4) {
+		// // 	pastLocs[i] = pastMoves[i - 4];
+		// // }
+		// // else if (pastMoves[i] == DOUBLE_BACK_5) {
+		// // 	pastLocs[i] = pastMoves[i - 5];
+		// // }
+		// else if (pastMoves[i] == TELEPORT) {
+		// 	pastLocs[i] = CASTLE_DRACULA;
+		// } else {
+		// 	pastLocs[i] = pastMoves[i];
+		// }
 		i++;
 	}
 
@@ -344,6 +354,22 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 	*canFree = true;
 	free(pastMoves);
 	return pastLocs;
+}
+
+static PlaceId traceHideByIndex(PlaceId *pastMoves, int i)
+{
+	PlaceId location = pastMoves[i - 1];
+	if (location == TELEPORT) return CASTLE_DRACULA;
+	if (isDoubleBack(location)) return traceDoubleBackByIndex(pastMoves, i - 1);
+	return location;
+}
+
+static PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i)
+{
+	int backIndex = pastMoves[i] - 102;
+	if (pastMoves[i - backIndex] == TELEPORT) return CASTLE_DRACULA;
+	if (pastMoves[i - backIndex] == HIDE) return pastMoves[i - backIndex - 1]; 
+	return pastMoves[i - backIndex];
 }
 
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
