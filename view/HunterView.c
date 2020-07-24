@@ -126,13 +126,20 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
     PlaceId location = NOWHERE;
 
 	int i;
-	for (i = 0; i < numReturnedLocs; i++) 
-	{
+	for (i = numReturnedLocs - 1; i >= 0 ; i--) 
+	{	
 		if (isRealLocation(trails[i])) 
-		{
-			*round = i;
+		{	
 			location = trails[i];
-			break;
+			if (location == HIDE) location = traceHideByIndex(trails, i);
+			else if (isDoubleBack(location)) location = traceDoubleBackByIndex(trails, i);
+
+			if (isRealLocation(location))
+			{
+				*round = i;
+				location = trails[i];
+				break;
+			}
 		}
 	}
 
@@ -143,16 +150,11 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
     return location;
 }
 
-static int isRealLocation(PlaceId location)
-{
-	return (location != CITY_UNKNOWN && location != SEA_UNKNOWN 
-			&& !isDoubleBack(location) && location != HIDE && location != UNKNOWN);
-}
-
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	PlaceId scr = HvGetPlayerLocation(hv, hunter);
+	// TODO: Use standard BFS + A find neighbouring function (Make this in Map.c)
 	*pathLength = 0;
 	return NULL;
 }
@@ -160,49 +162,53 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 ////////////////////////////////////////////////////////////////////////
 // Making a Move
 
-// PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
-// {
-// 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-// 	Player currHunter = HvGetPlayer(hv);
-// 	PlaceId currLoc = GvGetPlayerLocation(hv, currHunter);
-// 	PlaceId *availableLocs = GvGetReachable(hv, currHunter, hv->gv->numTurn, currLoc, *numReturnedLocs);
-// 	return availableLocs;
-// }
+PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
+{
+	Player currHunter = HvGetPlayer(hv);
+	PlaceId currLoc = HvGetPlayerLocation(hv, currHunter);
+	if (currLoc == UNKNOWN) *numReturnedLocs = 0; return NULL;
+	return GvGetReachable(hv->gv, currHunter, HvGetRound(hv), currLoc, numReturnedLocs);
+}
 
 PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
                              bool boat, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-
-	*numReturnedLocs = 0;
-	return NULL;
+	Player player = HvGetPlayer(hv);
+	PlaceId location = HvGetPlayerLocation(hv, player);
+	if (location == UNKNOWN) *numReturnedLocs = 0; return NULL;
+	return GvGetReachableByType(hv->gv, player, HvGetRound(hv), location, road, 
+								rail, boat, numReturnedLocs);
 }
 
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+	if (player == PLAYER_DRACULA && draculaNotRevealed(hv)) *numReturnedLocs = 0; return NULL;
+	return GvGetReachable(hv->gv, player, HvGetRound(hv), HvGetPlayerLocation(hv, player), 
+							numReturnedLocs);
 }
 
 PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	if (draculaNotRevealed(hv)) *numReturnedLocs = 0; return NULL;
+	if (player == PLAYER_DRACULA && draculaNotRevealed(hv)) *numReturnedLocs = 0; return NULL;
 	return GvGetReachableByType(hv->gv, player, HvGetRound(hv), HvGetPlayerLocation(hv, player), 
 								road, rail, boat, numReturnedLocs);
 }
 
-static int draculaNotRevealed(HunterView hv)
-{
-	PlaceId location = HvGetPlayerLocation(hv, CASTLE_DRACULA);
-	return (location == CITY_UNKNOWN || location == SEA_UNKNOWN 
-			|| location == NOWHERE);
-}
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
-// TODO
+// Helper functions
+static int draculaNotRevealed(HunterView hv)
+{
+	PlaceId location = HvGetPlayerLocation(hv, PLAYER_DRACULA);
+	return (location == CITY_UNKNOWN || location == SEA_UNKNOWN 
+			|| location == NOWHERE);
+}
+
+static int isRealLocation(PlaceId location)
+{
+	return (location != CITY_UNKNOWN && location != SEA_UNKNOWN && location != UNKNOWN);
+}

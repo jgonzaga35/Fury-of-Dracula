@@ -61,8 +61,6 @@ static PlaceId traceHide(GameView gv);
 static PlaceId traceDoubleBack(GameView gv);
 static PlaceId trueLocation(GameView gv, PlaceId location);
 static int isHunter(Player player);
-static PlaceId traceHideByIndex(PlaceId *pastMoves, int i);
-static PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i);
 // ---------------------Making a move helper functions--------------------------
 static int validPlayer(Player player);
 
@@ -356,22 +354,6 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 	return pastLocs;
 }
 
-static PlaceId traceHideByIndex(PlaceId *pastMoves, int i)
-{
-	PlaceId location = pastMoves[i - 1];
-	if (location == TELEPORT) return CASTLE_DRACULA;
-	if (isDoubleBack(location)) return traceDoubleBackByIndex(pastMoves, i - 1);
-	return location;
-}
-
-static PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i)
-{
-	int backIndex = pastMoves[i] - 102;
-	if (pastMoves[i - backIndex] == TELEPORT) return CASTLE_DRACULA;
-	if (pastMoves[i - backIndex] == HIDE) return pastMoves[i - backIndex - 1]; 
-	return pastMoves[i - backIndex];
-}
-
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
                             int *numReturnedLocs, bool *canFree)
 {
@@ -458,6 +440,21 @@ int isDoubleBack(PlaceId location)
 	return (location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5);
 }
 
+PlaceId traceHideByIndex(PlaceId *pastMoves, int i)
+{
+	PlaceId location = pastMoves[i - 1];
+	if (location == TELEPORT) return CASTLE_DRACULA;
+	if (isDoubleBack(location)) return traceDoubleBackByIndex(pastMoves, i - 1);
+	return location;
+}
+
+PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i)
+{
+	int backIndex = pastMoves[i] - 102;
+	if (pastMoves[i - backIndex] == TELEPORT) return CASTLE_DRACULA;
+	if (pastMoves[i - backIndex] == HIDE) return pastMoves[i - backIndex - 1]; 
+	return pastMoves[i - backIndex];
+}
 // Helper functions
 
 // Set the initial state of all varaibles
@@ -732,3 +729,4 @@ static int isHunter(Player player)
 {
 	return (player >= PLAYER_LORD_GODALMING && player <= PLAYER_MINA_HARKER);
 }
+

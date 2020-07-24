@@ -260,4 +260,8 @@ int numTurnsPassed(GameView gv);
 // Check if the location is Double back
 int isDoubleBack(PlaceId location);
 
+PlaceId traceHideByIndex(PlaceId *pastMoves, int i);
+
+PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i);
+
 #endif // !defined (FOD__GAME_VIEW_H_)
