@@ -108,11 +108,16 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	PlaceId curr = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
 	PlaceId *validLocs = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, curr, true, false, true, &numReturnedLocs);
 	PlaceId *trail = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 6, numReturnedMoves, &canFree);
-	//PlaceId *visited = GvGetLastLocations(dv->gv, PLAYER_DRACULA, 5, numReturnedMoves, &canFree);
-	
+
 	bool canHide = true;
 	bool canDoubleBack[5];
-	canDoubleBack[0] = true;
+	for (int i = 0; i < 5; i++) {
+		if (*numReturnedMoves >= i + 1) {
+			canDoubleBack[i] = true;
+		} else {
+			canDoubleBack[i] = false;
+		}
+	}
 
 	// Look through trail and if there are any HIDE or DOUBLE_BACKS set to false;
 	// Also remove any locs in trail visited by location move from validLocs.
@@ -138,36 +143,48 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 			}
 		}
 	}
-	assert(canDoubleBack[1] == false);
 	numReturnedLocs -= removedLocs;
-	PlaceId *validMoves;
 
 	int length = 0;
-	// Add validLocs and valid HIDE or DOUBLE BACK moves to validMoves array
-	for (int i = numReturnedLocs; i < numReturnedLocs + 5; i++) {
-		if (canHide) {
+	// Add valid HIDE or DOUBLE BACK moves to validMoves array
+	// Start filling in validLocs array from last index.
+	int start = numReturnedLocs;
+	int end = numReturnedLocs + *numReturnedMoves + 1;
+	//printf("start is %d, end is %d\n", start, end);
+	for (int i = start; i < end; i++) 
+	{
+		if (canHide) 
+		{
 			validLocs[i] = HIDE;
 			canHide = false;
-			// length++; 
+			length++; 
 		} 
-		else if (canDoubleBack[0]) {
+		else if (canDoubleBack[0]) 
+		{
 			validLocs[i] = DOUBLE_BACK_1;
 			canDoubleBack[0] = false;
 			length++;
-		} else if (canDoubleBack[1] == true) {
-			printf("happy\n");
+		} 
+		else if (canDoubleBack[1]) 
+		{
 			validLocs[i] = DOUBLE_BACK_2;
 			canDoubleBack[1] = false;
 			length++;
-		} else if (canDoubleBack[2]) {
+		} 
+		else if (canDoubleBack[2]) 
+		{
 			validLocs[i] = DOUBLE_BACK_3;
 			canDoubleBack[2] = false;
 			length++;
-		} else if (canDoubleBack[3]) {
+		} 
+		else if (canDoubleBack[3]) 
+		{
 			validLocs[i] = DOUBLE_BACK_4;
 			canDoubleBack[3] = false;
 			length++;
-		} else if (canDoubleBack[4]) {
+		} 
+		else if (canDoubleBack[4]) 
+		{
 			validLocs[i] == DOUBLE_BACK_5;
 			canDoubleBack[4] = false;
 			length++;
@@ -184,11 +201,11 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
 	PlaceId *availableLocs = DvGetValidMoves(dv, numReturnedLocs);
-	for (int i = 0; i < *numReturnedLocs; i++) {
-		printf("availableLocs[i] is %s\n", placeIdToAbbrev(availableLocs[i]));
-	}
+	// for (int i = 0; i < *numReturnedLocs; i++) {
+	// 	printf("availableLocs[i] is %s\n", placeIdToAbbrev(availableLocs[i]));
+	// }
 	bool canFree = true;
-	printf("*numReturnedLocs is %d\n", *numReturnedLocs);
+	// printf("*numReturnedLocs is %d\n", *numReturnedLocs);
 
 	int length = 0;
 	for (int i = 0; i < *numReturnedLocs; i++) {
