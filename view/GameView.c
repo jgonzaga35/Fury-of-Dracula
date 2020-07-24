@@ -279,7 +279,6 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 
 	// for hunters, GvGetMoveHistory = GvGetLocationHistory;
 	PlaceId *pastMoves = GvGetMoveHistory(gv, player, numReturnedLocs, canFree);
-	// assuming GvGetMoveHistory changes value of numReturnedLocs to numReturnedMoves...
 	if (isHunter(player)) {
 		*canFree = true;
 		return pastMoves;
