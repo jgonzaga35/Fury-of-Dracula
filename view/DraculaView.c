@@ -111,54 +111,99 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
  * If  Dracula  hasn't  made  a move yet, set *numReturnedMoves to 0 and
  * return NULL.
  */
-	// assert(*numReturnedMoves == -1);
-	// *numReturnedMoves = 0;
-	// bool canFree = true;
-	// PlaceId *trail = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 6, numReturnedMoves, &canFree);
-	// int canHide = 1;
-	// int canDoubleBack = 1;
-	// int j = 0;
-	// for (int i = 0; i < *numReturnedMoves; i++) {
-	// 	if (trail[i] == HIDE) {
-	// 		canHide = 0;
-	// 		j++;
-	// 	}
-	// 	else if (trail[i] <= DOUBLE_BACK_5 && trail[i] >= DOUBLE_BACK_1) {
-	// 		canDoubleBack = 0;
-	// 		j++;
-	// 	}
-	// }
-	// printf("canHide is %d, canDouble is %d\n", canHide, canDoubleBack);
-	// *numReturnedMoves += j;
-	// int k = *numReturnedMoves;
-
-	// printf("numReturned now is %d\n", *numReturnedMoves);
-
-	// *numReturnedMoves = 0;
-	// PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
-	// //This only accounts for location moves and not HIDE or DOUBLEBACK
-	// PlaceId *validMoves = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, 
-	// 								from, true, false, true, numReturnedMoves);
-	// j = 0;
-	// for (int i = *numReturnedMoves; i < *numReturnedMoves + 2; i++) {
-	// 	if (canHide == 1) {
-	// 		validMoves[i] = HIDE;
-	// 		j++;
-	// 	} else if (canDoubleBack == 1) {
-	// 		validMoves[i] = DOUBLE_BACK_1;
-	// 		j++;
-	// 	}
-	// }
-	// *numReturnedMoves += j;
-	// for (int i = 0; i < *numReturnedMoves; i++) {
-	// 	printf("place is %s\n", placeIdToAbbrev(validMoves[i]));
-	// }
-	// printf("numReturned is %d\n", *numReturnedMoves);
-
-	// return validMoves;
 
 	*numReturnedMoves = 0;
-	return NULL;
+	bool canFree = true;
+	PlaceId *trail = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 6, numReturnedMoves, &canFree);
+
+	if (*numReturnedMoves == 0) {
+		return NULL;
+	}
+
+	// always true for *numReturnedMoves >= 1
+	int canHide = true;
+	int canDoubleBack_1 = true;
+
+	int canDoubleBack_2 = false;
+	int canDoubleBack_3 = false;
+	int canDoubleBack_4 = false;
+	int canDoubleBack_5 = false;
+
+	if (*numReturnedMoves == 2) {
+		canDoubleBack_2 = true;
+	} else if (*numReturnedMoves == 3) {
+		canDoubleBack_2 = true;
+		canDoubleBack_3 = true;
+	} else if (*numReturnedMoves == 4) {
+		canDoubleBack_2 = true;
+		canDoubleBack_3 = true;
+		canDoubleBack_4 = true;
+	} else if (*numReturnedMoves >= 5) {
+		canDoubleBack_2 = true;
+		canDoubleBack_3 = true;
+		canDoubleBack_4 = true;
+		canDoubleBack_5 = true;
+	}
+	
+	// Look for HIDE or DOUBLE_BACK in the trail.
+	for (int i = 0; i < *numReturnedMoves; i++) {
+		if (trail[i] == HIDE) {
+			canHide = false;
+		}
+		else if (trail[i] <= DOUBLE_BACK_5 && trail[i] >= DOUBLE_BACK_1) {
+			canDoubleBack_1 = false;
+			canDoubleBack_2 = false;
+			canDoubleBack_3 = false;
+			canDoubleBack_4 = false;
+			canDoubleBack_5 = false;
+		}
+	}
+
+	*numReturnedMoves = 0;
+	PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
+
+	//This only accounts for location moves and not HIDE or DOUBLEBACK
+	PlaceId *validMoves = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, 
+									from, true, false, true, numReturnedMoves);
+
+	// validMoves[0] contains the current city, we need to remove this first.
+	for (int i = 0; i < *numReturnedMoves; i++) {
+		validMoves[i] = validMoves[i + 1];
+	}
+	*numReturnedMoves -= 1;
+
+	// Add any HIDE or DOUBLE BACK moves.
+	int extraMoves = 0;
+	for (int i = *numReturnedMoves; i < *numReturnedMoves + 6; i++) {
+		if (canHide == true) {
+			validMoves[i] = HIDE;
+			canHide = false;
+			extraMoves++;
+		} else if (canDoubleBack_1 == true) {
+			validMoves[i] = DOUBLE_BACK_1;
+			canDoubleBack_1 = false;
+			extraMoves++;
+		} else if (canDoubleBack_2 == true) {
+			validMoves[i] = DOUBLE_BACK_2;
+			canDoubleBack_2 = false;
+			extraMoves++;
+		} else if (canDoubleBack_3 == true) {
+			validMoves[i] = DOUBLE_BACK_3;
+			canDoubleBack_3 = false;
+			extraMoves++;
+		} else if (canDoubleBack_4 == true) {
+			validMoves[i] = DOUBLE_BACK_4;
+			canDoubleBack_4 = false;
+			extraMoves++;
+		} else if (canDoubleBack_5 == true) {
+			validMoves[i] == DOUBLE_BACK_5;
+			canDoubleBack_5 = false;
+			extraMoves++;
+		}
+	}
+	*numReturnedMoves += extraMoves;
+
+	return validMoves;
 }
 
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
