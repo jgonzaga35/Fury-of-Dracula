@@ -19,6 +19,7 @@
 #include "HunterView.h"
 #include "Map.h"
 #include "Places.h"
+#include "Queue.h"
 // add your own #includes here
 #include <string.h>
 
@@ -126,6 +127,7 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
     PlaceId location = NOWHERE;
 
 	int i;
+	
 	for (i = numReturnedLocs - 1; i >= 0 ; i--) 
 	{	
 		if (isRealLocation(trails[i])) 
@@ -142,8 +144,8 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 			}
 		}
 	}
-
-	//if (!isRealLocation(location) || round == 0) return NOWHERE;	// No real location exist
+	
+	if (!isRealLocation(location) || round == 0) return NOWHERE;	// No real location exist
 
 	if (location == TELEPORT) return CASTLE_DRACULA;
 
@@ -153,9 +155,62 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
-	PlaceId scr = HvGetPlayerLocation(hv, hunter);
 	// TODO: Use standard BFS + A find neighbouring function (Make this in Map.c)
+	PlaceId src = HvGetPlayerLocation(hv, hunter); 
+	int numReturnedLocs;
+	PlaceId *reachableLocs = HvWhereCanIGo(hv, &numReturnedLocs);
 	*pathLength = 0;
+	//printf("%d\n", numReturnedLocs);
+	
+	PlaceId visited[numReturnedLocs];
+	for (int i = 0; i < numReturnedLocs; i++) {
+		visited[i] = -1;
+	}
+	
+	visited[src] = src;
+
+	Queue locations = newQueue();
+	QueueJoin(locations, src);
+	
+	int found = 0; // boolean
+	
+	while (!QueueIsEmpty(locations)) {
+	   	PlaceId v = QueueLeave(locations);
+	   	if (v == dest) {
+			found = 1;
+			break;
+	   	}
+	   	for (int w = 0; w < numReturnedLocs; w++) {
+	      	if (visited[w] == -1) {
+	        	visited[w] = v;
+	        	QueueJoin(locations, w);
+	    	}
+	    }
+	}
+	 
+	if (found == 0) {
+		// printf("hello\n"); // check if entering if condition
+		int length = 1; 
+		PlaceId currLocation = dest;
+		PlaceId *path;
+		PlaceId temp[numReturnedLocs];
+		// DEBUG: Segmentation fault caused by something down here
+		/*while (currLocation != src) {
+			temp[length] = currLocation;
+			length++;
+			currLocation = visited[currLocation];
+		}
+		
+		int index = length;
+		for(int j = 0; j < length; j++) {
+			path[j] = temp[index];
+			index--;
+		}
+		printf("%d\n", length);*/
+		*pathLength = length;
+		return path; 
+	}
+
 	return NULL;
 }
 
