@@ -97,7 +97,7 @@ PlaceId HvGetVampireLocation(HunterView hv)
 
 PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
-	int numReturnedLocs = 0;
+	/*int numReturnedLocs = 0;
 	bool canFree = false;
 	PlaceId *trails = GvGetLocationHistory(hv->gv, PLAYER_DRACULA, &numReturnedLocs, &canFree);
 	
@@ -114,7 +114,30 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 	*round = HvGetRound(hv) - i;
 	if (location == TELEPORT) return CASTLE_DRACULA;
 	
-	return location;
+	return location;*/
+	
+	int numReturnedLocs = 0;
+	bool canFree = false;
+	PlaceId *trails = GvGetLocationHistory(hv->gv, PLAYER_DRACULA, &numReturnedLocs, &canFree);
+	*round = 0;
+
+    PlaceId location = NOWHERE;
+
+	int i;
+	for (i = 0; i < numReturnedLocs; i++) 
+	{
+		if (isRealLocation(trails[i])) {
+			*round = i;
+			location = trails[i];
+			break;
+		}
+	}
+
+	if (!isRealLocation(location) || round == 0) return NOWHERE;	// No real location exist
+
+	if (location == TELEPORT) return CASTLE_DRACULA;
+
+    return location;
 }
 
 static int isRealLocation(PlaceId location)
