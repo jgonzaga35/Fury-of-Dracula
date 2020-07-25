@@ -140,6 +140,33 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 	
+		printf("Test for DvWhereCanIGo 1\n");
+		
+		char *trail =
+			"GGE.... SGE.... HGE.... MGE.... DCD.V.. "
+			"GGE.... SGE.... HGE.... MGE....";
+		
+		Message messages[9] = {};
+		DraculaView dv = DvNew(trail, messages);
+		
+		int numMoves = -1;
+		PlaceId *moves = DvWhereCanIGo(dv, &numMoves);
+
+		// I'm assuming this is an array filled with locations
+		// Dracula can go to using LOCATION move, and NOT hide/double back move.
+		// Otherwise this would also need to include CASTLE_DRACULA.
+		assert(numMoves == 2);
+		sortPlaces(moves, numMoves);
+		assert(moves[0] == GALATZ);
+		assert(moves[1] == KLAUSENBURG);
+		free(moves);
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	
 		printf("Test for Dracula's valid moves NO VALID MOVES\n");
 		
 		char *trail =
