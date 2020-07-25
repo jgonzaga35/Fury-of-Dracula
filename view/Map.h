@@ -61,7 +61,7 @@ void printConnList(ConnList L);
 // Player argument to satisfy conditions that Dracula
 // cannot move to the hospital
 // If no condition needed for argument Player enter -1
-int bfsPathDist(Map m, PlaceId *visited, PlaceId from, bool road, bool rail, bool boat, Player p);
+void bfsPath(Map m, PlaceId *visited, PlaceId from, bool road, bool rail, bool boat, Player p);
 
 /** From list of connections (provided by MapGetconnections function),
  * scan through linked list, simultaneously adding
