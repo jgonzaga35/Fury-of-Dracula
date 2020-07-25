@@ -152,13 +152,11 @@ int main(void)
 		int numMoves = -1;
 		PlaceId *moves = DvWhereCanIGo(dv, &numMoves);
 
-		// I'm assuming this is an array filled with locations
-		// Dracula can go to using LOCATION move, and NOT hide/double back move.
-		// Otherwise this would also need to include CASTLE_DRACULA.
-		assert(numMoves == 2);
+		assert(numMoves == 3);
 		sortPlaces(moves, numMoves);
-		assert(moves[0] == GALATZ);
-		assert(moves[1] == KLAUSENBURG);
+		assert(moves[0] == CASTLE_DRACULA);
+		assert(moves[1] == GALATZ);
+		assert(moves[2] == KLAUSENBURG);
 		free(moves);
 		
 		printf("Test passed!\n");
@@ -230,6 +228,7 @@ int main(void)
 			"GGE.... SGE.... HGE.... MGE.... DNPT... "
 			"GGE.... SGE.... HGE.... MGE.... DROT... "
 			"GGE.... SGE.... HGE.... MGE.... DHIT... "
+			"GGE.... SGE.... HGE.... MGE.... DD1T... "
 			"GGE.... SGE.... HGE.... MGE....";
 		
 		Message messages[24] = {};
@@ -257,6 +256,7 @@ int main(void)
 			"GGE.... SGE.... HGE.... MGE.... DNPT... "
 			"GGE.... SGE.... HGE.... MGE.... DROT... "
 			"GGE.... SGE.... HGE.... MGE.... DHIT... "
+			"GGE.... SGE.... HGE.... MGE.... DD1T... "
 			"GGE.... SGE.... HGE.... MGE....";
 		
 		Message messages[24] = {};
@@ -284,6 +284,7 @@ int main(void)
 			"GGE.... SGE.... HGE.... MGE.... DNPT... "
 			"GGE.... SGE.... HGE.... MGE.... DROT... "
 			"GGE.... SGE.... HGE.... MGE.... DHIT... "
+			"GGE.... SGE.... HGE.... MGE.... DD1T... "
 			"GGE.... SGE.... HGE.... MGE....";
 		
 		Message messages[24] = {};

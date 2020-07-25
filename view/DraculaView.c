@@ -194,30 +194,60 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
-	PlaceId *availableLocs = DvGetValidMoves(dv, numReturnedLocs);
-	if (availableLocs == NULL) {
+	PlaceId *validLocs = DvGetValidMoves(dv, numReturnedLocs);
+
+	int numNum = 0;
+	bool canFree = true;
+	PlaceId *pastMoves = GvGetMoveHistory(dv->gv, PLAYER_DRACULA, &numNum, &canFree);
+	PlaceId *pastLocs = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, &numNum, &canFree);
+
+	if (validLocs == NULL) {
 		*numReturnedLocs = 0;
 		return NULL;
 	}
 
-	bool canFree = true;
-	int length = 0;
+	canFree = true;
 	for (int i = 0; i < *numReturnedLocs; i++) {
-		if (isDoubleBack(availableLocs[i]) || availableLocs[i] == HIDE) {
-			for (int c = i; c < *numReturnedLocs - 1; c++) {
-				availableLocs[c] = availableLocs[c + 1]; 
+		if (validLocs[i] == HIDE) {
+			validLocs[i] = pastLocs[0];
+		}
+		// Don't know how to trace DoubleBack...tried using 
+		// traceDoubleBackByIndex but doesn't work here.
+		else if (isDoubleBack(validLocs[i])) {
+			switch (validLocs[i]) {
+				case DOUBLE_BACK_1: validLocs[i] = pastLocs[0]; break;
+				case DOUBLE_BACK_2: validLocs[i] = pastLocs[1]; break;
+				case DOUBLE_BACK_3: validLocs[i] = pastLocs[2]; break;
+				case DOUBLE_BACK_4: validLocs[i] = pastLocs[3]; break;
+				case DOUBLE_BACK_5: validLocs[i] = pastLocs[4]; break;
 			}
-			length++;
 		}
 	}
-	*numReturnedLocs -= length;
-	return availableLocs;
+	// remove duplicates.
+	int length = 0;
+	for (int i = 0; i < *numReturnedLocs; i++) {
+		for (int j = i; j < *numReturnedLocs; j++) {
+			// Compare with every element in array except for itself.
+			if (i == j) continue;
+			if (validLocs[i] == validLocs[j]) {
+				for (int c = j; c < *numReturnedLocs - 1; c++) {
+					validLocs[c] = validLocs[c + 1];
+				}
+				*numReturnedLocs = *numReturnedLocs - 1;
+				break;
+			}
+		}
+	}
+	free(pastMoves);
+	free(pastLocs);
+	return validLocs;
 }
 
 PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
                              int *numReturnedLocs)
 {
 	PlaceId *availableLocs = DvWhereCanIGo(dv, numReturnedLocs);
+
 	if (availableLocs == NULL) {
 		*numReturnedLocs = 0;
 		return NULL;
