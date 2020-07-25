@@ -264,4 +264,7 @@ PlaceId traceHideByIndex(PlaceId *pastMoves, int i);
 
 PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i);
 
+PlaceId *getNeighbours(GameView gv, PlaceId src, Player hunter, Round round, 
+						int *numReturnedLocs);
+
 #endif // !defined (FOD__GAME_VIEW_H_)

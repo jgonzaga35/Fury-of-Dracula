@@ -408,6 +408,12 @@ PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i)
 	if (pastMoves[i - backIndex] == HIDE) return pastMoves[i - backIndex - 1]; 
 	return pastMoves[i - backIndex];
 }
+
+PlaceId *getNeighbours(GameView gv, PlaceId src, Player hunter, Round round, 
+						int *numReturnedLocs) 
+{
+	return getConnection(gv->map, src, hunter, round, numReturnedLocs);
+}
 // Helper functions
 
 // Set the initial state of all varaibles

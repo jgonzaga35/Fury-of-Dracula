@@ -289,7 +289,7 @@ void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Playe
 	}
 }
 
-void getRailCNC(ConnList CNC, PlaceId from,PlaceId *allowableCNC, int *numReturnedLocs, Round round, 
+void getRailCNC(ConnList CNC, PlaceId from, PlaceId *allowableCNC, int *numReturnedLocs, Round round, 
 				Player player, Map m)
 	{
 	if (player == PLAYER_DRACULA) return; // Dracula not allowed to travel by rail
@@ -335,4 +335,26 @@ void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Playe
 		}
 		curr = curr->next;
 	}
+}
+
+PlaceId *getConnection(Map map, PlaceId src, Player hunter, Round round, int *numReturnedLocs)
+{
+	// TODO: 
+	PlaceId *edges = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
+	for (int i = 0; NUM_REAL_PLACES; i++) 
+	{
+		edges[i] = -1;
+	}
+
+	PlaceId dest = 0;
+	Queue locationQ = newQueue();
+	QueueJoin(locationQ, src);
+	for (dest = 0; dest < map->nV; dest++) 
+	{
+		QueueJoin(locationQ, dest);
+
+	}
+
+	//*numReturnedLocs = create another function to get this
+	return edges;
 }

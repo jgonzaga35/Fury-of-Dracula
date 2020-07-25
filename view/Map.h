@@ -71,4 +71,7 @@ void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Playe
 void getRailCNC(ConnList CNC, PlaceId from, PlaceId *allowableCNC, int *numReturnedLocs, Round round, Player player, Map m);
 void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p);
 
+// returns array of neighbouring PlaceIds
+PlaceId *getConnection(Map map, PlaceId src, Player hunter, Round round, int *numReturnedLocs);
+
 #endif // !defined(FOD__MAP_H_)
