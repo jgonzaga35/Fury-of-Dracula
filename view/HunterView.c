@@ -156,31 +156,53 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
 	// TODO: Use standard BFS + A find neighbouring function (Make this in Map.c)
-	PlaceId src = HvGetPlayerLocation(hv, hunter); 
-	int numReturnedLocs;
-	PlaceId *reachableLocs = HvWhereCanIGo(hv, &numReturnedLocs);
-	*pathLength = 0;
-	//printf("%d\n", numReturnedLocs);
+	PlaceId visited[NUM_REAL_PLACES];
+	for (int i = 0; NUM_REAL_PLACES; i++) 
+	{
+		visited[i] = -1;
+	}
+
+	PlaceId prev[NUM_REAL_PLACES];
+	for (int j = 0; NUM_REAL_PLACES; j++) 
+	{
+		prev[j] = 0;
+	}
 	
-	// initially have not looked at possible paths to different cities yet,
-	// so initialised all visited value for each city to -1 
+	PlaceId src = HvGetPlayerLocation(hv, hunter);
+	Queue locationQ = newQueue();
+	QueueJoin(locationQ, src);
+
+	int currLocation = src;
+	int currLength = 0;
+
+	while (QueueIsEmpty(locationQ) == 0 && currLocation != dest) {
+		currLocation = QueueLeave(locationQ);
+		
+		int numReturnedLocs;
+		int *locations = getNeighbours(hv->gv, currLocation, hunter, GvGetRound(hv->gv), 
+										&numReturnedLocs);
+		
+		
+	}
+
+	/*PlaceId src = HvGetPlayerLocation(hv, hunter); 
+	int numReturnedLocs;
+	
+	PlaceId *locations = getNeighbours(hv->gv, src, hunter, HvGetRound(hv), &numReturnedLocs);
+	*pathLength = 0;
+	
 	PlaceId visited[numReturnedLocs];
 	for (int i = 0; i < numReturnedLocs; i++) {
 		visited[i] = -1;
 	}
 	
-	// already at source so have visited source i.e. change visited value for src
 	visited[src] = src;
 
-	// initialise a new queue to store cities
 	Queue locationQ = newQueue();
 	QueueJoin(locationQ, src);
 	
-	// boolean to indicate whether a path from src to dest has been found
 	int found = 0; 
 	
-	// while loop that checks every visitable city from source to see if it matches
-	// the destination of interest
 	while (!QueueIsEmpty(locationQ)) {
 	   	PlaceId v = QueueLeave(locationQ);
 	   	if (v == dest) {
@@ -202,24 +224,22 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		PlaceId currLocation = dest;
 		PlaceId *path;
 		PlaceId temp[numReturnedLocs];
-		// DEBUG: Segmentation fault caused by something down here
 		while (currLocation != src) {
-			printf("Hi\n");
 			temp[length] = currLocation;
 			length++;
 			currLocation = visited[currLocation];
 		}
-		/*
-		// store locations 
+		
+		// store locations in path array
 		int index = length - 1;
 		for(int j = 0; j < length - 1; j++) {
 			path[j] = temp[index];
 			index--;
-		}*/
-		//printf("%d\n", length);
+		}
+		
 		*pathLength = length - 1;
 		return path; 
-	}
+	}*/
 
 	return NULL;
 }
