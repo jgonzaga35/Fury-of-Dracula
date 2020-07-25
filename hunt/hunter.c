@@ -15,8 +15,8 @@
 
 void decideHunterMove(HunterView hv)
 {
-	Round round = HvGetRound(gv);
-	PlayerId name = HvGetPlayer(hv); // Which hunter?
+	Round round = HvGetRound(hv);
+	Player name = HvGetPlayer(hv); // Which hunter?
 
 	if(round == 0) { // FIRST ROUND
 		char *location;
@@ -56,6 +56,7 @@ void decideHunterMove(HunterView hv)
 		 * 	- 	Whenever (round + num) % 4 ==3, decide if hunters can intercept 
 		 * 		Dracula by moving via rail (Dracula's location decided by 
 		 * 		HvGetLastKnownDraculaLocation)
+		 * */
 	}
 
 
