@@ -112,7 +112,10 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	PlaceId *validLocs = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, curr, true, false, true, &numReturnedLocs);
 	PlaceId *trail = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 6, numReturnedMoves, &canFree);
 
-	bool canHide = true;
+	bool canHide = false;
+	if (*numReturnedMoves >= 1) {
+		canHide = true;
+	} 
 	bool canDoubleBack[5];
 	for (int i = 0; i < 5; i++) {
 		if (*numReturnedMoves >= i + 1) {
@@ -127,7 +130,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	int removedLocs = 0;
 	for (int i = 0; i < *numReturnedMoves; i++) { 
 		if (isDoubleBack(trail[i])) {
-			for (int j = 1; j < 5; j++) {
+			for (int j = 0; j < 5; j++) {
 				canDoubleBack[j] = false;
 			} 
 		} 
@@ -135,13 +138,13 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 			canHide = false;
 		} 
 		else if (placeIsReal(trail[i])) {
-			// remove from validLocs if it is there.
 			for (int j = 0; j < numReturnedLocs; j++) {
-				if (trail[i] == validLocs[j]) {
+				if (validLocs[j] == trail[i]) {
 					for (int c = j; c < numReturnedLocs - 1; c++) {
 						validLocs[c] = validLocs[c + 1]; 
 					}
 					removedLocs++;
+					break;
 				}
 			}
 		}
@@ -193,10 +196,16 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 			length++;
 		} 
 	}
+
 	numReturnedLocs += length;
 	*numReturnedMoves = numReturnedLocs;
-
 	free(trail);
+
+	// If all valid moves have been removed, return NULL.
+	if (*numReturnedMoves == 0) {
+		free(validLocs);
+		return NULL;
+	}
 
 	return validLocs;
 }

@@ -140,6 +140,33 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 	
+		printf("Test for Dracula's valid moves NO VALID MOVES\n");
+		
+		char *trail =
+			"GGE.... SGE.... HGE.... MGE.... DSA.V.. "
+			"GGE.... SGE.... HGE.... MGE.... DD1T... "
+			"GGE.... SGE.... HGE.... MGE.... DVAT... "
+			"GGE.... SGE.... HGE.... MGE.... DHIT... "
+			"GGE.... SGE.... HGE.... MGE.... DIOT... "
+			"GGE.... SGE.... HGE.... MGE.... DATT... ";
+			"GGE.... SGE.... HGE.... MGE....";
+		
+		Message messages[24] = {};
+		DraculaView dv = DvNew(trail, messages);
+		
+		int numLocs = -1;
+		PlaceId *locs = DvGetValidMoves(dv, &numLocs);
+		assert(numLocs == 0);
+		assert(locs == NULL);
+		free(locs);
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+
+
+	{///////////////////////////////////////////////////////////////////
+	
 		printf("Test for DvGetValidMoves/DvWhereCanIGo/DvWhereCanIGoByType no move made yet\n");
 		
 		char *trail =
