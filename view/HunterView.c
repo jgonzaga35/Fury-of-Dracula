@@ -227,12 +227,14 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 ////////////////////////////////////////////////////////////////////////
 // Making a Move
 
+// Round should be HvGetRound(hv) + 1 as, these functions need to info about
+// round after current round
 PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
-	Player currHunter = HvGetPlayer(hv);
-	PlaceId currLoc = HvGetPlayerLocation(hv, currHunter);
-	if (currLoc == UNKNOWN) {*numReturnedLocs = 0; return NULL;}
-	return GvGetReachable(hv->gv, currHunter, HvGetRound(hv), currLoc, numReturnedLocs);
+	Player player = HvGetPlayer(hv);
+	PlaceId location = HvGetPlayerLocation(hv, player);
+	if (location == UNKNOWN) {*numReturnedLocs = 0; return NULL;}
+	return GvGetReachable(hv->gv, player, HvGetRound(hv) + 1, location, numReturnedLocs);
 }
 
 PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
@@ -240,13 +242,11 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 {
 	Player player = HvGetPlayer(hv);
 	PlaceId location = HvGetPlayerLocation(hv, player);
-	if (location == UNKNOWN) *numReturnedLocs = 0; return NULL;
-	return GvGetReachableByType(hv->gv, player, HvGetRound(hv), location, road, 
+	if (location == UNKNOWN) {*numReturnedLocs = 0; return NULL;}
+	return GvGetReachableByType(hv->gv, player, HvGetRound(hv) + 1, location, road, 
 								rail, boat, numReturnedLocs);
 }
 
-// Round should be HvGetRound(hv) + 1 as, these functions need to info about
-// round after current round
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
