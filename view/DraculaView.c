@@ -18,21 +18,10 @@
 #include "Game.h"
 #include "GameView.h"
 #include "Map.h"
-// add your own #includes here
-
-// TODO: ADD YOUR OWN STRUCTS HERE
 
 struct draculaView {
-	// not yet finished adding variables to this struct
 	GameView gv;
 	Round numTurn;
-	// not sure if we need these variables - maybe
-	// we can just get them using Gv functions?
-	//int score;
-	//int health[NUM_PLAYERS];
-	//PlaceId trails[NUM_PLAYERS][TRAIL_SIZE];	// Never null
-	//PlaceId vampireLocation;					// Never null
-	//PlaceId trapLocations[TRAIL_SIZE];	
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -96,22 +85,22 @@ PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 
 PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 {
-	// Steps:
-	// Get reachable locations from current locations.
-	// Look through trail, and determine if Drac can make HIDE or DOUBLE BACK move.
-	// Add these to array.
-	// Remove locations that Drac has moved to before.
-
-	bool canFree = true;
-	int numReturnedLocs = 0;
+	// If the player has not made a move yet return NULL.
 	PlaceId curr = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
 	if (curr == NOWHERE) {
 		*numReturnedMoves = 0;
 		return NULL;
 	}
+
+	// Initialise array with list of reachable places.
+	int numReturnedLocs = 0;
 	PlaceId *validLocs = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, curr, true, false, true, &numReturnedLocs);
+
+	// Obtain Dracula's last 6 moves.
+	bool canFree = true;
 	PlaceId *trail = GvGetLastMoves(dv->gv, PLAYER_DRACULA, 6, numReturnedMoves, &canFree);
 
+	// Determine if HIDE or DOUBLE_BACK are valid moves based on trail length.
 	bool canHide = false;
 	if (*numReturnedMoves >= 1) {
 		canHide = true;
@@ -125,8 +114,8 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 		}
 	}
 
-	// Look through trail and if there are any HIDE or DOUBLE_BACKS set to false;
-	// Also remove any locs in trail visited by location move from validLocs.
+	// Determine if HIDE or DOUBLE_BACK are valid moves based on trail history.
+	// Remove any locations in the array that have been visited already using LOCATION move.
 	int removedLocs = 0;
 	for (int i = 0; i < *numReturnedMoves; i++) { 
 		if (isDoubleBack(trail[i])) {
@@ -149,56 +138,49 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 			}
 		}
 	}
+	// Adjust for removed locations.
 	numReturnedLocs -= removedLocs;
-
-	int length = 0;
-	// Add valid HIDE or DOUBLE BACK moves to validMoves array
+	
+	// Add valid HIDE or DOUBLE BACK moves to validMoves array.
 	// Start filling in validLocs array from last index.
+	int length = 0;
 	int start = numReturnedLocs;
 	int end = numReturnedLocs + *numReturnedMoves + 1;
-	//printf("start is %d, end is %d\n", start, end);
 	for (int i = start; i < end; i++) 
 	{
-		if (canHide) 
-		{
+		if (canHide) {
 			validLocs[i] = HIDE;
 			canHide = false;
 			length++; 
 		} 
-		else if (canDoubleBack[0]) 
-		{
+		else if (canDoubleBack[0]) {
 			validLocs[i] = DOUBLE_BACK_1;
 			canDoubleBack[0] = false;
 			length++;
 		} 
-		else if (canDoubleBack[1]) 
-		{
+		else if (canDoubleBack[1]) {
 			validLocs[i] = DOUBLE_BACK_2;
 			canDoubleBack[1] = false;
 			length++;
 		} 
-		else if (canDoubleBack[2]) 
-		{
+		else if (canDoubleBack[2]) {
 			validLocs[i] = DOUBLE_BACK_3;
 			canDoubleBack[2] = false;
 			length++;
 		} 
-		else if (canDoubleBack[3]) 
-		{
+		else if (canDoubleBack[3]) {
 			validLocs[i] = DOUBLE_BACK_4;
 			canDoubleBack[3] = false;
 			length++;
 		} 
-		else if (canDoubleBack[4]) 
-		{
+		else if (canDoubleBack[4]) {
 			validLocs[i] == DOUBLE_BACK_5;
 			canDoubleBack[4] = false;
 			length++;
 		} 
 	}
 
-	numReturnedLocs += length;
-	*numReturnedMoves = numReturnedLocs;
+	*numReturnedMoves = numReturnedLocs + length;
 	free(trail);
 
 	// If all valid moves have been removed, return NULL.
