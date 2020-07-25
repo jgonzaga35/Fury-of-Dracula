@@ -231,7 +231,7 @@ PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
 	Player currHunter = HvGetPlayer(hv);
 	PlaceId currLoc = HvGetPlayerLocation(hv, currHunter);
-	if (currLoc == UNKNOWN) *numReturnedLocs = 0; return NULL;
+	if (currLoc == UNKNOWN) {*numReturnedLocs = 0; return NULL;}
 	return GvGetReachable(hv->gv, currHunter, HvGetRound(hv), currLoc, numReturnedLocs);
 }
 
@@ -245,11 +245,13 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 								rail, boat, numReturnedLocs);
 }
 
+// Round should be HvGetRound(hv) + 1 as, these functions need to info about
+// round after current round
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
 	if (player == PLAYER_DRACULA && draculaNotRevealed(hv)) *numReturnedLocs = 0; return NULL;
-	return GvGetReachable(hv->gv, player, HvGetRound(hv), HvGetPlayerLocation(hv, player), 
+	return GvGetReachable(hv->gv, player, HvGetRound(hv) + 1, HvGetPlayerLocation(hv, player), 
 							numReturnedLocs);
 }
 
@@ -257,9 +259,18 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-	if (player == PLAYER_DRACULA && draculaNotRevealed(hv)) *numReturnedLocs = 0; return NULL;
-	return GvGetReachableByType(hv->gv, player, HvGetRound(hv), HvGetPlayerLocation(hv, player), 
+	if (player == PLAYER_DRACULA && draculaNotRevealed(hv)) {*numReturnedLocs = 0; return NULL;}
+	
+	if (player == PLAYER_DRACULA) { // ensure Dracula cannot travel by rail
+		return GvGetReachableByType(hv->gv, player, HvGetRound(hv) + 1, HvGetPlayerLocation(hv, player), 
 								road, rail, boat, numReturnedLocs);
+	} else if (PLAYER_LORD_GODALMING <= player && player <= PLAYER_MINA_HARKER) {
+		return GvGetReachableByType(hv->gv, player, HvGetRound(hv) + 1, 
+											HvGetPlayerLocation(hv, player), 
+											road, rail, boat, numReturnedLocs);
+	}
+
+	return NULL;
 }
 
 ////////////////////////////////////////////////////////////////////////

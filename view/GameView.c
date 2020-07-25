@@ -130,6 +130,7 @@ void GvFree(GameView gv)
 
 Round GvGetRound(GameView gv)
 {
+
 	return gv->numTurn / TURNS_PER_ROUND;
 }
 
@@ -369,9 +370,11 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 
 	// add specific types of connections
 	if (road) getRoadCNC(CNC, allowableCNC, numReturnedLocs, player);
-	if (rail && player != PLAYER_DRACULA) // Dracula cannot move by rail
+	if (rail && player != PLAYER_DRACULA) {// Dracula cannot move by rail
 		getRailCNC(CNC, from, allowableCNC, numReturnedLocs, round, player, gv->map);
+	}
 	if (boat) getBoatCNC(CNC, allowableCNC, numReturnedLocs, player);
+
 	return allowableCNC;
 }
 
