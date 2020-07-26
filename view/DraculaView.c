@@ -200,7 +200,8 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 
 	*numReturnedMoves = numReturnedLocs + length;
 	free(trail);
-
+	free(pastLocs);
+	
 	// If all valid moves have been removed, return NULL.
 	if (*numReturnedMoves == 0) {
 		free(validLocs);
