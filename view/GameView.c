@@ -409,10 +409,9 @@ PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i)
 	return pastMoves[i - backIndex];
 }
 
-PlaceId *getNeighbours(GameView gv, PlaceId src, Player hunter, Round round, 
-						int *numReturnedLocs) 
+PlaceId *getNeighbours(GameView gv, PlaceId src, int *numReturnedLocs) 
 {
-	return getConnection(gv->map, src, hunter, round, numReturnedLocs);
+	return getConnection(gv->map, src, numReturnedLocs);
 }
 // Helper functions
 

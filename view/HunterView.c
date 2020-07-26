@@ -99,26 +99,6 @@ PlaceId HvGetVampireLocation(HunterView hv)
 
 PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	/*int numReturnedLocs = 0;
-	bool canFree = false;
-	PlaceId *trails = GvGetLocationHistory(hv->gv, PLAYER_DRACULA, &numReturnedLocs, &canFree);
-	
-	int i;
-	PlaceId location;
-	for (i = 0; i < numReturnedLocs; i++)
-	{
-		location = trails[i];
-		if (isRealLocation(location)) break;
-	}
-	
-	if (!isRealLocation(location) || i == 0) return NOWHERE;	// No real location exist
-
-	*round = HvGetRound(hv) - i;
-	if (location == TELEPORT) return CASTLE_DRACULA;
-	
-	return location;*/
-	
 	int numReturnedLocs = 0;
 	bool canFree = false;
 	PlaceId *trails = GvGetLocationHistory(hv->gv, PLAYER_DRACULA, &numReturnedLocs, &canFree);
@@ -156,91 +136,66 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
 	// TODO: Use standard BFS + A find neighbouring function (Make this in Map.c)
-	PlaceId visited[NUM_REAL_PLACES];
-	for (int i = 0; NUM_REAL_PLACES; i++) 
+	PlaceId visited[MAX_REAL_PLACE];
+	PlaceId temp[MAX_REAL_PLACE];
+
+	for (PlaceId i = 0; i < MAX_REAL_PLACE; i++)
 	{
 		visited[i] = -1;
-	}
-
-	PlaceId prev[NUM_REAL_PLACES];
-	for (int j = 0; NUM_REAL_PLACES; j++) 
-	{
-		prev[j] = 0;
-	}
+		temp[i] = -1;
+	} 
 	
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 	Queue locationQ = newQueue();
 	QueueJoin(locationQ, src);
 
-	int currLocation = src;
+	PlaceId *path = NULL;
+	PlaceId currLocation = src;
 	int currLength = 0;
 
-	while (QueueIsEmpty(locationQ) == 0 && currLocation != dest) {
+	while (!QueueIsEmpty(locationQ)) 
+	{
 		currLocation = QueueLeave(locationQ);
-		
 		int numReturnedLocs;
-		int *locations = getNeighbours(hv->gv, currLocation, hunter, GvGetRound(hv->gv), 
-										&numReturnedLocs);
+		int *locations = getNeighbours(hv->gv, currLocation, &numReturnedLocs);
 		
-		
-	}
-
-	/*PlaceId src = HvGetPlayerLocation(hv, hunter); 
-	int numReturnedLocs;
-	
-	PlaceId *locations = getNeighbours(hv->gv, src, hunter, HvGetRound(hv), &numReturnedLocs);
-	*pathLength = 0;
-	
-	PlaceId visited[numReturnedLocs];
-	for (int i = 0; i < numReturnedLocs; i++) {
-		visited[i] = -1;
-	}
-	
-	visited[src] = src;
-
-	Queue locationQ = newQueue();
-	QueueJoin(locationQ, src);
-	
-	int found = 0; 
-	
-	while (!QueueIsEmpty(locationQ)) {
-	   	PlaceId v = QueueLeave(locationQ);
-	   	if (v == dest) {
-			found = 1;
-			break;
-	   	}
-	   	for (int w = 0; w < numReturnedLocs; w++) {
-	      	if (visited[w] == -1) {
-	        	visited[w] = v;
-	        	QueueJoin(locationQ, w);
-	    	}
-	    }
-	}
-	
-	// if path to dest is found, want to path array to be in source to destination order
-	if (found == 0) {
-		// printf("hello\n"); // check if entering if condition
-		int length = 0; 
-		PlaceId currLocation = dest;
-		PlaceId *path;
-		PlaceId temp[numReturnedLocs];
-		while (currLocation != src) {
-			temp[length] = currLocation;
-			length++;
-			currLocation = visited[currLocation];
+		PlaceId j = 0;
+		for (j = 0; j < numReturnedLocs; j++) 
+		{
+			if (!visited[locations[j]]) 
+			{
+				QueueJoin(locationQ, locations[j]);
+				temp[locations[j]] = currLocation;
+				visited[locations[j]] = locations[j];
+			}
 		}
 		
-		// store locations in path array
-		int index = length - 1;
-		for(int j = 0; j < length - 1; j++) {
-			path[j] = temp[index];
-			index--;
-		}
-		
-		*pathLength = length - 1;
-		return path; 
-	}*/
+		if (currLocation == dest)
+		{
+			temp[locations[j]] = currLocation;
+			PlaceId index = locations[j];
+			while (index != src)
+			{
+				index = temp[index];
+				pathLength++;
+			}
+			
+			currLength = *(pathLength - 1);
+			path[currLength] = dest;
+			currLength--;
 
+			index = temp[dest];
+			
+			while (currLength) 
+			{
+				path[currLength] = index;
+				index = temp[index];
+				currLength--;
+			}
+			return path;
+		}
+	}
+	
 	return NULL;
 }
 

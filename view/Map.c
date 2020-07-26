@@ -337,24 +337,23 @@ void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Playe
 	}
 }
 
-PlaceId *getConnection(Map map, PlaceId src, Player hunter, Round round, int *numReturnedLocs)
+PlaceId *getConnection(Map map, PlaceId src, int *numReturnedLocs)
 {
-	// TODO: 
-	PlaceId *edges = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
-	for (int i = 0; NUM_REAL_PLACES; i++) 
-	{
-		edges[i] = -1;
+	assert(map != NULL);
+	PlaceId *neighbours = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
+	for (PlaceId i = 0; i < MAX_REAL_PLACE; i++) neighbours[i] = -1;
+	
+	int i =0;
+	int numLocs = 0;
+
+	ConnList neighbourList = MapGetConnections(map, src);
+	
+	for (ConnList curr = neighbourList; curr != NULL; curr = curr->next) {
+		neighbours[i] = curr->p;
+		//printf("%d ", neighbours[i]);
+		numLocs++;
 	}
-
-	PlaceId dest = 0;
-	Queue locationQ = newQueue();
-	QueueJoin(locationQ, src);
-	for (dest = 0; dest < map->nV; dest++) 
-	{
-		QueueJoin(locationQ, dest);
-
-	}
-
-	//*numReturnedLocs = create another function to get this
-	return edges;
+	
+	*numReturnedLocs = numLocs;
+	return neighbours;
 }
