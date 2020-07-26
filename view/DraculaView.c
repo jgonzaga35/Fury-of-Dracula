@@ -24,6 +24,8 @@ struct draculaView {
 	Round numTurn;
 };
 
+static int isAdjacent (GameView gv, PlaceId src, PlaceId dest);
+
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
@@ -144,6 +146,9 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 		canHide = false;
 	}
 	
+	int pastNum = 0;
+	PlaceId *pastLocs = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, &pastNum, &canFree);
+
 	// Add valid HIDE or DOUBLE BACK moves to validMoves array.
 	// Start filling in validLocs array from last index.
 	int length = 0;
@@ -161,25 +166,35 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 			canDoubleBack[0] = false;
 			length++;
 		} 
+		// Location must be adjacent to current location 
+		// for valid DOUBLE_BACK move.
 		else if (canDoubleBack[1]) {
-			validLocs[i] = DOUBLE_BACK_2;
+			if (isAdjacent(dv->gv, pastLocs[0], pastLocs[1])) {
+				validLocs[i] = DOUBLE_BACK_2;
+				length++;
+			}
 			canDoubleBack[1] = false;
-			length++;
 		} 
 		else if (canDoubleBack[2]) {
-			validLocs[i] = DOUBLE_BACK_3;
+			if (isAdjacent(dv->gv, pastLocs[0], pastLocs[2])) {
+				validLocs[i] = DOUBLE_BACK_3;
+				length++;
+			}
 			canDoubleBack[2] = false;
-			length++;
 		} 
 		else if (canDoubleBack[3]) {
-			validLocs[i] = DOUBLE_BACK_4;
+			if (isAdjacent(dv->gv, pastLocs[0], pastLocs[3])) {
+				validLocs[i] = DOUBLE_BACK_4;
+				length++;
+			}
 			canDoubleBack[3] = false;
-			length++;
 		} 
 		else if (canDoubleBack[4]) {
-			validLocs[i] == DOUBLE_BACK_5;
+			if (isAdjacent(dv->gv, pastLocs[0], pastLocs[4])) {
+				validLocs[i] == DOUBLE_BACK_5;
+				length++;
+			}
 			canDoubleBack[4] = false;
-			length++;
 		} 
 	}
 
@@ -325,4 +340,17 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
+static int isAdjacent (GameView gv, PlaceId src, PlaceId dest) {
+	int numReturnedLocs = 0;
+	int numTurn = GvGetRound(gv);
+	PlaceId *adjacentLocs = GvGetReachableByType(gv, PLAYER_DRACULA, numTurn, src, true, false, true, &numReturnedLocs);
+	bool adjacent = false;
+	for (int i = 0; i < numReturnedLocs; i++) {
+		if (adjacentLocs[i] == dest) 
+			adjacent = true;
+	}
+
+	free(adjacentLocs);
+	return adjacent;
+}
 
