@@ -193,16 +193,15 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
 	PlaceId *validLocs = DvGetValidMoves(dv, numReturnedLocs);
+	if (validLocs == NULL) {
+		*numReturnedLocs = 0;
+		return NULL;
+	}
 
 	int numNum = 0;
 	bool canFree = true;
 	PlaceId *pastMoves = GvGetMoveHistory(dv->gv, PLAYER_DRACULA, &numNum, &canFree);
 	PlaceId *pastLocs = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, &numNum, &canFree);
-
-	if (validLocs == NULL) {
-		*numReturnedLocs = 0;
-		return NULL;
-	}
 
 	canFree = true;
 	for (int i = 0; i < *numReturnedLocs; i++) {
