@@ -138,6 +138,11 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	}
 	// Adjust for removed locations.
 	numReturnedLocs -= removedLocs;
+
+	// Dracula cannot HIDE if he is at sea.
+	if (placeIsSea(from)) {
+		canHide = false;
+	}
 	
 	// Add valid HIDE or DOUBLE BACK moves to validMoves array.
 	// Start filling in validLocs array from last index.

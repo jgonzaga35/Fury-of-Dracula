@@ -140,6 +140,35 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 	
+		printf("Test for DvGetValidMoves - trying to HIDE at SEA\n");
+		
+		char *trail =
+			"GGE.... SGE.... HGE.... MGE.... DBI.V.. "
+			"GGE.... SGE.... HGE.... MGE.... DNPT... "
+			"GGE.... SGE.... HGE.... MGE.... DROT... "
+			"GGE.... SGE.... HGE.... MGE.... DD1T... "
+			"GGE.... SGE.... HGE.... MGE.... DTST... ";
+			"GGE.... SGE.... HGE.... MGE....";
+		
+		Message messages[9] = {};
+		DraculaView dv = DvNew(trail, messages);
+		
+		int numMoves = -1;
+		PlaceId *moves = DvGetValidMoves(dv, &numMoves);
+		assert(numMoves == 4);
+		sortPlaces(moves, numMoves);
+		assert(moves[0] == CAGLIARI);
+		assert(moves[1] == GENOA);
+		assert(moves[2] == IONIAN_SEA);
+		assert(moves[3] == MEDITERRANEAN_SEA);
+		free(moves);
+		
+		printf("Test passed!\n");
+		DvFree(dv);
+	}
+
+	{///////////////////////////////////////////////////////////////////
+	
 		printf("Test for DvWhereCanIGo 1\n");
 		
 		char *trail =
