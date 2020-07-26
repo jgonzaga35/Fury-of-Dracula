@@ -343,14 +343,13 @@ PlaceId *getConnection(Map map, PlaceId src, int *numReturnedLocs)
 	PlaceId *neighbours = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
 	for (PlaceId i = 0; i < MAX_REAL_PLACE; i++) neighbours[i] = -1;
 	
-	int i =0;
 	int numLocs = 0;
 
 	ConnList neighbourList = MapGetConnections(map, src);
 	
 	for (ConnList curr = neighbourList; curr != NULL; curr = curr->next) {
-		neighbours[i] = curr->p;
-		//printf("%d ", neighbours[i]);
+		neighbours[numLocs] = curr->p;
+		// printf("%d ", neighbours[numLocs]);
 		numLocs++;
 	}
 	
