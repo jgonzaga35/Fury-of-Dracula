@@ -231,7 +231,7 @@ static int EdgeDistLen(PlaceId *visited, PlaceId src, PlaceId dest) {
 }
 
 // returns the distance in terms of edge length from src to all edges of "type"
-int bfsPathDist(Map m, PlaceId *visited, PlaceId from, 
+void bfsPath(Map m, PlaceId *visited, PlaceId from, 
 				bool road, bool rail, bool boat, Player p) 
 {
 	assert(m != NULL);
@@ -289,10 +289,9 @@ void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Playe
 	}
 }
 
-void getRailCNC(ConnList CNC, PlaceId from,PlaceId *allowableCNC, int *numReturnedLocs, Round round, 
+void getRailCNC(ConnList CNC, PlaceId from, PlaceId *allowableCNC, int *numReturnedLocs, Round round, 
 				Player player, Map m)
 	{
-
 	if (player == PLAYER_DRACULA) return; // Dracula not allowed to travel by rail
 	if (CNC == NULL) return;
 	ConnList curr = CNC;
@@ -300,12 +299,11 @@ void getRailCNC(ConnList CNC, PlaceId from,PlaceId *allowableCNC, int *numReturn
 	// initalise visited array
 	PlaceId *visited = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
 	for (PlaceId i = 0; i < MAX_REAL_PLACE; i += 1) visited[i] = -1;
-	bfsPathDist(m, visited, from, false, true, false, player); // type rail path array
+	bfsPath(m, visited, from, false, true, false, player); // type rail path array
 
 	int sum = (round + player) % 4; // max allowable station distances
-
 	if (sum == 0) return; // cannot move from rail at all
-
+	
 	for (int i = 0; i < m->nV; i++) {
 		for (ConnList curr = m->connections[i]; curr != NULL; curr = curr->next) {
 			if (curr->type == RAIL) {
@@ -337,4 +335,24 @@ void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Playe
 		}
 		curr = curr->next;
 	}
+}
+
+PlaceId *getConnection(Map map, PlaceId src, int *numReturnedLocs)
+{
+	assert(map != NULL);
+	PlaceId *neighbours = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
+	for (PlaceId i = 0; i < MAX_REAL_PLACE; i++) neighbours[i] = -1;
+	
+	int numLocs = 0;
+
+	ConnList neighbourList = MapGetConnections(map, src);
+	
+	for (ConnList curr = neighbourList; curr != NULL; curr = curr->next) {
+		neighbours[numLocs] = curr->p;
+		// printf("%d ", neighbours[numLocs]);
+		numLocs++;
+	}
+	
+	*numReturnedLocs = numLocs;
+	return neighbours;
 }

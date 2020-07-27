@@ -61,7 +61,7 @@ void printConnList(ConnList L);
 // Player argument to satisfy conditions that Dracula
 // cannot move to the hospital
 // If no condition needed for argument Player enter -1
-int bfsPathDist(Map m, PlaceId *visited, PlaceId from, bool road, bool rail, bool boat, Player p);
+void bfsPath(Map m, PlaceId *visited, PlaceId from, bool road, bool rail, bool boat, Player p);
 
 /** From list of connections (provided by MapGetconnections function),
  * scan through linked list, simultaneously adding
@@ -70,5 +70,8 @@ int bfsPathDist(Map m, PlaceId *visited, PlaceId from, bool road, bool rail, boo
 void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p);
 void getRailCNC(ConnList CNC, PlaceId from, PlaceId *allowableCNC, int *numReturnedLocs, Round round, Player player, Map m);
 void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p);
+
+// returns array of neighbouring PlaceIds
+PlaceId *getConnection(Map map, PlaceId src, int *numReturnedLocs);
 
 #endif // !defined(FOD__MAP_H_)

@@ -130,6 +130,7 @@ void GvFree(GameView gv)
 
 Round GvGetRound(GameView gv)
 {
+
 	return gv->numTurn / TURNS_PER_ROUND;
 }
 
@@ -295,56 +296,6 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player,
 		else if (location == HIDE) pastLocs[i] = traceHideByIndex(pastMoves, i);
 		else if (isDoubleBack(location)) pastLocs[i] = traceDoubleBackByIndex(pastMoves, i);
 		else pastLocs[i] = location;
-		// if (pastMoves[i] == HIDE) {
-		// 	pastLocs[i] = pastMoves[i - 1];
-		// 	if (isDoubleBack(pastLocs[i]))
-		// 	{
-		// 		int backIndex = pastLocs[i] - 102;
-		// 		pastLocs[i] = pastMoves[i - 1 - backIndex];
-		// 	}
-		// 	// while (pastLocs[i] >= HIDE && pastLocs[i] <= DOUBLE_BACK_5) {
-		// 	// 	if (pastLocs[i] == DOUBLE_BACK_1) {
-		// 	// 		pastLocs[i] = pastMoves[i - 2];
-		// 	// 	}
-		// 	// 	else if (pastLocs[i] == DOUBLE_BACK_2) {
-		// 	// 		pastLocs[i] = pastLocs[i - 3];
-		// 	// 	}
-		// 	// 	else if (pastLocs[i] == DOUBLE_BACK_3) {
-		// 	// 		pastLocs[i] = pastMoves[i - 4];
-		// 	// 	}
-		// 	// 	else if (pastLocs[i] == DOUBLE_BACK_4) {
-		// 	// 		pastLocs[i] = pastMoves[i - 5];
-		// 	// 	}
-		// 	// 	else if (pastLocs[i] == DOUBLE_BACK_5) {
-		// 	// 		pastLocs[i] = pastMoves[i - 6];
-		// 	// 	}
-		// 	// }
-		// } 
-		// else if (isDoubleBack(pastLocs[i]))
-		// 	{
-		// 		int backIndex = pastLocs[i] - 102;
-		// 		pastLocs[i] = pastMoves[i - backIndex];
-		// 	}
-		// // else if (pastMoves[i] == DOUBLE_BACK_1) {
-		// // 	pastLocs[i] = pastMoves[i - 1];
-		// // }
-		// // else if (pastMoves[i] == DOUBLE_BACK_2) {
-		// // 	pastLocs[i] = pastMoves[i - 2];
-		// // }
-		// // else if (pastMoves[i] == DOUBLE_BACK_3) {
-		// // 	pastLocs[i] = pastMoves[i - 3];
-		// // }
-		// // else if (pastMoves[i] == DOUBLE_BACK_4) {
-		// // 	pastLocs[i] = pastMoves[i - 4];
-		// // }
-		// // else if (pastMoves[i] == DOUBLE_BACK_5) {
-		// // 	pastLocs[i] = pastMoves[i - 5];
-		// // }
-		// else if (pastMoves[i] == TELEPORT) {
-		// 	pastLocs[i] = CASTLE_DRACULA;
-		// } else {
-		// 	pastLocs[i] = pastMoves[i];
-		// }
 		i++;
 	}
 
@@ -419,9 +370,11 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 
 	// add specific types of connections
 	if (road) getRoadCNC(CNC, allowableCNC, numReturnedLocs, player);
-	if (rail && player != PLAYER_DRACULA) // Dracula cannot move by rail
+	if (rail && player != PLAYER_DRACULA) {// Dracula cannot move by rail
 		getRailCNC(CNC, from, allowableCNC, numReturnedLocs, round, player, gv->map);
+	}
 	if (boat) getBoatCNC(CNC, allowableCNC, numReturnedLocs, player);
+
 	return allowableCNC;
 }
 
@@ -454,6 +407,11 @@ PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i)
 	if (pastMoves[i - backIndex] == TELEPORT) return CASTLE_DRACULA;
 	if (pastMoves[i - backIndex] == HIDE) return pastMoves[i - backIndex - 1]; 
 	return pastMoves[i - backIndex];
+}
+
+PlaceId *getNeighbours(GameView gv, PlaceId src, int *numReturnedLocs) 
+{
+	return getConnection(gv->map, src, numReturnedLocs);
 }
 // Helper functions
 
