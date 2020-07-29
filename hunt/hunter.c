@@ -49,7 +49,7 @@ void decideHunterMove(HunterView hv)
 	} 
 	// for all other rounds
 		PlaceId HunterLoc, DraculaLoc, VampireLoc;
-		Round round = HvGetRound(hv);
+		Round currRound = HvGetRound(hv);
 		Player currHunter = HvGetPlayer(hv);
 		char *play; // move to make -- this is sent to register best play
 		Mesage message; // message -- this is sent to register best play
@@ -81,20 +81,31 @@ void decideHunterMove(HunterView hv)
 
 		if(DraculaLoc != NOWHERE && LastDracRoundSeen != -1) { 
 			// Dracula's last real location is known
-			
+			int diff = currRound - LastDracRoundSeen; // how many rounds ago
+
 			// Depending on how far away the hunter is from Dracula,
 			// take different cases.
-			int pathLength = -1;
-			PlaceId *path = HvGetShortestPathTo(hv, currHunter, DraculaLoc, &pathLength);
-			// NOTE:: call to above function is expensive
-			 
-
+			switch(diff) {
+				case 0:
+					break;
+				case 1 <= diff && diff <= 5:
+					int pathLength = -1;
+					PlaceId *path = HvGetShortestPathTo(hv, currHunter, 
+														DraculaLoc, &pathLength);
+					// NOTE:: call to above function is very expensive and should be placed
+					// near the end i.e. enough time + last resort
+					registerBestPlay(path[pathLength - 1], "Moving Towards Drac");
+					break;
+				default:
+					// Dracula was seen a pretty long time ago
+					break;
+			}
 		} else {
-			// If Dracula's location not know, perform collab research
+			// If Dracula's location not known, perform collab research
 			// This allows us to know the 6th move in Dracula's trail immediately
 			// Note:: If the move was a HIDE/DOUBLE_BACK move, then the move that
 			// the HIDE/DOUBLE_BACK refers to will be revealed (and so on
-			// until LOCATIO is revealed)
+			// until LOCATION is revealed)
 			// Therefore, it might not exactly be the 6th last move
 			registerBestPlay(HunterLoc, "Research"); // sends currLocofHunter back
 		}
