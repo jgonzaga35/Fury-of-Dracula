@@ -18,7 +18,7 @@ void decideHunterMove(HunterView hv)
 	Round round = HvGetRound(hv);
 	Player name = HvGetPlayer(hv); // Which hunter?
 
-	if(round == 0) { // FIRST ROUND
+	if (round == 0) { // FIRST ROUND
 		char *location;
 		// Depending on the hunter, move to a predetermined location
 		// Best stratergy is to choose locations away from other hunters
