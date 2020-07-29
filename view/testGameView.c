@@ -517,6 +517,7 @@ int main(void)
 		}
 
 		{ // Large number of connections for hunters
+		// Own Test
 			printf("\tChecking Atlantic Ocean boat connections (Hunters)\n");
 			int numLocs = -1;
 			PlaceId *locs = GvGetReachableByType(gv, PLAYER_VAN_HELSING ,
@@ -538,6 +539,7 @@ int main(void)
 		}
 
 		{ // Large number of connections for Dracula
+		// Own Test
 			printf("\tChecking Atlantic Ocean boat connections (Dracula)\n");
 			int numLocs = -1;
 			PlaceId *locs = GvGetReachableByType(gv, PLAYER_DRACULA,
@@ -563,6 +565,7 @@ int main(void)
 		// =====================================================================
 		// Checking type of hunter doesn't affect travel connections
 		{
+		// Own Test
 			printf("\tChecking Ionian Sea boat connections vs hunter type "
 			       "(Lord Godalming, Round 1)\n");
 			
@@ -584,6 +587,7 @@ int main(void)
 		}
 
 		{
+		// Own Test
 			printf("\tChecking Ionian Sea boat connections vs hunter type "
 			       "(Dr Seward, Round 1)\n");
 			
@@ -605,6 +609,7 @@ int main(void)
 		}
 
 		{
+		// Own Test
 			printf("\tChecking Ionian Sea boat connections vs hunter type "
 			       "(Van Helsing Godalming, Round 1)\n");
 			
@@ -626,6 +631,7 @@ int main(void)
 		}
 
 		{
+		// Own Test
 			printf("\tChecking Ionian Sea boat connections vs hunter type "
 			       "(Mina Harker, Round 1)\n");
 			
@@ -650,6 +656,7 @@ int main(void)
 		// =====================================================================
 
 		{ // Checking connections which are not present
+		// Own Test
 			printf("\tChecking Atlantic Ocean boat connections\n");
 			int numLocs = -1;
 			PlaceId *locs = GvGetReachableByType(gv, PLAYER_LORD_GODALMING,
@@ -662,6 +669,7 @@ int main(void)
 		}
 
 		{ // Checking connections where Dracula cannot travel
+		// Own Test
 			printf("\tChecking SJSM Hospital road connection from Szeged "
 					"(Dracula, Round 1)\n");
 			int numLocs = -1;
@@ -679,6 +687,7 @@ int main(void)
 		}
 
 		{ // Checking connections where Dracula cannot travel from adj city
+		// Own Test
 			printf("\tChecking SJSM Hospital road connection from Sarajevo "
 					"(Dracula, Round 1)\n");
 			int numLocs = -1;
@@ -696,6 +705,7 @@ int main(void)
 		}
 		
 		{ // Checking rail connections where Dracula cannot travel by rail
+		// Own Test
 			printf("\tChecking Rail restriction from Frankfurt "
 					"(Dracula, Round 1)\n");
 			int numLocs = -1;
@@ -712,6 +722,7 @@ int main(void)
 		// =====================================================================
 		// Checking round number doesn't affect connections
 		{
+		// Own Test
 			printf("\tChecking Galatz road connections vs round number "
 			       "(Lord Godalming, Round 1)\n");
 			int numLocs = -1;
@@ -730,6 +741,7 @@ int main(void)
 		}
 
 		{
+		// Own Test
 			printf("\tChecking Galatz road connections vs round number "
 			       "(Lord Godalming, Round 2)\n");
 			int numLocs = -1;
@@ -748,6 +760,7 @@ int main(void)
 		}
 
 		{
+		// Own Test
 			printf("\tChecking Galatz road connections vs round number "
 			       "(Lord Godalming, Round 3)\n");
 			int numLocs = -1;
@@ -766,6 +779,7 @@ int main(void)
 		}
 
 		{
+		// Own Test
 			printf("\tChecking Galatz road connections vs round number "
 			       "(Lord Godalming, Round 4)\n");
 			int numLocs = -1;
@@ -784,6 +798,7 @@ int main(void)
 		}
 
 		{
+		// Own Test
 			printf("\tChecking Galatz road connections vs round number "
 			       "(Lord Godalming, Round 5)\n");
 			int numLocs = -1;
@@ -806,6 +821,7 @@ int main(void)
 
 		// Checking no connections returns empty
 		{
+		// Own Test
 			printf("\tChecking Munich with no connection types\n");
 			int numLocs = -1;
 			PlaceId *locs = GvGetReachableByType(gv, PLAYER_LORD_GODALMING,
