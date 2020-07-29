@@ -324,11 +324,15 @@ void getRailCNC(ConnList CNC, PlaceId from, PlaceId *allowableCNC, int *numRetur
 void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p) {
 	if (CNC == NULL) return;
 	ConnList curr = CNC;
+
 	for (int i = *numReturnedLocs; curr != NULL && i != MAX_REAL_PLACE; i += 1) {
 		// start adding ONLY boat CNC from numReturnedLocs position in array
 		if (curr->type == BOAT) {
-			if (p == PLAYER_DRACULA && curr->p == ST_JOSEPH_AND_ST_MARY) continue;
-			if (Dup(allowableCNC, curr->p, numReturnedLocs)) 
+			if (curr->p == ST_JOSEPH_AND_ST_MARY && p == PLAYER_DRACULA) {
+				curr = curr->next;
+				continue; // Dracula cannot visit hospital
+			}
+			if (Dup(allowableCNC, curr->p, numReturnedLocs))
 				continue; // do not add if already present in array
 			allowableCNC[*numReturnedLocs] = curr->p;
 			*numReturnedLocs += 1;
