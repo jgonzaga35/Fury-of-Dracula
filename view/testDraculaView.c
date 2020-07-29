@@ -53,7 +53,9 @@ int main(void)
 		assert(numTraps == 0);
 		free(traps);
 
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -80,7 +82,9 @@ int main(void)
 		assert(DvGetPlayerLocation(dv, PLAYER_DRACULA) == GENEVA);
 		assert(DvGetVampireLocation(dv) == NOWHERE);
 
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -109,7 +113,9 @@ int main(void)
 		assert(traps[2] == MANCHESTER);
 		free(traps);
 		
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -134,7 +140,9 @@ int main(void)
 		assert(moves[3] == DOUBLE_BACK_1);
 		free(moves);
 		
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -163,7 +171,9 @@ int main(void)
 		assert(moves[3] == MEDITERRANEAN_SEA);
 		free(moves);
 		
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -188,7 +198,9 @@ int main(void)
 		assert(moves[2] == KLAUSENBURG);
 		free(moves);
 		
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -223,7 +235,9 @@ int main(void)
 		assert(moves[6] == DOUBLE_BACK_5);
 		free(moves);
 		
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -256,8 +270,9 @@ int main(void)
 		assert(moves[4] == DOUBLE_BACK_3);
 		assert(moves[5] == DOUBLE_BACK_4);
 		free(moves);
-		
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -288,7 +303,9 @@ int main(void)
 		assert(moves[2] == HIDE);
 		free(moves);
 		
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -323,7 +340,9 @@ int main(void)
 
 		free(locs);
 		
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -349,7 +368,9 @@ int main(void)
 		assert(locs == NULL);
 		free(locs);
 		
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -379,7 +400,9 @@ int main(void)
 		assert(numLocs == 0);
 		free(locs);
 
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -407,7 +430,9 @@ int main(void)
 		assert(locs[0] == TYRRHENIAN_SEA);
 		free(locs);
 		
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -435,7 +460,9 @@ int main(void)
 		assert(locs[0] == FLORENCE);
 		free(locs);
 		
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -464,7 +491,9 @@ int main(void)
 		assert(locs[1] == TYRRHENIAN_SEA);
 		free(locs);
 		
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -494,7 +523,9 @@ int main(void)
 		assert(locs[5] == ZURICH);
 		free(locs);
 		
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 
@@ -522,7 +553,9 @@ int main(void)
 		assert(locs[0] == GENEVA);
 		free(locs);
 		
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 		DvFree(dv);
 	}
 

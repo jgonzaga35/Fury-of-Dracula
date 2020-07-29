@@ -42,7 +42,9 @@ int main(void)
 		assert(GvGetVampireLocation(gv) == NOWHERE);
 
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 	
 	{///////////////////////////////////////////////////////////////////
@@ -62,7 +64,9 @@ int main(void)
 		assert(GvGetPlayerLocation(gv, PLAYER_DR_SEWARD) == NOWHERE);
 
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 	
 	{///////////////////////////////////////////////////////////////////
@@ -85,7 +89,9 @@ int main(void)
 		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == NOWHERE);
 
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 
 	{///////////////////////////////////////////////////////////////////
@@ -114,7 +120,9 @@ int main(void)
 		assert(GvGetVampireLocation(gv) == CITY_UNKNOWN);
 
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 
 	{///////////////////////////////////////////////////////////////////
@@ -168,7 +176,9 @@ int main(void)
 		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == SEA_UNKNOWN);
 
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 
 
@@ -196,7 +206,9 @@ int main(void)
 		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == ENGLISH_CHANNEL);
 
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 	
 	{///////////////////////////////////////////////////////////////////
@@ -213,7 +225,9 @@ int main(void)
 		assert(GvGetHealth(gv, PLAYER_LORD_GODALMING) == GAME_START_HUNTER_LIFE_POINTS);
 		
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 	
 	{///////////////////////////////////////////////////////////////////
@@ -238,7 +252,9 @@ int main(void)
 		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == STRASBOURG);
 		
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 	
 	{///////////////////////////////////////////////////////////////////
@@ -257,7 +273,9 @@ int main(void)
 		assert(GvGetPlayerLocation(gv, PLAYER_DRACULA) == CASTLE_DRACULA);
 		
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 	
 	{///////////////////////////////////////////////////////////////////
@@ -283,7 +301,9 @@ int main(void)
 		free(traps);
 		
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 	
 	{///////////////////////////////////////////////////////////////////
@@ -312,7 +332,9 @@ int main(void)
 		free(traps);
 		
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 	
 	{///////////////////////////////////////////////////////////////////
@@ -350,7 +372,9 @@ int main(void)
 		free(traps);
 		
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 
 	{///////////////////////////////////////////////////////////////////
@@ -381,7 +405,9 @@ int main(void)
 		free(traps);
 		
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 
 	{///////////////////////////////////////////////////////////////////
@@ -412,7 +438,9 @@ int main(void)
 		free(traps);
 		
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 
 	{///////////////////////////////////////////////////////////////////
@@ -432,7 +460,9 @@ int main(void)
 				+ LIFE_GAIN_REST);
 		
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 
 	{///////////////////////////////////////////////////////////////////
@@ -458,7 +488,9 @@ int main(void)
 		assert(GvGetVampireLocation(gv) == NOWHERE);
 		
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 	
 	{///////////////////////////////////////////////////////////////////
@@ -528,7 +560,9 @@ int main(void)
 		}
 		
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 
 	{///////////////////////////////////////////////////////////////////
@@ -657,7 +691,9 @@ int main(void)
 		}
 
 		GvFree(gv);
+		printf("\033[1;32m");
 		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 
 	return EXIT_SUCCESS;
