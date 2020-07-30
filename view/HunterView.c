@@ -135,7 +135,6 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
-	// TODO: Use standard BFS + A find neighbouring function (Make this in Map.c)
 	printf("DESTINATION: %d\n", dest);
 	PlaceId visited[MAX_REAL_PLACE];
 	PlaceId currLocation;
@@ -152,13 +151,18 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	visited[src] = src;
 	int numLocations = 0;
 	Round currRound = HvGetRound(hv);
-
+	printf("ROUND1: %d\n", currRound);
+	
+	// TODO: fix incrementing of currRound
 	while (!QueueIsEmpty(locationQ)) 
 	{
-		currLocation = QueueLeave(locationQ);
+		currLocation = QueueLeave(locationQ); 
 		int numReturnedLocs;
-		PlaceId *neighbours = getNeighbours(hv->gv, HvGetPlayer(hv), currRound++, currLocation, &numReturnedLocs);
 		
+		PlaceId *neighbours = getNeighbours(hv->gv, hunter, currRound++, 
+											currLocation, &numReturnedLocs);
+		
+		printf ("Current Round: %d\n", currRound);
 		if (currLocation == dest)
 		{
 			int length = 0; 
@@ -170,7 +174,6 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 				currLocation = visited[currLocation];
 			}
 			
-			// store locations in path array
 			int index = length - 1;
 			for(int k = 0; k < length; k++) {
 				path[k] = temp[index];
@@ -178,7 +181,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 			}
 			printf("PATH: \n");
 			for(int m = 0; m < length; m++) 
-				{printf("%d\n", path[m]);}
+				{printf("%s\n", placeIdToName(path[m]));}
 
 			*pathLength = length;
 			printf("PATHLENGTH: %d\n", *pathLength);
@@ -191,6 +194,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 				if (visited[neighbours[j]] == -1)
 				{	
 					visited[neighbours[j]] = currLocation;
+					printf("CURRLOC: %s\n", placeIdToName(currLocation));
 					numLocations++;
 					QueueJoin(locationQ, neighbours[j]);
 				}
