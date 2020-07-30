@@ -11,14 +11,15 @@
 ////////////////////////////////////////////////////////////////////////
 
 #include <assert.h>
-#include <err.h>
+//#include <err.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sysexits.h>
+//#include <sysexits.h>
 
 #include "Map.h"
 #include "Places.h"
+#include "Queue.h"
 
 struct map {
 	int nV; // number of vertices
@@ -32,6 +33,8 @@ static inline bool isSentinelEdge(Connection c);
 
 static ConnList connListInsert(ConnList l, PlaceId v, TransportType type);
 static bool connListContains(ConnList l, PlaceId v, TransportType type);
+static int Dup(PlaceId *allowableCNC, PlaceId p, int *numReturedLocs);
+static int EdgeDistLen(PlaceId *visited, PlaceId src, PlaceId dest);
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -194,3 +197,166 @@ ConnList MapGetConnections(Map m, PlaceId p)
 }
 
 ////////////////////////////////////////////////////////////////////////
+void printConnList(ConnList L) {
+	if (L == NULL) return;
+	for (ConnList curr = L; curr != NULL; curr = curr->next) {
+		printf("%d-%d-", curr->p, curr->type);
+		printf("%s ",placeIdToAbbrev(curr->p));
+	}
+	printf("\n");
+}
+
+// checks that p is not present in allowable CNC
+// returns 1 if dup, 0 if no dup
+static int Dup(PlaceId *allowableCNC, PlaceId p, int *numReturedLocs) {
+	for (PlaceId i = 0; i < *numReturedLocs; i += 1) {
+		if (p == allowableCNC[i]) return 1;
+	}
+	return 0;
+}
+
+static int EdgeDistLen(PlaceId *visited, PlaceId src, PlaceId dest) {
+	if (visited[dest] == -1) return 0; // No route found (not possible)
+	// calculate distance in terms of edge length from src to dest
+	int length = 0;
+	PlaceId j = dest;
+	while (j != src) {
+		if (j == -1) return 0;
+		j = visited[j];
+		length += 1;
+	}
+	j = visited[j];
+
+	return length;
+}
+
+// returns the distance in terms of edge length from src to all edges of "type"
+void bfsPath(Map m, PlaceId *visited, PlaceId from, 
+				bool road, bool rail, bool boat, Player p) 
+{
+	assert(m != NULL);
+	Queue q = newQueue();
+	QueueJoin(q, from);
+	visited[from] = from;
+
+	PlaceId left; // left is most recent item in q that left
+	ConnList curr; // iterator
+
+	while (!QueueIsEmpty(q)) {
+		left = QueueLeave(q);
+		for (ConnList curr = m->connections[left]; curr != NULL; curr = curr->next) { 
+			// loop through all adj nodes to "left"
+			if (left != curr->p && visited[curr->p] == -1) {
+				if (p == PLAYER_DRACULA && curr->p == ST_JOSEPH_AND_ST_MARY) continue;
+				// curr not visited, join q + visit
+				if (road && curr->type == ROAD) 
+					{visited[curr->p] = left; QueueJoin(q, curr->p);}
+				if (rail && curr->type == RAIL) 
+					{visited[curr->p] = left; QueueJoin(q, curr->p);}
+				if (boat && curr->type == SEA) 
+					{visited[curr->p] = left; QueueJoin(q, curr->p);}
+			}
+		}
+	}
+
+	dropQueue(q);
+}
+
+/** From list of connections (provided by MapGetconnections function),
+ * scan through linked list, simultaneously adding
+ * "type" connection to allowableCNC array.
+ * Update number of unique locations added to array through numReturnedLocs 
+ * Note :: 'i' is iterated over in the following for loops to stop 
+ * buffer overflow in allowableCNC array. otherwise, it serves no other
+ * purpose in the function.*/
+
+void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p) {
+	if (CNC == NULL) return;
+	ConnList curr = CNC;
+	for (int i = *numReturnedLocs; curr != NULL && i != MAX_REAL_PLACE; i += 1) {
+		// start adding ONLY road CNC from numReturnedLocs position in array
+		if (curr->type == ROAD) {
+			if (curr->p == ST_JOSEPH_AND_ST_MARY && p == PLAYER_DRACULA) {
+				curr = curr->next;
+				continue; // Dracula cannot visit hospital
+			}
+			if (Dup(allowableCNC, curr->p, numReturnedLocs)) 
+				continue; // do not add if already present in array
+			allowableCNC[*numReturnedLocs] = curr->p;
+			*numReturnedLocs += 1;
+		}
+		curr = curr->next;
+	}
+}
+
+void getRailCNC(ConnList CNC, PlaceId from, PlaceId *allowableCNC, int *numReturnedLocs, Round round, 
+				Player player, Map m)
+	{
+	if (player == PLAYER_DRACULA) return; // Dracula not allowed to travel by rail
+	if (CNC == NULL) return;
+	ConnList curr = CNC;
+
+	// initalise visited array
+	PlaceId *visited = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
+	for (PlaceId i = 0; i < MAX_REAL_PLACE; i += 1) visited[i] = -1;
+	bfsPath(m, visited, from, false, true, false, player); // type rail path array
+
+	int sum = (round + player) % 4; // max allowable station distances
+	if (sum == 0) return; // cannot move from rail at all
+	
+	for (int i = 0; i < m->nV; i++) {
+		for (ConnList curr = m->connections[i]; curr != NULL; curr = curr->next) {
+			if (curr->type == RAIL) {
+				if (Dup(allowableCNC, curr->p, numReturnedLocs)) 
+					continue; // do not add if already present in array
+				int dist = EdgeDistLen(visited, from, curr->p);
+				if (0 < dist && dist <= sum) { // add all distances less than max allowable dist
+					allowableCNC[*numReturnedLocs] = curr->p; 
+					*numReturnedLocs += 1;
+				}
+			}
+		}
+	}
+	
+	free(visited);
+}
+
+void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p) {
+	if (CNC == NULL) return;
+	ConnList curr = CNC;
+
+	for (int i = *numReturnedLocs; curr != NULL && i != MAX_REAL_PLACE; i += 1) {
+		// start adding ONLY boat CNC from numReturnedLocs position in array
+		if (curr->type == BOAT) {
+			if (curr->p == ST_JOSEPH_AND_ST_MARY && p == PLAYER_DRACULA) {
+				curr = curr->next;
+				continue; // Dracula cannot visit hospital
+			}
+			if (Dup(allowableCNC, curr->p, numReturnedLocs))
+				continue; // do not add if already present in array
+			allowableCNC[*numReturnedLocs] = curr->p;
+			*numReturnedLocs += 1;
+		}
+		curr = curr->next;
+	}
+}
+
+PlaceId *getConnection(Map map, PlaceId src, int *numReturnedLocs)
+{
+	assert(map != NULL);
+	PlaceId *neighbours = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
+	for (PlaceId i = 0; i < MAX_REAL_PLACE; i++) neighbours[i] = -1;
+	
+	int numLocs = 0;
+
+	ConnList neighbourList = MapGetConnections(map, src);
+	
+	for (ConnList curr = neighbourList; curr != NULL; curr = curr->next) {
+		neighbours[numLocs] = curr->p;
+		// printf("%d ", neighbours[numLocs]);
+		numLocs++;
+	}
+	
+	*numReturnedLocs = numLocs;
+	return neighbours;
+}

@@ -367,14 +367,13 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	// add "from" city
 	allowableCNC[0] = from;
 	*numReturnedLocs += 1;
-
+	
 	// add specific types of connections
 	if (road) getRoadCNC(CNC, allowableCNC, numReturnedLocs, player);
 	if (rail && player != PLAYER_DRACULA) {// Dracula cannot move by rail
 		getRailCNC(CNC, from, allowableCNC, numReturnedLocs, round, player, gv->map);
 	}
 	if (boat) getBoatCNC(CNC, allowableCNC, numReturnedLocs, player);
-
 	return allowableCNC;
 }
 

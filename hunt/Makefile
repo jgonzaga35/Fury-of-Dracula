@@ -6,7 +6,10 @@
 # 2020-07-10	v2.0	Team Dracula <cs2521@cse.unsw.edu.au>
 
 CC = gcc
-CFLAGS = -Wall -Werror
+
+########################################################################
+# REMOVED "CFLAGS = -Wall -Werror" AS IT STOPPED COMPILATION
+########################################################################
 
 # do not change the following line
 BINS = dracula hunter
@@ -21,8 +24,8 @@ LIBS =
 
 all: $(BINS)
 
-dracula: playerDracula.o dracula.o DraculaView.o $(OBJS) $(LIBS)
-hunter: playerHunter.o hunter.o HunterView.o $(OBJS) $(LIBS)
+dracula: playerDracula.o dracula.o DraculaView.o Map.o Queue.o $(OBJS) $(LIBS)
+hunter: playerHunter.o hunter.o HunterView.o Map.o Queue.o $(OBJS) $(LIBS)
 
 playerDracula.o: player.c dracula.h Game.h DraculaView.h GameView.h Places.h
 	$(CC) $(CFLAGS) -DI_AM_DRACULA -c $< -o $@
@@ -31,13 +34,14 @@ playerHunter.o: player.c hunter.h Game.h HunterView.h GameView.h Places.h
 
 dracula.o: dracula.c dracula.h DraculaView.h GameView.h Places.h Game.h
 hunter.o: hunter.c hunter.h HunterView.h GameView.h Places.h Game.h
-GameView.o:	GameView.c GameView.h Places.h Game.h
 DraculaView.o: DraculaView.c DraculaView.h GameView.h Places.h Game.h
 HunterView.o: HunterView.c GameView.h Places.h HunterView.h Game.h
-Map.o: Map.c Map.h Places.h
 Places.o: Places.c Places.h
 
 # if you use other ADTs, add dependencies for them here
+Map.o: Map.c Map.h Places.h Game.h Queue.h
+Item.o : Item.h Map.h
+Queue.o: Queue.c Queue.h Item.h
 
 .PHONY: clean
 clean:

@@ -41,7 +41,9 @@ int main(void)
 		assert(HvGetVampireLocation(hv) == NOWHERE);
 
 		HvFree(hv);
-		printf("Test passed\n");
+		printf("\033[1;32m");
+		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 
 	{///////////////////////////////////////////////////////////////////
@@ -144,7 +146,9 @@ int main(void)
 		assert(round == 0);
 
 		HvFree(hv);
-		printf("Test passed\n");
+		printf("\033[1;32m");
+		printf("Test passed!\n");
+		printf("\033[0m");
 	}
 
 	{///////////////////////////////////////////////////////////////////
