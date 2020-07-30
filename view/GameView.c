@@ -408,9 +408,9 @@ PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i)
 	return pastMoves[i - backIndex];
 }
 
-PlaceId *getNeighbours(GameView gv, PlaceId src, int *numReturnedLocs) 
+PlaceId *getNeighbours(GameView gv, Player player, Round round, PlaceId src, int *numReturnedLocs) 
 {
-	return getConnection(gv->map, src, numReturnedLocs);
+	return GvGetReachable(gv, player, round, src,  numReturnedLocs);
 }
 // Helper functions
 

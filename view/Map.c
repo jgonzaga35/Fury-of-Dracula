@@ -341,11 +341,11 @@ void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Playe
 	}
 }
 
-PlaceId *getConnection(Map map, PlaceId src, int *numReturnedLocs)
+/*PlaceId *getConnection(Map map, PlaceId src, int *numReturnedLocs)
 {
 	assert(map != NULL);
 	PlaceId *neighbours = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
-	for (PlaceId i = 0; i < MAX_REAL_PLACE; i++) neighbours[i] = -1;
+	for (int i = 0; i < MAX_REAL_PLACE; i++) neighbours[i] = -1;
 	
 	int numLocs = 0;
 
@@ -353,10 +353,29 @@ PlaceId *getConnection(Map map, PlaceId src, int *numReturnedLocs)
 	
 	for (ConnList curr = neighbourList; curr != NULL; curr = curr->next) 
 	{
+		// if the current city is a RAIL city, then check adjacent cities of this
+		// city to see if also RAIL city
+		// check up to 3 cities if each successive is RAIL
+		if (curr->type = RAIL) 
+		{
+
+		}
 		neighbours[numLocs] = curr->p;
 		numLocs++;
 	}
 
 	*numReturnedLocs = numLocs;
 	return neighbours;
-}
+} */
+
+/*
+static PlaceId checkIfAdjacentRail (Map map, PlaceId city)
+{
+	PlaceId *neighbours = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
+	for (int i = 0; i < MAX_REAL_PLACE; i++) neighbours[i] = -1;
+
+	int numLocs = 0;
+	ConnList neighbourList = MapGetConnections(map, city);
+
+
+}*/

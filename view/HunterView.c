@@ -157,7 +157,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	{
 		currLocation = QueueLeave(locationQ);
 		int numReturnedLocs;
-		PlaceId *neighbours = getNeighbours(hv->gv, currLocation, &numReturnedLocs);
+		PlaceId *neighbours = getNeighbours(hv->gv, HvGetPlayer(hv), currRound++, currLocation, &numReturnedLocs);
 		
 		if (currLocation == dest)
 		{

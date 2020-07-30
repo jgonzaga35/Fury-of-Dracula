@@ -72,6 +72,6 @@ void getRailCNC(ConnList CNC, PlaceId from, PlaceId *allowableCNC, int *numRetur
 void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p);
 
 // returns array of neighbouring PlaceIds
-PlaceId *getConnection(Map map, PlaceId src, int *numReturnedLocs);
+// PlaceId *getConnection(Map map, PlaceId src, int *numReturnedLocs);
 
 #endif // !defined(FOD__MAP_H_)
