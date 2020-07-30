@@ -136,67 +136,69 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
 	// TODO: Use standard BFS + A find neighbouring function (Make this in Map.c)
+	printf("DESTINATION: %d\n", dest);
 	PlaceId visited[MAX_REAL_PLACE];
-	PlaceId temp[MAX_REAL_PLACE];
-
-	for (PlaceId i = 0; i < MAX_REAL_PLACE; i++)
-	{
-		visited[i] = -1;
-		temp[i] = -1;
-	} 
-	
+	PlaceId currLocation;
+	PlaceId *path = malloc(sizeof(PlaceId *));
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
+
+	for (PlaceId i = 0; i < MAX_REAL_PLACE; i++) 
+		{visited[i] = -1;}
+	
+	printf("SOURCE: %d\n", src);
+	
 	Queue locationQ = newQueue();
 	QueueJoin(locationQ, src);
-
-	PlaceId *path = NULL;
-	PlaceId currLocation = src;
-	int currLength = 0;
+	visited[src] = src;
+	int numLocations = 0;
+	Round currRound = HvGetRound(hv);
 
 	while (!QueueIsEmpty(locationQ)) 
 	{
 		currLocation = QueueLeave(locationQ);
 		int numReturnedLocs;
-		int *locations = getNeighbours(hv->gv, currLocation, &numReturnedLocs);
-		
-		PlaceId j = 0;
-		for (j = 0; j < numReturnedLocs; j++) 
-		{
-			if (!visited[locations[j]]) 
-			{
-				QueueJoin(locationQ, locations[j]);
-				temp[locations[j]] = currLocation;
-				visited[locations[j]] = locations[j];
-			}
-		}
+		PlaceId *neighbours = getNeighbours(hv->gv, currLocation, &numReturnedLocs);
 		
 		if (currLocation == dest)
 		{
-			temp[locations[j]] = currLocation;
-			PlaceId index = locations[j];
-			while (index != src)
+			int length = 0; 
+			PlaceId temp[numLocations];
+			while (currLocation != src) 
 			{
-				index = temp[index];
-				pathLength++;
+				temp[length] = currLocation;
+				length++;
+				currLocation = visited[currLocation];
 			}
 			
-			currLength = *(pathLength - 1);
-			path[currLength] = dest;
-			currLength--;
+			// store locations in path array
+			int index = length - 1;
+			for(int k = 0; k < length; k++) {
+				path[k] = temp[index];
+				index--; 
+			}
+			printf("PATH: \n");
+			for(int m = 0; m < length; m++) 
+				{printf("%d\n", path[m]);}
 
-			index = temp[dest];
-			
-			while (currLength) 
+			*pathLength = length;
+			printf("PATHLENGTH: %d\n", *pathLength);
+			break;
+		} 
+		else 
+		{
+			for (int j = 0; j < numReturnedLocs; j++)
 			{
-				path[currLength] = index;
-				index = temp[index];
-				currLength--;
+				if (visited[neighbours[j]] == -1)
+				{	
+					visited[neighbours[j]] = currLocation;
+					numLocations++;
+					QueueJoin(locationQ, neighbours[j]);
+				}
 			}
-			return path;
 		}
-	}
+	} 
 	
-	return NULL;
+	return path;
 }
 
 ////////////////////////////////////////////////////////////////////////

@@ -347,12 +347,12 @@ PlaceId *getConnection(Map map, PlaceId src, int *numReturnedLocs)
 
 	ConnList neighbourList = MapGetConnections(map, src);
 	
-	for (ConnList curr = neighbourList; curr != NULL; curr = curr->next) {
+	for (ConnList curr = neighbourList; curr != NULL; curr = curr->next) 
+	{
 		neighbours[numLocs] = curr->p;
-		// printf("%d ", neighbours[numLocs]);
 		numLocs++;
 	}
-	
+
 	*numReturnedLocs = numLocs;
 	return neighbours;
 }
