@@ -309,7 +309,7 @@ int main(void)
 		printf("\033[0m");
 	}
 	
-	/*{///////////////////////////////////////////////////////////////////
+	{///////////////////////////////////////////////////////////////////
 		
 		printf("Testing shortest path 1\n");
 		
@@ -387,7 +387,7 @@ int main(void)
 		printf("\033[1;32m");
 		printf("Test passed!\n");
 		printf("\033[0m");
-	}*/
+	}
 	
 	{///////////////////////////////////////////////////////////////////
 	
@@ -607,6 +607,95 @@ int main(void)
 		assert(locs[1] == MILAN);
 		assert(locs[2] == GENOA);
 		assert(locs[3] == FLORENCE);
+		free(locs);
+		
+		printf("\033[1;32m");
+		printf("Test passed!\n");
+		printf("\033[0m");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+		// own test
+		printf("Test for HvWhereCanIGoByType via rail and boat from Genoa\n");
+		
+		char *trail =
+			"GGO.... SGE.... HGE.... MGE.... DBI.V.. ";
+		
+		Message messages[24] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = 0;
+		bool road = false;
+		bool rail = true;
+		bool boat = true;
+		PlaceId *locs = HvWhereCanIGoByType(hv, road, rail, boat, &numLocs);
+
+		assert(numLocs == 5);
+		assert(locs[0] == GENOA);
+		assert(locs[1] == MILAN);
+		assert(locs[2] == GENEVA);
+		assert(locs[3] == FLORENCE);
+		assert(locs[4] == TYRRHENIAN_SEA);
+		free(locs);
+		
+		printf("\033[1;32m");
+		printf("Test passed!\n");
+		printf("\033[0m");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+		// own test
+		printf("Test for HvWhereCanIGoByType via rail and road from Frankfurt\n");
+		
+		char *trail =
+			"GFR.... SGE.... HGE.... MGE.... DBI.V.. ";
+		
+		Message messages[24] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = 0;
+		bool road = false;
+		bool rail = true;
+		bool boat = false;
+		PlaceId *locs = HvWhereCanIGoByType(hv, road, rail, boat, &numLocs);
+		
+		assert(numLocs == 7);
+		assert(locs[0] == FRANKFURT);
+		assert(locs[1] == LEIPZIG);
+		assert(locs[2] == COLOGNE);
+		assert(locs[3] == BRUSSELS);
+		assert(locs[4] == STRASBOURG);
+		assert(locs[5] == BERLIN);
+		assert(locs[6] == NUREMBURG);
+		free(locs);
+		
+		printf("\033[1;32m");
+		printf("Test passed!\n");
+		printf("\033[0m");
+	}
+
+	{///////////////////////////////////////////////////////////////////
+		// own test
+		printf("Test for HvWhereCanIGoByType via road and boat from Barcelona\n");
+		
+		char *trail =
+			"GBA.... SGE.... HGE.... MGE.... DBI.V.. ";
+		
+		Message messages[24] = {};
+		HunterView hv = HvNew(trail, messages);
+		
+		int numLocs = 0;
+		bool road = false;
+		bool rail = true;
+		bool boat = false;
+		PlaceId *locs = HvWhereCanIGoByType(hv, road, rail, boat, &numLocs);
+
+		assert(numLocs == 5);
+		assert(locs[0] == BARCELONA);
+		assert(locs[1] == MADRID);
+		assert(locs[2] == SARAGOSSA);
+		assert(locs[3] == ALICANTE);
+		assert(locs[4] == BORDEAUX);
 		free(locs);
 		
 		printf("\033[1;32m");
