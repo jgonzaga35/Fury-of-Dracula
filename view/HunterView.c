@@ -137,8 +137,8 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 {
 	printf("DESTINATION: %d\n", dest);
 	PlaceId visited[MAX_REAL_PLACE];
-	PlaceId currLocation;
 	PlaceId *path = malloc(sizeof(PlaceId *));
+	PlaceId currLocation;
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 
 	for (PlaceId i = 0; i < MAX_REAL_PLACE; i++) 
@@ -152,17 +152,19 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	int numLocations = 0;
 	Round currRound = HvGetRound(hv);
 	printf("ROUND1: %d\n", currRound);
+	int roundArray[70];
+	for (int k = 0; k < 71; k++) 
+		{roundArray[k] = 0;}
+	roundArray[src] = 1;
 	
-	// TODO: fix incrementing of currRound
 	while (!QueueIsEmpty(locationQ)) 
 	{
 		currLocation = QueueLeave(locationQ); 
 		int numReturnedLocs;
 		
-		PlaceId *neighbours = getNeighbours(hv->gv, hunter, currRound++, 
+		PlaceId *neighbours = getNeighbours(hv->gv, hunter, roundArray[currLocation], 
 											currLocation, &numReturnedLocs);
 		
-		printf ("Current Round: %d\n", currRound);
 		if (currLocation == dest)
 		{
 			int length = 0; 
@@ -194,14 +196,18 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 				if (visited[neighbours[j]] == -1)
 				{	
 					visited[neighbours[j]] = currLocation;
-					printf("CURRLOC: %s\n", placeIdToName(currLocation));
 					numLocations++;
 					QueueJoin(locationQ, neighbours[j]);
+					roundArray[neighbours[j]] = roundArray[currLocation]++;
+					printf("CURR neigh: %s\n", placeIdToName(neighbours[j]));
 				}
 			}
 		}
-	} 
-	
+
+		printf("CURRLOC: %s ||| ROUNDNUM: %d\n", placeIdToName(currLocation), roundArray[currLocation]);
+
+	} 	
+
 	return path;
 }
 
