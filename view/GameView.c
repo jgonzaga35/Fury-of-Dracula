@@ -582,10 +582,13 @@ static void performHunterAction(GameView gv, Player player, char cmd[4], PlaceId
 }
 
 // Check if the hunter performed rest
-static void haveRest(GameView gv, Player player) {
-	if (gv->trails[player][CURR_PLACE + 1] == gv->trails[player][CURR_PLACE]) {
+static void haveRest(GameView gv, Player player) 
+{
+	if (gv->trails[player][CURR_PLACE + 1] == gv->trails[player][CURR_PLACE]) 
+	{
 		gv->health[player] += LIFE_GAIN_REST;
-		if (gv->health[player] >= GAME_START_HUNTER_LIFE_POINTS) gv->health[player] = GAME_START_HUNTER_LIFE_POINTS;
+		if (gv->health[player] >= GAME_START_HUNTER_LIFE_POINTS) 
+			gv->health[player] = GAME_START_HUNTER_LIFE_POINTS;
 	}
 }
 
@@ -600,12 +603,12 @@ static void addTrap(GameView gv, PlaceId location)
 static void removeTrap(GameView gv, PlaceId location)
 {	
 	int i;
-	for (i = 0; i < TRAIL_SIZE; i++) {
+	for (i = 0; i < TRAIL_SIZE; i++) 
+	{
 		if (gv->trapLocations[i] == location)
 		{
-			for (int j = i; j < TRAIL_SIZE - 1; j++) {
+			for (int j = i; j < TRAIL_SIZE - 1; j++) 
 				gv->trapLocations[j] = gv->trapLocations[j + 1];
-			}
 		}
 	}
 
@@ -615,14 +618,16 @@ static void removeTrap(GameView gv, PlaceId location)
 // Place encounter at Dracula's location
 static void performDraculaAction(GameView gv, char firstCmd, char secondCmd, PlaceId draculaLocation) 
 {	
-	switch(firstCmd) {
+	switch(firstCmd) 
+	{
 		case '.': break;
 		case 'T':
 			addTrap(gv, trueLocation(gv, draculaLocation));
 			break;
 	}
 	
-	switch(secondCmd) {
+	switch(secondCmd) 
+	{
 		case '.': break;
 		case 'V':
 			gv->vampireLocation = trueLocation(gv, draculaLocation);

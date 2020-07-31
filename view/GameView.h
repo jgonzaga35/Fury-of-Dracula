@@ -20,6 +20,7 @@
 
 #include "Game.h"
 #include "Places.h"
+#include "Map.h"
 // add your own #includes here
 
 typedef struct gameView *GameView;
