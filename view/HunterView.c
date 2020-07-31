@@ -155,6 +155,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		printf("===============The value of j is: %d=============\n", j);
 		if(j == -1) break;
 		j = pathArr[j];
+		for(int k = 0; k < sum; k ++) {j = pathArr[j];}
 		path[iteratorPath] = j;
 		iteratorPath --;
 	}
