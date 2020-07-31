@@ -139,8 +139,33 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	for(PlaceId i =  0; i < MAX_REAL_PLACE; i++) pathArr[i] = -1;
 
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
+	Map m = getMap(hv->gv);
 
-	findShortestPathTo(hunter, src, dest, HvGetRound(hv), pathLength, pathArr);
+	findShortestPathTo(hunter, src, dest, HvGetRound(hv), pathLength, pathArr, m);
+	if(*pathLength == 0) return NULL; // no path possible
+
+	int sum = (HvGetRound(hv) + hunter) % 4; // max allowable station distances
+	// if sum == 0, cannot move from rail at all
+
+	// forms path arr (only path that is required)
+	PlaceId *path = malloc(*pathLength * sizeof(PlaceId));
+	PlaceId j = dest;
+	PlaceId iteratorPath = *pathLength - 1;
+	while(j != src) {
+		printf("===============The value of j is: %d=============\n", j);
+		if(j == -1) break;
+		j = pathArr[j];
+		path[iteratorPath] = j;
+		iteratorPath --;
+	}
+	
+	printf("////////////////////////////////////////////\n");
+	for(PlaceId i = 0; i < *pathLength; i ++)
+		printf("%d %s\n", path[i], placeIdToName(path[i]));
+	printf("////////////////////////////////////////////\n");
+	
+
+	
 	
 	// printf("DESTINATION: %d\n", dest);
 	// PlaceId visited[MAX_REAL_PLACE];
@@ -224,7 +249,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	// 	}
 	// } 
 	
-	return pathArr;
+	return path;
 }
 
 ////////////////////////////////////////////////////////////////////////
