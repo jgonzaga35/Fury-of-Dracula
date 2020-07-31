@@ -410,10 +410,7 @@ void findShortestPathTo(Player hunter, PlaceId src, PlaceId dest, int currRound,
 		}
 	}
 	dropQueue(q);
-
 	
-	*pathLength = EdgeDistLen(pathArr, src, dest);
-	*pathLength -= 1; // don't include src
 	printf("////////////////////////////\n");
 	for(PlaceId i =  0; i < MAX_REAL_PLACE; i++) printf("[%d %s] === %10d %s\n", i, placeIdToName(i), pathArr[i], placeIdToName(pathArr[i]));
 	printf("////////////////////////////\n");
