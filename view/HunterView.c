@@ -138,46 +138,12 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {	
-	//TODO: Prayag's Part
-	// PlaceId *pathArr = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
-	// for(PlaceId i =  0; i < MAX_REAL_PLACE; i++) pathArr[i] = -1;
-
-	// PlaceId src = HvGetPlayerLocation(hv, hunter);
-	// Map m = getMap(hv->gv);
-
-	// findShortestPathTo(hunter, src, dest, HvGetRound(hv), pathLength, pathArr, m);
-	// if(*pathLength == 0) return NULL; // no path possible
-
-	// int sum = (HvGetRound(hv) + hunter) % 4; // max allowable station distances
-	// // if sum == 0, cannot move from rail at all
-
-	// // forms path arr (only path that is required)
-	// PlaceId *path = malloc(*pathLength * sizeof(PlaceId));
-	// PlaceId j = dest;
-	// PlaceId iteratorPath = *pathLength - 1;
-	// while(j != src) {
-	// 	printf("===============The value of j is: %d=============\n", j);
-	// 	if(j == -1) break;
-	// 	j = pathArr[j];
-	// 	for(int k = 0; k < sum; k ++) {j = pathArr[j];}
-	// 	path[iteratorPath] = j;
-	// 	iteratorPath --;
-	// }
-	
-	// printf("////////////////////////////////////////////\n");
-	// for(PlaceId i = 0; i < *pathLength; i ++)
-	// 	printf("%d %s\n", path[i], placeIdToName(path[i]));
-	// printf("////////////////////////////////////////////\n");
-	
-
-	
-	//TODO: Andrew's Part
-	printf("DESTINATION: %d %s\n", dest, placeIdToName(dest));
 	PlaceId pathTo[MAX_REAL_PLACE];
 	int roundArray[MAX_REAL_PLACE];		// Array that stores the round that we should arrive at a location
 
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 	Round currRound = HvGetRound(hv);
+	printf("round is %d\n", currRound);
 
 	PlaceId currLocation;
 	
@@ -190,8 +156,6 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	Queue locationQ = newQueue();
 	QueueJoin(locationQ, src);
 	
-	//printf("ROUND1: %d\n", currRound);
-	
 	int found = FALSE;
 	PlaceId tempLoc;
 	while (!QueueIsEmpty(locationQ) && found == FALSE) 
@@ -201,8 +165,6 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		
 		PlaceId *neighbours = GvGetReachable(hv->gv, hunter, roundArray[currLocation], currLocation, &numReturnedLocs);
 
-		//printf("//////////////////////////////////\n");
-
 		for (int j = 0; j < numReturnedLocs; j++)
 		{	
 			tempLoc = neighbours[j];
@@ -210,9 +172,8 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 			if (pathTo[tempLoc] == -1)
 			{	
 				pathTo[tempLoc] = currLocation;
-				roundArray[tempLoc] = roundArray[currLocation] += 1;	// The round we can go there is the next round
-				//printf("CURRLOC: %s\n", placeIdToName(currLocation));
-				printf("Location %s at %d round\n", placeIdToName(tempLoc), roundArray[tempLoc]);
+				roundArray[tempLoc] = roundArray[currLocation] + 1;	// The round we can go there is the next round
+				printf("Neighbour of %s is %s at %d round\n", placeIdToName(currLocation), placeIdToName(tempLoc), roundArray[tempLoc]);
 				QueueJoin(locationQ, tempLoc);
 
 				if (tempLoc == dest)
@@ -244,10 +205,6 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 	// Copy the result reversely into the path array
 	for (int j = 0; j < index; j++) path[j] = tempPath[index - j - 1];
-
-	printf("Stop 1 is %s in round %d\n", placeIdToName(path[0]), roundArray[path[0]]);
-	printf("Stop 2 is %s in round %d\n", placeIdToName(path[1]), roundArray[path[1]]);
-	//printf("Stop 3 is %s in round %d\n", placeIdToName(path[2]), roundArray[path[2]]);
 
 	return path;
 }
