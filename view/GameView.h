@@ -261,10 +261,10 @@ int numTurnsPassed(GameView gv);
 // Check if the location is Double back
 int isDoubleBack(PlaceId location);
 
-// Return the location that hide refers
+// Return the real location that hide refers
 PlaceId traceHideByIndex(PlaceId *pastMoves, int i);
 
-// Return the location that double back refers
+// Return the real location that double back refers
 PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i);
 
 // Return a list of neighbouring citys of the src

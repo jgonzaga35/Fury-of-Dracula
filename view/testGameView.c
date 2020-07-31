@@ -865,10 +865,6 @@ int main(void)
 		PlaceId *traps = GvGetTrapLocations(gv, &numTraps);
 		assert(numTraps == 4);
 		sortPlaces(traps, numTraps);
-		// printf("Trap 1 is at %d\n", traps[0]);
-		// printf("Trap 2 is at %d\n", traps[1]);
-		// printf("Trap 3 is at %d\n", traps[2]);
-		// printf("Trap 4 is at %d\n", traps[3]);
 		assert(traps[0] == ALICANTE && traps[1] == MADRID && traps[2] == SARAGOSSA && traps[3] == TOULOUSE);
 		free(traps);
 		

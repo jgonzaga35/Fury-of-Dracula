@@ -155,7 +155,7 @@ int main(void)
 			"GGE.... SGE.... HGE.... MGE.... DNPT... "
 			"GGE.... SGE.... HGE.... MGE.... DROT... "
 			"GGE.... SGE.... HGE.... MGE.... DD1T... "
-			"GGE.... SGE.... HGE.... MGE.... DTST... ";
+			"GGE.... SGE.... HGE.... MGE.... DTST... "
 			"GGE.... SGE.... HGE.... MGE....";
 		
 		Message messages[9] = {};
@@ -356,7 +356,7 @@ int main(void)
 			"GGE.... SGE.... HGE.... MGE.... DVAT... "
 			"GGE.... SGE.... HGE.... MGE.... DHIT... "
 			"GGE.... SGE.... HGE.... MGE.... DIOT... "
-			"GGE.... SGE.... HGE.... MGE.... DATT... ";
+			"GGE.... SGE.... HGE.... MGE.... DATT... "
 			"GGE.... SGE.... HGE.... MGE....";
 		
 		Message messages[24] = {};
