@@ -238,12 +238,6 @@ static int EdgeDistLen(PlaceId *visited, PlaceId src, PlaceId dest)
 		j = visited[j];
 		length += 1;
 	}
-	j = visited[j];
-	// while (visited[j] != src)
-	// {
-	// 	j = visited[j];
-	// 	length += 1;
-	// }
 
 	return length;
 }
