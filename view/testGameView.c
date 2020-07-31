@@ -840,7 +840,7 @@ int main(void)
 	
 	{///////////////////////////////////////////////////////////////////
 		// Own Test
-		printf("Own Test: Testing trap locations after one drop of the trail\n");
+		printf("Testing trap locations after one drop of the trail\n");
 		
 		char *trail =
 			"GED.... SGE.... HZU.... MCA.... DCF.V.. "
@@ -880,7 +880,7 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 	// Own test
-		printf("Own Test: Testing Hide refer to Double back\n");
+		printf("Testing Hide refer to Double back\n");
 		
 		char *trail =
 			"GED.... SGE.... HZU.... MCA.... DBE.V.. "
@@ -913,7 +913,7 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 	// Own test
-		printf("Own Test: Testing Hide refer to Double back\n");
+		printf("Testing Hide refer to Double back\n");
 		
 		char *trail =
 			"GED.... SGE.... HZU.... MCA.... DBE.V.. "
@@ -946,7 +946,7 @@ int main(void)
 
 	{///////////////////////////////////////////////////////////////////
 	// Own test
-		printf("Own Test: Testing rest and encounter Dracula twice\n");
+		printf("Testing rest and encounter Dracula twice\n");
 		
 		char *trail =
 			"GSJ.... SGE.... HZU.... MGR.... DBA.... "
