@@ -331,6 +331,16 @@ int main(void)
 		}
 		
 		{
+			printf("\tLisbon -> Lisbon (Lord Godalming, Round 1)\n");
+			int pathLength = -1;
+			PlaceId *path = HvGetShortestPathTo(hv, PLAYER_LORD_GODALMING,
+			                                    LISBON, &pathLength);
+			printf("%d\n", pathLength);
+			assert(pathLength == 0);
+			free(path);
+		}
+
+		{
 			printf("\tLisbon -> Cologne (Lord Godalming, Round 1)\n");
 			int pathLength = -1;
 			PlaceId *path = HvGetShortestPathTo(hv, PLAYER_LORD_GODALMING,
@@ -382,7 +392,7 @@ int main(void)
 			assert(path[6] == CASTLE_DRACULA);
 			free(path);
 		}
-		
+
 		HvFree(hv);
 		printf("\033[1;32m");
 		printf("Test passed!\n");
@@ -705,6 +715,8 @@ int main(void)
 		printf("Test passed!\n");
 		printf("\033[0m");
 	}
+
+	
 
 	return EXIT_SUCCESS;
 }
