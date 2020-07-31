@@ -71,7 +71,12 @@ void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Playe
 void getRailCNC(ConnList CNC, PlaceId from, PlaceId *allowableCNC, int *numReturnedLocs, Round round, Player player, Map m);
 void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p);
 
+
+/////////////////////////////////////////////////////////////////////////
+
 // returns array of neighbouring PlaceIds
 // PlaceId *getConnection(Map map, PlaceId src, int *numReturnedLocs);
 
+void findShortestPathTo(Player hunter, PlaceId src, PlaceId dest, int currRound,
+                             int *pathLength, int *pathArr);
 #endif // !defined(FOD__MAP_H_)

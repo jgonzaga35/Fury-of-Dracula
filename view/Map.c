@@ -379,3 +379,42 @@ static PlaceId checkIfAdjacentRail (Map map, PlaceId city)
 
 
 }*/
+
+
+void findShortestPathTo(Player hunter, PlaceId src, PlaceId dest, int currRound,
+                             int *pathLength, int *pathArr) 
+{
+	PlaceId visited[MAX_REAL_PLACE];
+	for(PlaceId i =  0; i < MAX_REAL_PLACE; i++) visited[i] = -1;
+	
+	*pathLength = 0;
+	Map m;
+
+	PlaceId left; // left is most recent item in q that left
+	ConnList curr; // iterator
+
+	// initalise queue
+	Queue q = newQueue();
+	QueueJoin(q, src);
+	visited[src] = src;
+
+	while(!QueueIsEmpty(q)) {
+		left = QueueLeave(q);
+		for (ConnList curr = m->connections[left]; curr != NULL; curr = curr->next) { 
+			// loop through all adj nodes to "left"
+			if (left != curr->p && visited[curr->p] == -1) {
+				if (p == PLAYER_DRACULA && curr->p == ST_JOSEPH_AND_ST_MARY) continue;
+				// curr not visited, join q + visit
+				if (curr->type == ROAD) 
+					{visited[curr->p] = left; QueueJoin(q, curr->p);}
+				if (curr->type == RAIL) 
+					{visited[curr->p] = left; QueueJoin(q, curr->p);}
+				if (curr->type == SEA) 
+					{visited[curr->p] = left; QueueJoin(q, curr->p);}
+			}
+		}
+	}
+	dropQueue(q);
+
+	for(PlaceId i =  0; i < MAX_REAL_PLACE; i++) printf("%d %s", path[i],placeIdToName(path[i]));
+}

@@ -135,80 +135,85 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
-	printf("DESTINATION: %d\n", dest);
-	PlaceId visited[MAX_REAL_PLACE];
-	PlaceId *path = malloc(sizeof(PlaceId *));
-	PlaceId currLocation;
+	PlaceId *pathArr = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
+	for(PlaceId i =  0; i < MAX_REAL_PLACE; i++) path[i] = -1;
+
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 
-	for (PlaceId i = 0; i < MAX_REAL_PLACE; i++) 
-		{visited[i] = -1;}
+	findShortestPathTo(hunter, src, dest, HvGetRound(hv), pathLength, pathArr);
 	
-	printf("SOURCE: %d\n", src);
+	// printf("DESTINATION: %d\n", dest);
+	// PlaceId visited[MAX_REAL_PLACE];
+	// PlaceId currLocation;
+	// PlaceId *path = malloc(sizeof(PlaceId *));
+	// PlaceId src = HvGetPlayerLocation(hv, hunter);
+
+	// for (PlaceId i = 0; i < MAX_REAL_PLACE; i++) 
+	// 	{visited[i] = -1;}
 	
-	Queue locationQ = newQueue();
-	QueueJoin(locationQ, src);
-	visited[src] = src;
-	int numLocations = 0;
-	Round currRound = HvGetRound(hv);
-	printf("ROUND1: %d\n", currRound);
-	int roundArray[70];
-	for (int k = 0; k < 71; k++) 
-		{roundArray[k] = 0;}
-	roundArray[src] = 1;
+	// printf("SOURCE: %d\n", src);
 	
-	while (!QueueIsEmpty(locationQ)) 
-	{
-		currLocation = QueueLeave(locationQ); 
-		int numReturnedLocs;
+	// Queue locationQ = newQueue();
+	// QueueJoin(locationQ, src);
+	// visited[src] = src;
+	// int numLocations = 0;
+	// Round currRound = HvGetRound(hv);
+	// printf("ROUND1: %d\n", currRound);
+	
+	// // TODO: fix incrementing of currRound
+	// while (!QueueIsEmpty(locationQ)) 
+	// {
+	// 	currLocation = QueueLeave(locationQ); 
+	// 	int numReturnedLocs;
 		
-		PlaceId *neighbours = getNeighbours(hv->gv, hunter, roundArray[currLocation], 
-											currLocation, &numReturnedLocs);
-		
-		if (currLocation == dest)
-		{
-			int length = 0; 
-			PlaceId temp[numLocations];
-			while (currLocation != src) 
-			{
-				temp[length] = currLocation;
-				length++;
-				currLocation = visited[currLocation];
-			}
+	// 	PlaceId *neighbours = GvGetReachableByType(hv->gv, hunter, HvGetRound(hv), src, true, false, false, &numLocations);
+	// 	neighbours = GvGetReachableByType(hv->gv, hunter, HvGetRound(hv), src, false, true, false, &numLocations);
+	// 	neighbours = GvGetReachableByType(hv->gv, hunter, HvGetRound(hv), src, false, false, true, &numLocations);
+
+	// 	printf("//////////////////////////////////\n");
+	// 	for(int i = 0; i < numLocations; i++)
+	// 		printf("%d %s | ", neighbours[i], placeIdToName(neighbours[i]));
+	// 	printf ("Current Round: %d\n", currRound);
+	// 	if (currLocation == dest)
+	// 	{
+	// 		int length = 0; 
+	// 		PlaceId temp[numLocations];
+	// 		while (currLocation != src) 
+	// 		{
+	// 			temp[length] = currLocation;
+	// 			length++;
+	// 			currLocation = visited[currLocation];
+	// 		}
 			
-			int index = length - 1;
-			for(int k = 0; k < length; k++) {
-				path[k] = temp[index];
-				index--; 
-			}
-			printf("PATH: \n");
-			for(int m = 0; m < length; m++) 
-				{printf("%s\n", placeIdToName(path[m]));}
+	// 		int index = length - 1;
+	// 		for(int k = 0; k < length; k++) {
+	// 			path[k] = temp[index];
+	// 			index--; 
+	// 		}
+	// 		printf("PATH: \n");
+	// 		for(int m = 0; m < length; m++) 
+	// 			{printf("%s\n", placeIdToName(path[m]));}
 
-			*pathLength = length;
-			printf("PATHLENGTH: %d\n", *pathLength);
-			break;
-		} 
-		else 
-		{
-			for (int j = 0; j < numReturnedLocs; j++)
-			{
-				if (visited[neighbours[j]] == -1)
-				{	
-					visited[neighbours[j]] = currLocation;
-					numLocations++;
-					QueueJoin(locationQ, neighbours[j]);
-					roundArray[neighbours[j]] = roundArray[currLocation]++;
-					printf("CURR neigh: %s\n", placeIdToName(neighbours[j]));
-				}
-			}
-		}
-
-		printf("CURRLOC: %s ||| ROUNDNUM: %d\n", placeIdToName(currLocation), roundArray[currLocation]);
-
-	} 	
-
-	return path;
+	// 		*pathLength = length;
+	// 		printf("PATHLENGTH: %d\n", *pathLength);
+	// 		break;
+	// 	} 
+	// 	else 
+	// 	{
+	// 		for (int j = 0; j < numReturnedLocs; j++)
+	// 		{
+	// 			if (visited[neighbours[j]] == -1)
+	// 			{	
+	// 				visited[neighbours[j]] = currLocation;
+	// 				printf("CURRLOC: %s\n", placeIdToName(currLocation));
+	// 				numLocations++;
+	// 				QueueJoin(locationQ, neighbours[j]);
+	// 			}
+	// 		}
+	// 	}
+	// } 
+	
+	return pathArr;
 }
 
 ////////////////////////////////////////////////////////////////////////
