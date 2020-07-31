@@ -199,7 +199,10 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		index += 1;
 	}
 	
-	*pathLength = index;
+	if (index != 0)
+		{*pathLength = index;}
+	else 
+		{*pathLength = 0;}
 
 	PlaceId *path = malloc(index * sizeof(PlaceId));
 
