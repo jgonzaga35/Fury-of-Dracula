@@ -141,9 +141,12 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	PlaceId pathTo[MAX_REAL_PLACE + 1];
 	int roundArray[MAX_REAL_PLACE + 1];		// Array that stores the round that 
 											// we should arrive at a location
-
+	
+	
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 	Round currRound = HvGetRound(hv);
+	if (src == dest) 
+		{*pathLength = 0;}
 
 	PlaceId currLocation;
 	
@@ -199,10 +202,8 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		index += 1;
 	}
 	
-	if (index != 0)
-		{*pathLength = index;}
-	else 
-		{*pathLength = 0;}
+	*pathLength = index;
+	
 
 	PlaceId *path = malloc(index * sizeof(PlaceId));
 
