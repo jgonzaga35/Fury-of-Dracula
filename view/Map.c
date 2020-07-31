@@ -239,6 +239,11 @@ static int EdgeDistLen(PlaceId *visited, PlaceId src, PlaceId dest)
 		length += 1;
 	}
 	j = visited[j];
+	// while (visited[j] != src)
+	// {
+	// 	j = visited[j];
+	// 	length += 1;
+	// }
 
 	return length;
 }
@@ -316,7 +321,7 @@ void getRailCNC(ConnList CNC, PlaceId from, PlaceId *allowableCNC, int *numRetur
 	ConnList curr = CNC;
 
 	// initalise visited array
-	PlaceId *visited = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
+	PlaceId *visited = malloc((MAX_REAL_PLACE + 1) * sizeof(PlaceId));
 	for (PlaceId i = 0; i < MAX_REAL_PLACE; i += 1) visited[i] = -1;
 	bfsPath(m, visited, from, false, true, false, player); // type rail path array
 

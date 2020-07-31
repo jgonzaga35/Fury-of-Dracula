@@ -143,7 +143,6 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 	Round currRound = HvGetRound(hv);
-	printf("round is %d\n", currRound);
 
 	PlaceId currLocation;
 	
@@ -198,7 +197,6 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	}
 	
 	*pathLength = index;
-	printf("PATHLENGTH: %d\n", *pathLength);
 
 	PlaceId *path = malloc(index * sizeof(PlaceId));
 
