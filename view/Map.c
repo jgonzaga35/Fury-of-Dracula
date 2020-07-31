@@ -43,14 +43,16 @@ static int EdgeDistLen(PlaceId *visited, PlaceId src, PlaceId dest);
 Map MapNew(void)
 {
 	Map m = malloc(sizeof(*m));
-	if (m == NULL) {
+	if (m == NULL) 
+	{
 		fprintf(stderr, "Couldn't allocate Map!\n");
 		exit(EXIT_FAILURE);
 	}
 
 	m->nV = NUM_REAL_PLACES;
 	m->nE = 0;
-	for (int i = 0; i < NUM_REAL_PLACES; i++) {
+	for (int i = 0; i < NUM_REAL_PLACES; i++) 
+	{
 		m->connections[i] = NULL;
 	}
 
@@ -63,9 +65,11 @@ void MapFree(Map m)
 {
 	assert (m != NULL);
 
-	for (int i = 0; i < m->nV; i++) {
+	for (int i = 0; i < m->nV; i++) 
+	{
 		ConnList curr = m->connections[i];
-		while (curr != NULL) {
+		while (curr != NULL) 
+		{
 			ConnList next = curr->next;
 			free(curr);
 			curr = next;
@@ -82,8 +86,10 @@ void MapShow(Map m)
 	assert(m != NULL);
 
 	printf("V = %d, E = %d\n", m->nV, m->nE);
-	for (int i = 0; i < m->nV; i++) {
-		for (ConnList curr = m->connections[i]; curr != NULL; curr = curr->next) {
+	for (int i = 0; i < m->nV; i++) 
+	{
+		for (ConnList curr = m->connections[i]; curr != NULL; curr = curr->next) 
+		{
 			printf("%s connects to %s by %s\n",
 			       placeIdToName((PlaceId) i),
 			       placeIdToName(curr->p),
@@ -109,11 +115,11 @@ int MapNumConnections(Map m, TransportType type)
 	assert(transportTypeIsValid(type) || type == ANY);
 
 	int nE = 0;
-	for (int i = 0; i < m->nV; i++) {
+	for (int i = 0; i < m->nV; i++) 
+	{
 		for (ConnList curr = m->connections[i]; curr != NULL; curr = curr->next) {
-			if (curr->type == type || type == ANY) {
+			if (curr->type == type || type == ANY)
 				nE++;
-			}
 		}
 	}
 
@@ -127,9 +133,8 @@ static void addConnections(Map m)
 {
 	assert(m != NULL);
 
-	for (int i = 0; !isSentinelEdge(CONNECTIONS[i]); i++) {
+	for (int i = 0; !isSentinelEdge(CONNECTIONS[i]); i++)
 		addConnection(m, CONNECTIONS[i].v, CONNECTIONS[i].w, CONNECTIONS[i].t);
-	}
 }
 
 /// Add a new edge to the Map/Graph
@@ -162,7 +167,8 @@ static ConnList connListInsert(ConnList l, PlaceId p, TransportType type)
 	assert(transportTypeIsValid(type));
 
 	ConnList new = malloc(sizeof(*new));
-	if (new == NULL) {
+	if (new == NULL) 
+	{
 		fprintf(stderr, "Couldn't allocate ConnNode");
 		exit(EXIT_FAILURE);
 	}
@@ -179,8 +185,10 @@ static bool connListContains(ConnList l, PlaceId p, TransportType type)
 	assert(placeIsReal(p));
 	assert(transportTypeIsValid(type));
 
-	for (ConnList curr = l; curr != NULL; curr = curr->next) {
-		if (curr->p == p && curr->type == type) {
+	for (ConnList curr = l; curr != NULL; curr = curr->next) 
+	{
+		if (curr->p == p && curr->type == type) 
+		{
 			return true;
 		}
 	}
@@ -197,9 +205,11 @@ ConnList MapGetConnections(Map m, PlaceId p)
 }
 
 ////////////////////////////////////////////////////////////////////////
-void printConnList(ConnList L) {
+void printConnList(ConnList L) 
+{
 	if (L == NULL) return;
-	for (ConnList curr = L; curr != NULL; curr = curr->next) {
+	for (ConnList curr = L; curr != NULL; curr = curr->next) 
+	{
 		printf("%d-%d-", curr->p, curr->type);
 		printf("%s ",placeIdToAbbrev(curr->p));
 	}
@@ -208,19 +218,22 @@ void printConnList(ConnList L) {
 
 // checks that p is not present in allowable CNC
 // returns 1 if dup, 0 if no dup
-static int Dup(PlaceId *allowableCNC, PlaceId p, int *numReturedLocs) {
-	for (PlaceId i = 0; i < *numReturedLocs; i += 1) {
+static int Dup(PlaceId *allowableCNC, PlaceId p, int *numReturedLocs) 
+{
+	for (PlaceId i = 0; i < *numReturedLocs; i += 1)
 		if (p == allowableCNC[i]) return 1;
-	}
+	
 	return 0;
 }
 
-static int EdgeDistLen(PlaceId *visited, PlaceId src, PlaceId dest) {
+static int EdgeDistLen(PlaceId *visited, PlaceId src, PlaceId dest) 
+{
 	if (visited[dest] == -1) return 0; // No route found (not possible)
 	// calculate distance in terms of edge length from src to dest
 	int length = 0;
 	PlaceId j = dest;
-	while (j != src) {
+	while (j != src) 
+	{
 		if (j == -1) return 0;
 		j = visited[j];
 		length += 1;
@@ -242,11 +255,14 @@ int bfsPathDist(Map m, PlaceId *visited, PlaceId from,
 	PlaceId left; // left is most recent item in q that left
 	ConnList curr; // iterator
 
-	while (!QueueIsEmpty(q)) {
+	while (!QueueIsEmpty(q)) 
+	{
 		left = QueueLeave(q);
-		for (ConnList curr = m->connections[left]; curr != NULL; curr = curr->next) { 
+		for (ConnList curr = m->connections[left]; curr != NULL; curr = curr->next) 
+		{ 
 			// loop through all adj nodes to "left"
-			if (left != curr->p && visited[curr->p] == -1) {
+			if (left != curr->p && visited[curr->p] == -1) 
+			{
 				if (p == PLAYER_DRACULA && curr->p == ST_JOSEPH_AND_ST_MARY) continue;
 				// curr not visited, join q + visit
 				if (road && curr->type == ROAD) 
@@ -273,10 +289,13 @@ int bfsPathDist(Map m, PlaceId *visited, PlaceId from,
 void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p) {
 	if (CNC == NULL) return;
 	ConnList curr = CNC;
-	for (int i = *numReturnedLocs; curr != NULL && i != MAX_REAL_PLACE; i += 1) {
+	for (int i = *numReturnedLocs; curr != NULL && i != MAX_REAL_PLACE; i += 1) 
+	{
 		// start adding ONLY road CNC from numReturnedLocs position in array
-		if (curr->type == ROAD) {
-			if (curr->p == ST_JOSEPH_AND_ST_MARY && p == PLAYER_DRACULA) {
+		if (curr->type == ROAD) 
+		{
+			if (curr->p == ST_JOSEPH_AND_ST_MARY && p == PLAYER_DRACULA) 
+			{
 				curr = curr->next;
 				continue; // Dracula cannot visit hospital
 			}
@@ -306,13 +325,17 @@ void getRailCNC(ConnList CNC, PlaceId from,PlaceId *allowableCNC, int *numReturn
 
 	if (sum == 0) return; // cannot move from rail at all
 
-	for (int i = 0; i < m->nV; i++) {
-		for (ConnList curr = m->connections[i]; curr != NULL; curr = curr->next) {
-			if (curr->type == RAIL) {
+	for (int i = 0; i < m->nV; i++) 
+	{
+		for (ConnList curr = m->connections[i]; curr != NULL; curr = curr->next) 
+		{
+			if (curr->type == RAIL) 
+			{
 				if (Dup(allowableCNC, curr->p, numReturnedLocs)) 
 					continue; // do not add if already present in array
 				int dist = EdgeDistLen(visited, from, curr->p);
-				if (0 < dist && dist <= sum) { // add all distances less than max allowable dist
+				if (0 < dist && dist <= sum) // add all distances less than max allowable dist
+				{ 
 					allowableCNC[*numReturnedLocs] = curr->p; 
 					*numReturnedLocs += 1;
 				}
@@ -326,9 +349,11 @@ void getRailCNC(ConnList CNC, PlaceId from,PlaceId *allowableCNC, int *numReturn
 void getBoatCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p) {
 	if (CNC == NULL) return;
 	ConnList curr = CNC;
-	for (int i = *numReturnedLocs; curr != NULL && i != MAX_REAL_PLACE; i += 1) {
+	for (int i = *numReturnedLocs; curr != NULL && i != MAX_REAL_PLACE; i += 1) 
+	{
 		// start adding ONLY boat CNC from numReturnedLocs position in array
-		if (curr->type == BOAT) {
+		if (curr->type == BOAT) 
+		{
 			if (p == PLAYER_DRACULA && curr->p == ST_JOSEPH_AND_ST_MARY) continue;
 			if (Dup(allowableCNC, curr->p, numReturnedLocs)) 
 				continue; // do not add if already present in array
