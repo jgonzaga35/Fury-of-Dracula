@@ -601,12 +601,13 @@ int main(void)
 		bool rail = true;
 		bool boat = false;
 		PlaceId *locs = HvWhereCanIGoByType(hv, road, rail, boat, &numLocs);
-
-		assert(numLocs == 4);
+		
+		assert(numLocs == 5);
 		assert(locs[0] == GENEVA);
 		assert(locs[1] == MILAN);
-		assert(locs[2] == GENOA);
-		assert(locs[3] == FLORENCE);
+		assert(locs[2] == ZURICH);
+		assert(locs[3] == GENOA);
+		assert(locs[4] == FLORENCE);
 		free(locs);
 		
 		printf("\033[1;32m");
@@ -629,13 +630,14 @@ int main(void)
 		bool rail = true;
 		bool boat = true;
 		PlaceId *locs = HvWhereCanIGoByType(hv, road, rail, boat, &numLocs);
-
-		assert(numLocs == 5);
+		
+		assert(numLocs == 6);
 		assert(locs[0] == GENOA);
 		assert(locs[1] == MILAN);
-		assert(locs[2] == GENEVA);
-		assert(locs[3] == FLORENCE);
-		assert(locs[4] == TYRRHENIAN_SEA);
+		assert(locs[2] == ZURICH);
+		assert(locs[3] == GENEVA);
+		assert(locs[4] == FLORENCE);
+		assert(locs[5] == TYRRHENIAN_SEA);
 		free(locs);
 		
 		printf("\033[1;32m");
@@ -658,8 +660,8 @@ int main(void)
 		bool rail = true;
 		bool boat = false;
 		PlaceId *locs = HvWhereCanIGoByType(hv, road, rail, boat, &numLocs);
-		
-		assert(numLocs == 7);
+
+		assert(numLocs == 8);
 		assert(locs[0] == FRANKFURT);
 		assert(locs[1] == LEIPZIG);
 		assert(locs[2] == COLOGNE);
@@ -667,6 +669,7 @@ int main(void)
 		assert(locs[4] == STRASBOURG);
 		assert(locs[5] == BERLIN);
 		assert(locs[6] == NUREMBURG);
+		assert(locs[7] == ZURICH);
 		free(locs);
 		
 		printf("\033[1;32m");
