@@ -61,6 +61,8 @@ static PlaceId traceHide(GameView gv);
 static PlaceId traceDoubleBack(GameView gv);
 static PlaceId trueLocation(GameView gv, PlaceId location);
 static int isHunter(Player player);
+
+// Interface functions
 int numTurnsPassed(GameView gv);
 int isDoubleBack(PlaceId location);
 PlaceId traceHideByIndex(PlaceId *pastMoves, int i);
@@ -664,9 +666,7 @@ static PlaceId traceDoubleBack(GameView gv)
 	PlaceId doubleBack = gv->trails[PLAYER_DRACULA][0];
 	int backIndex = doubleBack - 102;
 
-	//printf("The backIndex is %d\n", backIndex);
 	PlaceId location = gv->trails[PLAYER_DRACULA][backIndex];
-	//printf("The location returned for DB is %d\n", location);
 
 	if (location == TELEPORT) return CASTLE_DRACULA;
 	if (location != HIDE) return location;

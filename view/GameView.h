@@ -269,4 +269,7 @@ PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i);
 // Return a list of neighbouring citys of the src
 PlaceId *getNeighbours(GameView gv, Player player, Round round, PlaceId src, int *numReturnedLocs);
 
+// Return the map
+Map getMap(GameView gv);
+
 #endif // !defined (FOD__GAME_VIEW_H_)
