@@ -66,6 +66,7 @@ int isDoubleBack(PlaceId location);
 PlaceId traceHideByIndex(PlaceId *pastMoves, int i);
 PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i);
 PlaceId *getNeighbours(GameView gv, Player player, Round round, PlaceId src, int *numReturnedLocs);
+Map getMap(GameView gv);
 // ---------------------Making a move helper functions--------------------------
 static int validPlayer(Player player);
 
@@ -417,6 +418,12 @@ PlaceId *getNeighbours(GameView gv, Player player, Round round, PlaceId src, int
 {
 	return GvGetReachable(gv, player, round, src,  numReturnedLocs);
 }
+
+Map getMap(GameView gv) 
+{
+	return gv->map;
+}
+
 // Helper functions
 
 // Set the initial state of all varaibles
