@@ -316,7 +316,7 @@ void getRailCNC(ConnList CNC, PlaceId from, PlaceId *allowableCNC, int *numRetur
 
 	// initalise visited array
 	PlaceId *visited = malloc((MAX_REAL_PLACE + 1) * sizeof(PlaceId));
-	for (PlaceId i = 0; i < MAX_REAL_PLACE; i += 1) visited[i] = -1;
+	for (PlaceId i = 0; i < MAX_REAL_PLACE + 1; i += 1) visited[i] = -1;
 	bfsPath(m, visited, from, false, true, false, player); // type rail path array
 
 	int sum = (round + player) % 4; // max allowable station distances

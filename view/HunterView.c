@@ -138,8 +138,8 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {	
-	PlaceId pathTo[MAX_REAL_PLACE];
-	int roundArray[MAX_REAL_PLACE];		// Array that stores the round that we should arrive at a location
+	PlaceId pathTo[MAX_REAL_PLACE + 1];
+	int roundArray[MAX_REAL_PLACE + 1];		// Array that stores the round that we should arrive at a location
 
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 	Round currRound = HvGetRound(hv);
@@ -147,8 +147,8 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	PlaceId currLocation;
 	
 	//Initialize
-	for (PlaceId i = 0; i < MAX_REAL_PLACE; i++) pathTo[i] = -1;
-	for (int i = 0; i < MAX_REAL_PLACE; i++) roundArray[i] = 0;
+	for (PlaceId i = 0; i < MAX_REAL_PLACE + 1; i++) pathTo[i] = -1;
+	for (int i = 0; i < MAX_REAL_PLACE + 1; i++) roundArray[i] = 0;
 	roundArray[src] = currRound;			// we are at src at currRound
 	pathTo[src] = src;
 

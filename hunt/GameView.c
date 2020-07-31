@@ -213,7 +213,7 @@ PlaceId *GvGetMoveHistory(GameView gv, Player player,
 	assert(playerName != '\0');
 
 	// Dynamically allocate array of PlaceIds
-	PlaceId *pastMoves = malloc(sizeof(PlaceId *)*MAX_REAL_PLACE);
+	PlaceId *pastMoves = malloc(sizeof(PlaceId *) * MAX_REAL_PLACE);
 
 	// Fill in PlaceId array with move history of given player.
 	// Loop through pastPlays string...
