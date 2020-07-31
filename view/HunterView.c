@@ -136,7 +136,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
 	PlaceId *pathArr = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
-	for(PlaceId i =  0; i < MAX_REAL_PLACE; i++) path[i] = -1;
+	for(PlaceId i =  0; i < MAX_REAL_PLACE; i++) pathArr[i] = -1;
 
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 
