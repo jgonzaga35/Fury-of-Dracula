@@ -9,13 +9,8 @@
 #
 ########################################################################
 
-########################################################################
-# REMOVED -Wall -Werror AS IT STOPPED COMPILATION
-########################################################################
-
-
 CC = gcc
-CFLAGS = -g
+CCFLAGS = -Wall -Werror -g
 BINS = testGameView testHunterView testDraculaView testMap
 
 all: $(BINS)

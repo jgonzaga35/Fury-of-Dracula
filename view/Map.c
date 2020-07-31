@@ -331,8 +331,8 @@ void getRailCNC(ConnList CNC, PlaceId from, PlaceId *allowableCNC, int *numRetur
 				if (Dup(allowableCNC, curr->p, numReturnedLocs)) 
 					continue; // do not add if already present in array
 				int dist = EdgeDistLen(visited, from, curr->p);
-				if (0 < dist && dist <= sum) // add all distances less than max allowable dist
-				{ 
+				if (0 < dist && dist <= sum)
+				{ // add all distances less than max allowable dist
 					allowableCNC[*numReturnedLocs] = curr->p; 
 					*numReturnedLocs += 1;
 				}

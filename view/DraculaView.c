@@ -99,7 +99,9 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 
 	// Initialise array with list of reachable places.
 	int numReachableLocs = 0;
-	PlaceId *validMoves = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, from, true, false, true, &numReachableLocs);
+	PlaceId *validMoves = 
+		GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, from, 
+							true, false, true, &numReachableLocs);
 
 	// Obtain Dracula's move history.
 	bool canFree = true;
@@ -118,7 +120,8 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	}
 
 	// Determine if HIDE or DOUBLE_BACK are valid moves based on trail.
-	// Remove any locations in the array that have been visited already using LOCATION move.
+	// Remove any locations in the array that have been visited already using 
+	// LOCATION move.
 	int removedLocs = 0;
 	for (int i = 0; i < 5 && i < *numReturnedMoves; i++) 
 	{ 
@@ -295,7 +298,9 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 	// Find reachable locations by type.
 	int validNum = *numReturnedLocs;
 	PlaceId currentLoc = DvGetPlayerLocation(dv, PLAYER_DRACULA);
-	PlaceId *reachableLocs = GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, currentLoc, road, false, boat, numReturnedLocs);
+	PlaceId *reachableLocs = 
+		GvGetReachableByType(dv->gv, PLAYER_DRACULA, dv->numTurn, currentLoc, 
+							road, false, boat, numReturnedLocs);
 	int reachableNum = *numReturnedLocs;
 	*numReturnedLocs = validNum;
 
@@ -350,7 +355,9 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 
 	// Else return reachable locations for the hunter.
 	PlaceId current = GvGetPlayerLocation(dv->gv, player);
-	PlaceId *availableLocs = GvGetReachableByType(dv->gv, player, dv->numTurn, current, road, rail, boat, numReturnedLocs);
+	PlaceId *availableLocs = 
+		GvGetReachableByType(dv->gv, player, dv->numTurn, current, road, 
+							rail, boat, numReturnedLocs);
 	if (availableLocs == NULL) {
 		*numReturnedLocs = 0;
 		return NULL;
@@ -364,7 +371,9 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 static int isAdjacent (GameView gv, PlaceId src, PlaceId dest) {
 	int numReturnedLocs = 0;
 	int numTurn = GvGetRound(gv);
-	PlaceId *adjacentLocs = GvGetReachableByType(gv, PLAYER_DRACULA, numTurn, src, true, false, true, &numReturnedLocs);
+	PlaceId *adjacentLocs = 
+		GvGetReachableByType(gv, PLAYER_DRACULA, numTurn, src, 
+			true, false, true, &numReturnedLocs);
 	bool adjacent = false;
 	for (int i = 0; i < numReturnedLocs; i++) {
 		if (adjacentLocs[i] == dest) adjacent = true;

@@ -128,7 +128,7 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 		}
 	}
 	
-	if (!isRealLocation(location) || round == 0) return NOWHERE;	// No real location exist
+	if (!isRealLocation(location) || round == 0) return NOWHERE; // No real location exist
 
 	if (location == TELEPORT) return CASTLE_DRACULA;
 
@@ -139,7 +139,8 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {	
 	PlaceId pathTo[MAX_REAL_PLACE + 1];
-	int roundArray[MAX_REAL_PLACE + 1];		// Array that stores the round that we should arrive at a location
+	int roundArray[MAX_REAL_PLACE + 1];		// Array that stores the round that 
+											// we should arrive at a location
 
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 	Round currRound = HvGetRound(hv);
@@ -162,7 +163,8 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 		currLocation = QueueLeave(locationQ); 
 		int numReturnedLocs;
 		
-		PlaceId *neighbours = GvGetReachable(hv->gv, hunter, roundArray[currLocation], currLocation, &numReturnedLocs);
+		PlaceId *neighbours = GvGetReachable(
+			hv->gv, hunter, roundArray[currLocation], currLocation, &numReturnedLocs);
 
 		for (int j = 0; j < numReturnedLocs; j++)
 		{	
@@ -171,7 +173,8 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 			if (pathTo[tempLoc] == -1)
 			{	
 				pathTo[tempLoc] = currLocation;
-				roundArray[tempLoc] = roundArray[currLocation] + 1;	// The round we can go there is the next round
+				// The round we can go there is the next round
+				roundArray[tempLoc] = roundArray[currLocation] + 1;
 				QueueJoin(locationQ, tempLoc);
 
 				if (tempLoc == dest)
