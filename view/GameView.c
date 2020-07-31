@@ -61,6 +61,11 @@ static PlaceId traceHide(GameView gv);
 static PlaceId traceDoubleBack(GameView gv);
 static PlaceId trueLocation(GameView gv, PlaceId location);
 static int isHunter(Player player);
+int numTurnsPassed(GameView gv);
+int isDoubleBack(PlaceId location);
+PlaceId traceHideByIndex(PlaceId *pastMoves, int i);
+PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i);
+PlaceId *getNeighbours(GameView gv, Player player, Round round, PlaceId src, int *numReturnedLocs);
 // ---------------------Making a move helper functions--------------------------
 static int validPlayer(Player player);
 
