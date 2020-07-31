@@ -146,7 +146,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 	Round currRound = HvGetRound(hv);
 	if (src == dest) 
-		{*pathLength = 0;}
+		{*pathLength = 0; return NULL;}
 
 	PlaceId currLocation;
 	
