@@ -173,7 +173,6 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 			{	
 				pathTo[tempLoc] = currLocation;
 				roundArray[tempLoc] = roundArray[currLocation] + 1;	// The round we can go there is the next round
-				printf("Neighbour of %s is %s at %d round\n", placeIdToName(currLocation), placeIdToName(tempLoc), roundArray[tempLoc]);
 				QueueJoin(locationQ, tempLoc);
 
 				if (tempLoc == dest)
