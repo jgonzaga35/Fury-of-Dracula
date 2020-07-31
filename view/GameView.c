@@ -69,7 +69,6 @@ int numTurnsPassed(GameView gv);
 int isDoubleBack(PlaceId location);
 PlaceId traceHideByIndex(PlaceId *pastMoves, int i);
 PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i);
-PlaceId *getNeighbours(GameView gv, Player player, Round round, PlaceId src, int *numReturnedLocs);
 Map getMap(GameView gv);
 
 ////////////////////////////////////////////////////////////////////////
@@ -410,12 +409,6 @@ PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i)
 	if (pastMoves[i - backIndex] == TELEPORT) return CASTLE_DRACULA;
 	if (pastMoves[i - backIndex] == HIDE) return pastMoves[i - backIndex - 1]; 
 	return pastMoves[i - backIndex];
-}
-
-// Return a list of neighbouring citys of the src
-PlaceId *getNeighbours(GameView gv, Player player, Round round, PlaceId src, int *numReturnedLocs) 
-{
-	return GvGetReachable(gv, player, round, src,  numReturnedLocs);
 }
 
 // Return the map in the GameView struct
