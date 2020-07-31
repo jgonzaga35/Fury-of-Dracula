@@ -151,7 +151,18 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	// for (PlaceId i = 0; i < MAX_REAL_PLACE; i++) 
 	// 	{visited[i] = -1;}
 	
-	// printf("SOURCE: %d\n", src);
+	// Initialize Queue and visited array
+	// Queue locationQ = newQueue();
+	// QueueJoin(locationQ, src);
+	// visited[src] = src;
+	// int numLocations = 0;
+	
+	// Round currRound = HvGetRound(hv);
+	// printf("ROUND1: %d\n", currRound);
+	// int roundArray[70];				// Array that stores the round that we should arrive at a location
+	// for (int k = 0; k < 71; k++) 
+	// 	{roundArray[k] = 0;}
+	// roundArray[src] = currRound;			// we are at src at currRound
 	
 	// Queue locationQ = newQueue();
 	// QueueJoin(locationQ, src);
