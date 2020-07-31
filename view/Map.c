@@ -284,7 +284,6 @@ void bfsPath(Map m, PlaceId *visited, PlaceId from,
  * Note :: 'i' is iterated over in the following for loops to stop 
  * buffer overflow in allowableCNC array. otherwise, it serves no other
  * purpose in the function.*/
-
 void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p) {
 	if (CNC == NULL) return;
 	ConnList curr = CNC;
