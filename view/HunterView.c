@@ -37,7 +37,8 @@ static int draculaNotRevealed(HunterView hv);
 HunterView HvNew(char *pastPlays, Message messages[])
 {
 	HunterView new = malloc(sizeof(struct hunterView));
-	if (new == NULL) {
+	if (new == NULL) 
+	{
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
 		exit(EXIT_FAILURE);
 	}
@@ -47,9 +48,8 @@ HunterView HvNew(char *pastPlays, Message messages[])
 	int numTurns = numTurnsPassed(new->gv);
 	new->message = malloc(numTurns * sizeof(Message));
 	   
-	for (int i = 0; i < numTurns; i++) {
+	for (int i = 0; i < numTurns; i++)
 		strncpy(new->message[i], messages[i], MESSAGE_SIZE);
-	}
 	
 	return new;
 }
@@ -280,6 +280,7 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 // Your own interface functions
 
 // Helper functions
+// Check whether Dracula's location has been revealed
 static int draculaNotRevealed(HunterView hv)
 {
 	PlaceId location = HvGetPlayerLocation(hv, PLAYER_DRACULA);
@@ -287,6 +288,7 @@ static int draculaNotRevealed(HunterView hv)
 			|| location == NOWHERE);
 }
 
+// Check whether location is a real location
 static int isRealLocation(PlaceId location)
 {
 	return (location != CITY_UNKNOWN && location != SEA_UNKNOWN && location != UNKNOWN);
