@@ -335,7 +335,6 @@ int main(void)
 			int pathLength = -1;
 			PlaceId *path = HvGetShortestPathTo(hv, PLAYER_LORD_GODALMING,
 			                                    LISBON, &pathLength);
-			printf("%d\n", pathLength);
 			assert(pathLength == 0);
 			free(path);
 		}
