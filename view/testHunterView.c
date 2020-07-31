@@ -512,7 +512,6 @@ int main(void)
 	}
 	
 		{///////////////////////////////////////////////////////////////////
-		// own test
 		printf("Test for HvWhereCanIGo from Lisbon \n");
 		
 		char *trail =
@@ -540,7 +539,6 @@ int main(void)
 	}
 
 	{///////////////////////////////////////////////////////////////////
-		// own test
 		printf("Test for HvWhereCanIGoByType only via boat from Barcelona\n");
 		
 		char *trail =
@@ -566,7 +564,6 @@ int main(void)
 	}
 
 	{///////////////////////////////////////////////////////////////////
-		// own test
 		printf("Test for HvWhereCanIGoByType only via road from Madrid\n");
 		
 		char *trail =
@@ -597,7 +594,6 @@ int main(void)
 	}
 
 	{///////////////////////////////////////////////////////////////////
-		// own test
 		printf("Test for HvWhereCanIGoByType only via rail from Geneva\n");
 		
 		char *trail =
@@ -626,7 +622,6 @@ int main(void)
 	}
 
 	{///////////////////////////////////////////////////////////////////
-		// own test
 		printf("Test for HvWhereCanIGoByType via rail and boat from Genoa\n");
 		
 		char *trail =
@@ -656,7 +651,6 @@ int main(void)
 	}
 
 	{///////////////////////////////////////////////////////////////////
-		// own test
 		printf("Test for HvWhereCanIGoByType via rail and road from Frankfurt\n");
 		
 		char *trail =
@@ -688,7 +682,6 @@ int main(void)
 	}
 
 	{///////////////////////////////////////////////////////////////////
-		// own test
 		printf("Test for HvWhereCanIGoByType via road and boat from Barcelona\n");
 		
 		char *trail =
