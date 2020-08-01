@@ -19,14 +19,15 @@
 #include <string.h>
 #include <stdlib.h>
 
-void removeRiskyLocs(PlaceId *validLocs, PlaceId *riskyLocs, int *numValidLocs, int *numRiskyLocs);
+void removeRiskyLocs(PlaceId *ValidLocs, PlaceId *riskyLocs, int *numValidLocs, int *numRiskyLocs);
 void decideDraculaMove(DraculaView dv)
 {
-	
-	Round round = DvGetRound(dv);	// The current round in the game.
-	char *play;						// The play to be made.
+	Round round = DvGetRound(dv);				  // The current round in the game.
+	char *play;									  // The play to be made.
+	int health= DvGetHealth(dv, PLAYER_DRACULA); // Dracula's Blood Points.
+	int isRisky = 0;								// 0 if validLocs has not been modified, 1 otherwise
 
-	// First Round
+	// Dracula chooses STRASBOURG as the initial location.
 	if (round == 0) {
 		registerBestPlay("ST", "Mwahahahaha");
 		return;
@@ -36,7 +37,6 @@ void decideDraculaMove(DraculaView dv)
 	int numValidLocs = 0;
 	PlaceId *validLocs = DvWhereCanIGo(dv, &numValidLocs);
 	if (numValidLocs == 0) {
-		printf("no valid locs\n");
 		free(validLocs);
 		registerBestPlay("TP", "I love COMP2521");
 		return;
@@ -54,40 +54,62 @@ void decideDraculaMove(DraculaView dv)
 	// Get reachable locations by road ("risky locations" for each hunter and remove these from Dracula's
 	// valid locations array (he wants to avoid these locations as much as possible).
 	int numRiskyLocs = 0;
-	for (int player = PLAYER_LORD_GODALMING; player < PLAYER_MINA_HARKER; player++) {
+	for (int player = 0; player < 4; player++) {
 		// riskyLocs should never be null as hunters always have a valid move.
 		PlaceId *riskyLocs = DvWhereCanTheyGoByType(dv, player, true, false, true, &numRiskyLocs);
 		removeRiskyLocs(validLocs, riskyLocs, &numValidLocs, &numRiskyLocs);
 		free(riskyLocs);
 	}
 
-	// If all of Dracula's valid locations are also "risky" locations:
+	// If all of Dracula's valid locations are "risky" locations:
 	if (numValidLocs == 0) {
-		// If possible go to the SEA to avoid encountering a hunter.
-		// (Its better to lose 2 BP at SEA than lose 10 BP to a hunter!)
-		validLocs = DvWhereCanIGoByType(dv, false, true, &numValidLocs);
-		if (validLocs != NULL) {
-			int index = rand() % (numValidLocs + 1);
-			strcpy(play, placeIdToAbbrev(validLocs[index]));
-			free(validLocs);
-			registerBestPlay(play, "jas is best lecturer");
-			return;
+		// If Dracula is low on health try to go to sea so he does not encounter hunters.
+		if (health <= 20 && health >= 6) {
+			validLocs = DvWhereCanIGoByType(dv, false, true, &numValidLocs);
+			if (validLocs != NULL) {
+				int index = rand() % (numValidLocs + 1);
+				strcpy(play, placeIdToAbbrev(validLocs[index]));
+				free(validLocs);
+				registerBestPlay(play, "jas is best lecturer");
+				return;
+			} 
+		} 
+
+		// If Dracula is healthy or low on health (desperate), 
+		// go to the hunter's current location.
+		// According to the rules, hunters only encounter Drac if they 
+		// arrive to the city last, so they won't encounter Drac.
+		// So this might work - its either a very good idea or very bad idea
+		if (health >= 35 || health <= 5) {
+			int numPotentialLocs = 0;
+			PlaceId *potentialLocs = DvWhereCanIGo(dv, &numPotentialLocs); 
+			numRiskyLocs = 0;
+			for (int player = 0; player < 4; player++) {
+				PlaceId currentLoc = DvGetPlayerLocation(dv, player);
+				for (int i = 0; i < numPotentialLocs; i++) {
+					if (potentialLocs[i] == currentLoc) {
+						strcpy(play, placeIdToAbbrev(currentLoc));
+						free(validLocs);
+						free(potentialLocs);
+						registerBestPlay(play, "give me marks");
+						return;
+					}
+				}
+			}
+			free(potentialLocs);
 		}
-		
-		// Otherwise choose random location in the original validLocs (not necessarily a good move!)
+
+		// Default: Dracula picks a random risky location.
 		validLocs = DvWhereCanIGo(dv, &numValidLocs);
-		numRiskyLocs = 0;
-		for (int player = PLAYER_LORD_GODALMING; player < PLAYER_MINA_HARKER; player++) {
-			// riskyLocs should never be null as hunters always have a valid move.
-			PlaceId *riskyLocs = DvWhereCanTheyGoByType(dv, player, false, true, false, &numRiskyLocs);
-			removeRiskyLocs(validLocs, riskyLocs, &numValidLocs, &numRiskyLocs);
-			free(riskyLocs);
-		}
+		int index = rand() % (numValidLocs + 1);
+		strcpy(play, placeIdToAbbrev(validLocs[index]));
+		free(validLocs);
+		registerBestPlay(play, "Mwahahahaha");
 	}
 
-
+	// Default: choose a random location
 	// If Dracula can go to a location that is not "risky":
-	// Go to random location in validLocs (not necessarily a good move!)
+	// Go to random location in ValidLocs (not necessarily a good move!)
 	int index = rand() % (numValidLocs + 1);
 	strcpy(play, placeIdToAbbrev(validLocs[index]));
 	free(validLocs);
@@ -95,15 +117,15 @@ void decideDraculaMove(DraculaView dv)
 	return;
 }
 
-void removeRiskyLocs(PlaceId *validLocs, PlaceId *riskyLocs, int *numValidLocs, int *numRiskyLocs) {
+void removeRiskyLocs(PlaceId *ValidLocs, PlaceId *riskyLocs, int *numValidLocs, int *numRiskyLocs) {
 	// For each valid location of Dracula:
 	for (int i = 0; i < *numValidLocs; i++) {
 		// Compare with each risky location.
 		for (int j = 0; j < *numRiskyLocs; j++) {
-			if (validLocs[i] == riskyLocs[j]) {
-				// Remove location from validLocs if it is a riskyLoc.
+			if (ValidLocs[i] == riskyLocs[j]) {
+				// Remove location from ValidLocs if it is a riskyLoc.
 				for (int c = i; c < *numValidLocs - 1; c++) {
-					validLocs[c] = validLocs[c + 1];
+					ValidLocs[c] = ValidLocs[c + 1];
 				}
 				*numValidLocs = *numValidLocs - 1;
 			}
