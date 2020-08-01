@@ -12,8 +12,13 @@
 #include "dracula.h"
 #include "DraculaView.h"
 #include "Game.h"
+#include "Map.h"
+#include "Map.c"
+#include "Places.h"
+#include "Queue.h"
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 void removeRiskyLocs(PlaceId *validLocs, PlaceId *riskyLocs, int *numValidLocs, int *numRiskyLocs);
 void decideDraculaMove(DraculaView dv)
@@ -28,12 +33,15 @@ void decideDraculaMove(DraculaView dv)
 		return;
 	}
 
+	
 	// Get possible locations for Dracula. Return TELEPORT if no valid moves.
 	int numValidLocs = 0;
 	PlaceId *validLocs = DvWhereCanIGo(dv, &numValidLocs);
+
 	if (numValidLocs == 0) {
+		printf("no valid locs\n");
 		free(validLocs);
-		registerBestPlay("TP", "Mwahahahaha");
+		registerBestPlay("TP", "I love COMP2521");
 		return;
 	}
 
@@ -54,29 +62,29 @@ void decideDraculaMove(DraculaView dv)
 		// (Its better to lose 2 BP at SEA than lose 10 BP to a hunter!)
 		validLocs = DvWhereCanIGoByType(dv, false, true, &numValidLocs);
 		if (validLocs != NULL) {
-			const char *abbrev = placeIdToAbbrev(validLocs[0]);
 			char *play;
-			strcpy(play, abbrev);
+			int index = rand() % (numValidLocs + 1);
+			strcpy(play, placeIdToAbbrev(validLocs[index]));
 			free(validLocs);
-			registerBestPlay(play, "Mwahahahaha");
+			registerBestPlay(play, "jas is best lecturer");
 			return;
 		}
 		
-		// Otherwise go to the first move in the original validLocs (not necessarily a good move!)
+		// Otherwise choose random location in the original validLocs (not necessarily a good move!)
 		validLocs = DvWhereCanIGo(dv, &numValidLocs);
-		const char *abbrev = placeIdToAbbrev(validLocs[0]);
+		int index = rand() % (numValidLocs + 1);
 		char *play;
-		strcpy(play, abbrev);
+		strcpy(play, placeIdToAbbrev(validLocs[index]));
 		free(validLocs);
 		registerBestPlay(play, "Mwahahahaha");
 		return;
 	}
 
 	// If Dracula can go to a location that is not "risky":
-	// Go to the first move in validLocs (not necessarily a good move!)
-	const char *abbrev = placeIdToAbbrev(validLocs[0]);
+	// Go to random location in validLocs (not necessarily a good move!)
 	char *play;
-	strcpy(play, abbrev);
+	int index = rand() % (numValidLocs + 1);
+	strcpy(play, placeIdToAbbrev(validLocs[index]));
 	free(validLocs);
 	registerBestPlay(play, "Mwahahahaha");
 	return;
@@ -99,3 +107,5 @@ void removeRiskyLocs(PlaceId *validLocs, PlaceId *riskyLocs, int *numValidLocs, 
 	}
 	return;
 }
+
+
