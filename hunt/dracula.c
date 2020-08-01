@@ -19,7 +19,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-bool thereIsHunter(PlaceId location, PlaceId hunterLocs[]);
 void removeRiskyLocs(PlaceId *ValidLocs, PlaceId *riskyLocs, int *numValidLocs, int *numRiskyLocs);
 void decideDraculaMove(DraculaView dv)
 {
@@ -51,7 +50,7 @@ void decideDraculaMove(DraculaView dv)
 	// Go to Castle Dracula if possible - Dracula wants to gain 10 BP.
 	// Even if a hunter is there, it will be an even exchange. 
 	for (int i = 0; i < numValidLocs; i++) {
-		if (validLocs[i] == CASTLE_DRACULA && !thereIsHunter(CASTLE_DRACULA, hunterLocs)) {
+		if (validLocs[i] == CASTLE_DRACULA && health >= 25) {
 			registerBestPlay("CD", "COMP2521 > COMP1511");
 			return;
 		} 
@@ -136,16 +135,6 @@ void removeRiskyLocs(PlaceId *ValidLocs, PlaceId *riskyLocs, int *numValidLocs, 
 		}
 	}
 	return;
-}
-
-bool thereIsHunter(PlaceId location, PlaceId hunterLocs[]) {
-	for (int player = 0; player < 4; player++) {
-		if (hunterLocs[player] == location) {
-			return true;
-		}
-	}
-
-	return false;
 }
 
 
