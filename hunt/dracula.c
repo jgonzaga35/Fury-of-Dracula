@@ -19,14 +19,20 @@
 #include <string.h>
 #include <stdlib.h>
 
+bool thereIsHunter(PlaceId location, PlaceId hunterLocs[]);
 void removeRiskyLocs(PlaceId *ValidLocs, PlaceId *riskyLocs, int *numValidLocs, int *numRiskyLocs);
 void decideDraculaMove(DraculaView dv)
 {
 	Round round = DvGetRound(dv);				  // The current round in the game.
 	char *play;									  // The play to be made.
-	int health= DvGetHealth(dv, PLAYER_DRACULA); // Dracula's Blood Points.
-	int numValidLocs = 0;
-	int numRiskyLocs = 0;
+	int health= DvGetHealth(dv, PLAYER_DRACULA);  // Dracula's Blood Points.
+	int numValidLocs = 0;						  // Number of Valid Locations for Dracula.	
+	int numRiskyLocs = 0;					      // Number of Risky Locations for Dracula.
+	PlaceId hunterLocs[4];                        // Array of current hunter locations.
+	for (int player = 0; player < 4; player++) {
+		hunterLocs[player] = DvGetPlayerLocation(dv, player);
+	}
+
 
 	// Dracula chooses STRASBOURG as the initial location.
 	if (round == 0) {
@@ -45,7 +51,7 @@ void decideDraculaMove(DraculaView dv)
 	// Go to Castle Dracula if possible - Dracula wants to gain 10 BP.
 	// Even if a hunter is there, it will be an even exchange. 
 	for (int i = 0; i < numValidLocs; i++) {
-		if (validLocs[i] == CASTLE_DRACULA) {
+		if (validLocs[i] == CASTLE_DRACULA && !thereIsHunter(CASTLE_DRACULA, hunterLocs)) {
 			registerBestPlay("CD", "COMP2521 > COMP1511");
 			return;
 		} 
@@ -84,10 +90,9 @@ void decideDraculaMove(DraculaView dv)
 			PlaceId *potentialLocs = DvWhereCanIGo(dv, &numPotentialLocs); 
 			numRiskyLocs = 0;
 			for (int player = 0; player < 4; player++) {
-				PlaceId currentLoc = DvGetPlayerLocation(dv, player);
 				for (int i = 0; i < numPotentialLocs; i++) {
-					if (potentialLocs[i] == currentLoc) {
-						strcpy(play, placeIdToAbbrev(currentLoc));
+					if (potentialLocs[i] == hunterLocs[player]) {
+						strcpy(play, placeIdToAbbrev(hunterLocs[player]));
 						free(validLocs);
 						free(potentialLocs);
 						registerBestPlay(play, "give me marks");
@@ -131,6 +136,16 @@ void removeRiskyLocs(PlaceId *ValidLocs, PlaceId *riskyLocs, int *numValidLocs, 
 		}
 	}
 	return;
+}
+
+bool thereIsHunter(PlaceId location, PlaceId hunterLocs[]) {
+	for (int player = 0; player < 4; player++) {
+		if (hunterLocs[player] == location) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 
