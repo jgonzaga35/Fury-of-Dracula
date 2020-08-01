@@ -25,7 +25,8 @@ void decideDraculaMove(DraculaView dv)
 	Round round = DvGetRound(dv);				  // The current round in the game.
 	char *play;									  // The play to be made.
 	int health= DvGetHealth(dv, PLAYER_DRACULA); // Dracula's Blood Points.
-	int isRisky = 0;								// 0 if validLocs has not been modified, 1 otherwise
+	int numValidLocs = 0;
+	int numRiskyLocs = 0;
 
 	// Dracula chooses STRASBOURG as the initial location.
 	if (round == 0) {
@@ -34,7 +35,6 @@ void decideDraculaMove(DraculaView dv)
 	}
 
 	// Get possible locations for Dracula. Return TELEPORT if no valid moves.
-	int numValidLocs = 0;
 	PlaceId *validLocs = DvWhereCanIGo(dv, &numValidLocs);
 	if (numValidLocs == 0) {
 		free(validLocs);
@@ -53,7 +53,6 @@ void decideDraculaMove(DraculaView dv)
 
 	// Get reachable locations by road ("risky locations" for each hunter and remove these from Dracula's
 	// valid locations array (he wants to avoid these locations as much as possible).
-	int numRiskyLocs = 0;
 	for (int player = 0; player < 4; player++) {
 		// riskyLocs should never be null as hunters always have a valid move.
 		PlaceId *riskyLocs = DvWhereCanTheyGoByType(dv, player, true, false, true, &numRiskyLocs);
