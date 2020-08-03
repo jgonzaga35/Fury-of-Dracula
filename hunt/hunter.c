@@ -20,12 +20,12 @@ void decideHunterMove(HunterView hv)
 {
 	Round round = HvGetRound(hv);
 	Player name = HvGetPlayer(hv); // Which hunter?
-
+	
 	if (round == 0) { // FIRST ROUND
 		char *location;
 		// Depending on the hunter, move to a predetermined location
 		// Best stratergy is to choose locations away from other hunters
-		
+
 		// I chose corners of the map - not sure if best choice
 		// (need at least one hunter in middle)
 		// Need to discuss this
@@ -49,7 +49,7 @@ void decideHunterMove(HunterView hv)
 		registerBestPlay(location, "");
 		return;
 	} 
-
+	
 	// for all other rounds
 	PlaceId HunterLoc, DraculaLoc, VampireLoc;
 	Round currRound = HvGetRound(hv);
@@ -77,7 +77,7 @@ void decideHunterMove(HunterView hv)
 
 	// ---------------------------Move to random loc----------------------------
 	// Move to a random location, (safe option - due to timing limit)
-	//srand(time);
+	// srand(time);
 
 	// ------------------If hunter health low, rest-----------------------------
 	int currHunterHealth = HvGetHealth(hv, currHunter);
@@ -112,19 +112,15 @@ void decideHunterMove(HunterView hv)
 		// use HvGetShortestPathTo.
 		// Instead, do a random move
 		else {
-			// doRandomMove();
 			int numReturnedLocs;
 			PlaceId *canTravelTo = HvWhereCanIGo(hv, &numReturnedLocs);
-			int randomCityIndex = rand()%numReturnedLocs;
-			if (randomCityIndex == 0 || randomCityIndex >= numReturnedLocs) 
+			int randomCityIndex = 0;
+			while (randomCityIndex == 0 || randomCityIndex >= numReturnedLocs)
 			{
-				while (randomCityIndex == 0 || randomCityIndex >= numReturnedLocs)
-				{
-					randomCityIndex = rand()%numReturnedLocs;
-				}
+				randomCityIndex = rand()%numReturnedLocs;
 			}
 			char *nextMove = strcpy(nextMove, placeIdToAbbrev(canTravelTo[randomCityIndex]));
-			registerBestPlay(nextMove, "Moving Towards Drac");
+			registerBestPlay(nextMove, "Moving To Random Location");
 		}
 	} else if(currRound >= 6) {
 		// If Dracula's location not known, perform collab research
