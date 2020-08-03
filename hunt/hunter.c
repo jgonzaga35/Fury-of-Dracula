@@ -97,9 +97,12 @@ void decideHunterMove(HunterView hv)
 			}
 			// Else Dracula was seen a pretty long time ago, no point trying to
 			// use HvGetShortestPathTo
-		} else {
+		} else if(currRound >= 6) {
 			// If Dracula's location not known, perform collab research
 			// This allows us to know the 6th move in Dracula's trail immediately
+			// NOTE:: Research can only occur after 6th round as there is no
+			//		  move in the 5th position of Dracula's trail before round 6
+			
 			// Note:: If the move was a HIDE/DOUBLE_BACK move, then the move that
 			// the HIDE/DOUBLE_BACK refers to will be revealed (and so on
 			// until LOCATION is revealed)
