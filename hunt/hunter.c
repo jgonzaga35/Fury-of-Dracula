@@ -120,8 +120,9 @@ void decideHunterMove(HunterView hv)
 			int numReturnedLocs;
 			PlaceId *canTravelTo = HvWhereCanIGo(hv, &numReturnedLocs);
 			int randomCityIndex = rand()%numReturnedLocs;
-			if (randomCityIndex == 0 || randomCityIndex >= numReturnedLocs) {
-				while (randomCityIndex !=0 && !(randomCityIndex >= numReturnedLocs))
+			if (randomCityIndex == 0 || randomCityIndex >= numReturnedLocs) 
+			{
+				while (randomCityIndex == 0 || randomCityIndex >= numReturnedLocs)
 				{
 					randomCityIndex = rand()%numReturnedLocs;
 				}
