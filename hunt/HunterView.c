@@ -23,6 +23,9 @@
 // add your own #includes here
 #include <string.h>
 
+#define TRUE	1
+#define FALSE	0
+
 struct hunterView {
 	GameView  gv;
 	Message *message;
@@ -37,7 +40,8 @@ static int draculaNotRevealed(HunterView hv);
 HunterView HvNew(char *pastPlays, Message messages[])
 {
 	HunterView new = malloc(sizeof(struct hunterView));
-	if (new == NULL) {
+	if (new == NULL) 
+	{
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
 		exit(EXIT_FAILURE);
 	}
@@ -47,9 +51,8 @@ HunterView HvNew(char *pastPlays, Message messages[])
 	int numTurns = numTurnsPassed(new->gv);
 	new->message = malloc(numTurns * sizeof(Message));
 	   
-	for (int i = 0; i < numTurns; i++) {
+	for (int i = 0; i < numTurns; i++)
 		strncpy(new->message[i], messages[i], MESSAGE_SIZE);
-	}
 	
 	return new;
 }
@@ -125,7 +128,7 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 		}
 	}
 	
-	if (!isRealLocation(location) || round == 0) return NOWHERE;	// No real location exist
+	if (!isRealLocation(location) || round == 0) return NOWHERE; // No real location exist
 
 	if (location == TELEPORT) return CASTLE_DRACULA;
 
@@ -134,69 +137,80 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
-{
-	// TODO: Use standard BFS + A find neighbouring function (Make this in Map.c)
-	PlaceId visited[MAX_REAL_PLACE];
-	PlaceId temp[MAX_REAL_PLACE];
-
-	for (PlaceId i = 0; i < MAX_REAL_PLACE; i++)
-	{
-		visited[i] = -1;
-		temp[i] = -1;
-	} 
+{	
+	PlaceId pathTo[MAX_REAL_PLACE + 1];
+	int roundArray[MAX_REAL_PLACE + 1];		// Array that stores the round that 
+											// we should arrive at a location
+	
 	
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
+	Round currRound = HvGetRound(hv);
+	if (src == dest) 
+		{*pathLength = 0; return NULL;}
+
+	PlaceId currLocation;
+	
+	//Initialize
+	for (PlaceId i = 0; i < MAX_REAL_PLACE + 1; i++) pathTo[i] = -1;
+	for (int i = 0; i < MAX_REAL_PLACE + 1; i++) roundArray[i] = 0;
+	roundArray[src] = currRound;			// we are at src at currRound
+	pathTo[src] = src;
+
 	Queue locationQ = newQueue();
 	QueueJoin(locationQ, src);
-
-	PlaceId *path = NULL;
-	PlaceId currLocation = src;
-	int currLength = 0;
-
-	while (!QueueIsEmpty(locationQ)) 
+	
+	int found = FALSE;
+	PlaceId tempLoc;
+	while (!QueueIsEmpty(locationQ) && found == FALSE) 
 	{
-		currLocation = QueueLeave(locationQ);
+		currLocation = QueueLeave(locationQ); 
 		int numReturnedLocs;
-		int *locations = getNeighbours(hv->gv, currLocation, &numReturnedLocs);
 		
-		PlaceId j = 0;
-		for (j = 0; j < numReturnedLocs; j++) 
-		{
-			if (!visited[locations[j]]) 
-			{
-				QueueJoin(locationQ, locations[j]);
-				temp[locations[j]] = currLocation;
-				visited[locations[j]] = locations[j];
-			}
-		}
-		
-		if (currLocation == dest)
-		{
-			temp[locations[j]] = currLocation;
-			PlaceId index = locations[j];
-			while (index != src)
-			{
-				index = temp[index];
-				pathLength++;
-			}
-			
-			currLength = *(pathLength - 1);
-			path[currLength] = dest;
-			currLength--;
+		PlaceId *neighbours = GvGetReachable(
+			hv->gv, hunter, roundArray[currLocation], currLocation, &numReturnedLocs);
 
-			index = temp[dest];
-			
-			while (currLength) 
-			{
-				path[currLength] = index;
-				index = temp[index];
-				currLength--;
+		for (int j = 0; j < numReturnedLocs; j++)
+		{	
+			tempLoc = neighbours[j];
+			// Has not been visited
+			if (pathTo[tempLoc] == -1)
+			{	
+				pathTo[tempLoc] = currLocation;
+				// The round we can go there is the next round
+				roundArray[tempLoc] = roundArray[currLocation] + 1;
+				QueueJoin(locationQ, tempLoc);
+
+				if (tempLoc == dest)
+				{
+					found = TRUE;
+					break;
+				}
 			}
-			return path;
 		}
+	} 
+
+	dropQueue(locationQ);
+	
+	// Compute the path to dest backwardly using pathTo array
+	PlaceId tempPath[MAX_REAL_PLACE];
+	tempPath[0] = dest;
+	int index = 1;
+	while (pathTo[tempLoc] != src)
+	{
+		tempPath[index] = pathTo[tempLoc];
+		tempLoc = pathTo[tempLoc];
+		index += 1;
 	}
 	
-	return NULL;
+	*pathLength = index;
+	
+
+	PlaceId *path = malloc(index * sizeof(PlaceId));
+
+	// Copy the result reversely into the path array
+	for (int j = 0; j < index; j++) path[j] = tempPath[index - j - 1];
+
+	return path;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -252,6 +266,7 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 // Your own interface functions
 
 // Helper functions
+// Check whether Dracula's location has been revealed
 static int draculaNotRevealed(HunterView hv)
 {
 	PlaceId location = HvGetPlayerLocation(hv, PLAYER_DRACULA);
@@ -259,6 +274,7 @@ static int draculaNotRevealed(HunterView hv)
 			|| location == NOWHERE);
 }
 
+// Check whether location is a real location
 static int isRealLocation(PlaceId location)
 {
 	return (location != CITY_UNKNOWN && location != SEA_UNKNOWN && location != UNKNOWN);

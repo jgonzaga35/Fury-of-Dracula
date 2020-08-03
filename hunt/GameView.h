@@ -20,6 +20,7 @@
 
 #include "Game.h"
 #include "Places.h"
+#include "Map.h"
 // add your own #includes here
 
 typedef struct gameView *GameView;
@@ -254,6 +255,19 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
 
-// TODO
+// Return the number of turns passed
+int numTurnsPassed(GameView gv);
+
+// Check if the location is Double back
+int isDoubleBack(PlaceId location);
+
+// Return the real location that hide refers
+PlaceId traceHideByIndex(PlaceId *pastMoves, int i);
+
+// Return the real location that double back refers
+PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i);
+
+// Return the map
+Map getMap(GameView gv);
 
 #endif // !defined (FOD__GAME_VIEW_H_)
