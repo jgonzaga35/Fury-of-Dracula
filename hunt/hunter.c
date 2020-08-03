@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include "Game.h"
 #include "hunter.h"
 #include "HunterView.h"
@@ -74,7 +75,11 @@ void decideHunterMove(HunterView hv)
 			break;
 	}
 
-	// --------------If hunter health low, rest-----------------------------
+	// ---------------------------Move to random loc----------------------------
+	// Move to a random location, (safe option - due to timing limit)
+	srand(time)
+
+	// ------------------If hunter health low, rest-----------------------------
 	int currHunterHealth = HvGetHealth(hv, currHunter);
 	if(currHunterHealth <= 3) {
 		char *nextMove = strcpy(nextMove, placeIdToAbbrev(HunterLoc));
@@ -107,7 +112,7 @@ void decideHunterMove(HunterView hv)
 		// use HvGetShortestPathTo.
 		// Instead, do a random move
 		else {
-			doRandomMove();
+			// doRandomMove();
 		}
 	} else if(currRound >= 6) {
 		// If Dracula's location not known, perform collab research
@@ -125,8 +130,14 @@ void decideHunterMove(HunterView hv)
 
 	// ------------------------If Dracula health <= x---------------------------
 	if(HvGetHealth(hv, PLAYER_DRACULA) <= 15) {
-		// TODO:
 		// If Dracula's health is less than x, move towards Castle Dracula
+		if(LastDracRoundSeen != -1) {
+			int pathLength = -1;
+			PlaceId *path = HvGetShortestPathTo(hv, currHunter, CASTLE_DRACULA, &pathLength);
+			char *nextMove = strcpy(nextMove, placeIdToAbbrev(path[0]));
+			registerBestPlay(nextMove,"Moving to CD");
+		}
+
 		// HOWEVER, if he is really far away, then try and kill him
 	}
 	registerBestPlay(play, message);
