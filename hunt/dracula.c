@@ -83,9 +83,10 @@ void decideDraculaMove(DraculaView dv)
 			validLocs = DvWhereCanIGoByType(dv, false, true, &numValidLocs);
 			if (validLocs != NULL) {
 				int index = rand() % (numValidLocs + 1);
-				strcpy(play, placeIdToAbbrev(validLocs[index]));
+				registerBestPlay(convertMove(trail, validLocs[index], draculaLoc), "Mwahahahaha");
+				//strcpy(play, placeIdToAbbrev(validLocs[index]));
 				free(validLocs);
-				registerBestPlay(play, "jas is best lecturer");
+				//registerBestPlay(play, "jas is best lecturer");
 				return;
 			} 
 		} 
@@ -102,10 +103,11 @@ void decideDraculaMove(DraculaView dv)
 			for (int player = 0; player < 4; player++) {
 				for (int i = 0; i < numPotentialLocs; i++) {
 					if (potentialLocs[i] == hunterLocs[player]) {
-						strcpy(play, placeIdToAbbrev(hunterLocs[player]));
+						//strcpy(play, placeIdToAbbrev(hunterLocs[player]));
+						registerBestPlay(convertMove(trail, hunterLocs[player], draculaLoc), "Mwahahahaha");
 						free(validLocs);
 						free(potentialLocs);
-						registerBestPlay(play, "give me marks");
+						//registerBestPlay(play, "give me marks");
 						return;
 					}
 				}
@@ -116,18 +118,20 @@ void decideDraculaMove(DraculaView dv)
 		// Default: Dracula picks a random risky location.
 		validLocs = DvWhereCanIGo(dv, &numValidLocs);
 		int index = rand() % (numValidLocs + 1);
-		strcpy(play, placeIdToAbbrev(validLocs[index]));
+		registerBestPlay(convertMove(trail, validLocs[index], draculaLoc), "Mwahahahaha");
+		//strcpy(play, placeIdToAbbrev(validLocs[index]));
 		free(validLocs);
-		registerBestPlay(play, "Mwahahahaha");
+		//registerBestPlay(play, "Mwahahahaha");
 	}
 
 	// Default: choose a random location
 	// If Dracula can go to a location that is not "risky":
 	// Go to random location in ValidLocs (not necessarily a good move!)
 	int index = rand() % (numValidLocs + 1);
-	strcpy(play, placeIdToAbbrev(validLocs[index]));
+	registerBestPlay(convertMove(trail, validLocs[index], draculaLoc), "Mwahahahaha");
+	// strcpy(play, placeIdToAbbrev(validLocs[index]));
 	free(validLocs);
-	registerBestPlay(play, "Mwahahahaha");
+	// registerBestPlay(play, "Mwahahahaha");
 	return;
 }
 
