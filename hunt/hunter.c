@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 #include "Game.h"
 #include "hunter.h"
 #include "HunterView.h"
@@ -48,79 +49,108 @@ void decideHunterMove(HunterView hv)
 		registerBestPlay(location, "");
 		return;
 	} 
+
 	// for all other rounds
-		PlaceId HunterLoc, DraculaLoc, VampireLoc;
-		Round currRound = HvGetRound(hv);
-		Player currHunter = HvGetPlayer(hv);
-		char *play; // move to make -- this is sent to register best play
-		Message message; // message -- this is sent to register best play
+	PlaceId HunterLoc, DraculaLoc, VampireLoc;
+	Round currRound = HvGetRound(hv);
+	Player currHunter = HvGetPlayer(hv);
+	char *play; // move to make -- this is sent to register best play
+	Message message; // message -- this is sent to register best play
 
-		// ---------------Get current location of the hunter--------------------
-		switch(currHunter) {
-			case PLAYER_LORD_GODALMING:
-				HunterLoc = HvGetPlayerLocation(hv, currHunter);
-				break;
-			case PLAYER_DR_SEWARD:
-				HunterLoc = HvGetPlayerLocation(hv, currHunter);
-				break;
-			case PLAYER_VAN_HELSING:
-				HunterLoc = HvGetPlayerLocation(hv, currHunter);
-				break;
-			case PLAYER_MINA_HARKER:
-				HunterLoc = HvGetPlayerLocation(hv, currHunter);
-				break;
-			default:
-				break;
+	// ---------------Get current location of the hunter--------------------
+	switch(currHunter) {
+		case PLAYER_LORD_GODALMING:
+			HunterLoc = HvGetPlayerLocation(hv, currHunter);
+			break;
+		case PLAYER_DR_SEWARD:
+			HunterLoc = HvGetPlayerLocation(hv, currHunter);
+			break;
+		case PLAYER_VAN_HELSING:
+			HunterLoc = HvGetPlayerLocation(hv, currHunter);
+			break;
+		case PLAYER_MINA_HARKER:
+			HunterLoc = HvGetPlayerLocation(hv, currHunter);
+			break;
+		default:
+			break;
+	}
+
+	// ---------------------------Move to random loc----------------------------
+	// Move to a random location, (safe option - due to timing limit)
+	//srand(time);
+
+	// ------------------If hunter health low, rest-----------------------------
+	int currHunterHealth = HvGetHealth(hv, currHunter);
+	if(currHunterHealth <= 3) {
+		char *nextMove = strcpy(nextMove, placeIdToAbbrev(HunterLoc));
+		registerBestPlay(nextMove, "Resting");
+	}
+
+	// -----------------Get last known Dracula location-------------------------
+	/** Gets  Dracula's  last  known  real  location  as revealed in the 
+		 * play string and sets *round to the number of the  latest  round  in  
+		 * which Dracula moved there.*/
+	Round LastDracRoundSeen = -1;
+	DraculaLoc = HvGetLastKnownDraculaLocation(hv, &LastDracRoundSeen);
+
+	if(DraculaLoc != NOWHERE && LastDracRoundSeen != -1) { 
+		// Dracula's last real location is known
+		int diff = currRound - LastDracRoundSeen; // how many rounds ago
+
+		// Depending on how far away the hunter is from Dracula,
+		// take different cases.
+		if ( 0 <= diff && diff <= 5) {
+			int pathLength = -1;
+			PlaceId *path = HvGetShortestPathTo(hv, currHunter, 
+												DraculaLoc, &pathLength);
+			// NOTE:: call to above function is very expensive and should be placed
+			// near the end i.e. enough time + last resort
+			char *nextMove = strcpy(nextMove, placeIdToAbbrev(path[0]));
+			registerBestPlay(nextMove, "Moving Towards Drac");
 		}
-
-		// --------------Get last known Dracula location------------------------
-		/** Gets  Dracula's  last  known  real  location  as revealed in the 
-		  * play string and sets *round to the number of the  latest  round  in  
-		  * which Dracula moved there.*/
-		Round LastDracRoundSeen = -1;
-		DraculaLoc = HvGetLastKnownDraculaLocation(hv, &LastDracRoundSeen);
-
-		if(DraculaLoc != NOWHERE && LastDracRoundSeen != -1) { 
-			// Dracula's last real location is known
-			int diff = currRound - LastDracRoundSeen; // how many rounds ago
-
-			// Depending on how far away the hunter is from Dracula,
-			// take different cases.
-			if ( 0 <= diff && diff <= 5) {
-				int pathLength = -1;
-				PlaceId *path = HvGetShortestPathTo(hv, currHunter, 
-													DraculaLoc, &pathLength);
-				// NOTE:: call to above function is very expensive and should be placed
-				// near the end i.e. enough time + last resort
-				char *nextMove = strcpy(nextMove, placeIdToAbbrev(path[0]));
-				registerBestPlay(nextMove, "Moving Towards Drac");
+		// Else Dracula was seen a pretty long time ago, no point trying to
+		// use HvGetShortestPathTo.
+		// Instead, do a random move
+		else {
+			// doRandomMove();
+			int numReturnedLocs;
+			PlaceId *canTravelTo = HvWhereCanIGo(hv, &numReturnedLocs);
+			int randomCityIndex = rand()%numReturnedLocs;
+			if (randomCityIndex == 0 || randomCityIndex >= numReturnedLocs) 
+			{
+				while (randomCityIndex == 0 || randomCityIndex >= numReturnedLocs)
+				{
+					randomCityIndex = rand()%numReturnedLocs;
+				}
 			}
-			// Else Dracula was seen a pretty long time ago, no point trying to
-			// use HvGetShortestPathTo
-		} else {
-			// If Dracula's location not known, perform collab research
-			// This allows us to know the 6th move in Dracula's trail immediately
-			// Note:: If the move was a HIDE/DOUBLE_BACK move, then the move that
-			// the HIDE/DOUBLE_BACK refers to will be revealed (and so on
-			// until LOCATION is revealed)
-			// Therefore, it might not exactly be the 6th last move
-			char *nextMove = strcpy(nextMove, placeIdToAbbrev(HunterLoc));
-			registerBestPlay(nextMove, "Research"); // sends currLocofHunter back
+			char *nextMove = strcpy(nextMove, placeIdToAbbrev(canTravelTo[randomCityIndex]));
+			registerBestPlay(nextMove, "Moving Towards Drac");
+		}
+	} else if(currRound >= 6) {
+		// If Dracula's location not known, perform collab research
+		// This allows us to know the 6th move in Dracula's trail immediately
+		// NOTE:: Research can only occur after 6th round as there is no
+		//		  move in the 5th position of Dracula's trail before round 6
+
+		// Note:: If the move was a HIDE/DOUBLE_BACK move, then the move that
+		// the HIDE/DOUBLE_BACK refers to will be revealed (and so on
+		// until LOCATION is revealed)
+		// Therefore, it might not exactly be the 6th last move
+		char *nextMove = strcpy(nextMove, placeIdToAbbrev(HunterLoc));
+		registerBestPlay(nextMove, "Research"); // sends currLocofHunter back
+	}
+
+	// ------------------------If Dracula health <= x---------------------------
+	if(HvGetHealth(hv, PLAYER_DRACULA) <= 15) {
+		// If Dracula's health is less than x, move towards Castle Dracula
+		if(LastDracRoundSeen != -1) {
+			int pathLength = -1;
+			PlaceId *path = HvGetShortestPathTo(hv, currHunter, CASTLE_DRACULA, &pathLength);
+			char *nextMove = strcpy(nextMove, placeIdToAbbrev(path[0]));
+			registerBestPlay(nextMove,"Moving to CD");
 		}
 
-		// --------------If hunter health low, rest-----------------------------
-		int currHunterHealth = HvGetHealth(hv, currHunter);
-		if(currHunterHealth <= 3) {
-			char *nextMove = strcpy(nextMove, placeIdToAbbrev(HunterLoc));
-			registerBestPlay(nextMove, "Resting");
-		}
-
-		// ---------------------If Dracula health <= x--------------------------
-		if(HvGetHealth(hv, PLAYER_DRACULA) <= 15) {
-			// TODO:
-			// If Dracula's health is less than x, move towards Castle Dracula
-			// HOWEVER, if he is really far away, then try and kill him
-		}
-
+		// HOWEVER, if he is really far away, then try and kill him
+	}
 	registerBestPlay(play, message);
 }
