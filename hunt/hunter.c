@@ -16,11 +16,12 @@
 #include "hunter.h"
 #include "HunterView.h"
 
+PlaceId doRandom(HunterView hv, Player hunter);
+
 void decideHunterMove(HunterView hv)
 {
 	Round round = HvGetRound(hv);
 	Player name = HvGetPlayer(hv); // Which hunter?
-
 	if (round == 0) { // FIRST ROUND
 		char *location;
 		// Depending on the hunter, move to a predetermined location
@@ -77,7 +78,8 @@ void decideHunterMove(HunterView hv)
 
 	// ---------------------------Move to random loc----------------------------
 	// Move to a random location, (safe option - due to timing limit)
-	srand(time)
+	// char *move = strcpy(move, placeIdToAbbrev(doRandom(hv, currHunter)));
+	// registerBestPlay(move, "rand");
 
 	// ------------------If hunter health low, rest-----------------------------
 	int currHunterHealth = HvGetHealth(hv, currHunter);
@@ -141,4 +143,13 @@ void decideHunterMove(HunterView hv)
 		// HOWEVER, if he is really far away, then try and kill him
 	}
 	registerBestPlay(play, message);
+}
+
+PlaceId doRandom(HunterView hv, Player hunter) {
+	srand(time(0));
+	int numLocs = 1;
+	PlaceId *places = HvWhereCanIGo(hv, &numLocs);
+	int loc = rand() % numLocs;
+	// printf("The location is: %d: %s\n", places[loc], placeIdToName(places[loc]));
+	return places[loc];
 }
