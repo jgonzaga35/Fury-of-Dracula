@@ -70,6 +70,7 @@ int isDoubleBack(PlaceId location);
 PlaceId traceHideByIndex(PlaceId *pastMoves, int i);
 PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i);
 Map getMap(GameView gv);
+PlaceId *GvGetTrail(GameView gv);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -415,6 +416,11 @@ PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i)
 Map getMap(GameView gv) 
 {
 	return gv->map;
+}
+
+PlaceId *GvGetTrail(GameView gv)
+{
+	return gv->trails[PLAYER_DRACULA];
 }
 
 // Helper functions
