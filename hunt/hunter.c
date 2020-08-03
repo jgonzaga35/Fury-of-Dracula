@@ -46,7 +46,7 @@ void decideHunterMove(HunterView hv)
 				break;
 		}
 		
-		registerBestPlay(location, "Move To Corners The Corners of Europe");
+		registerBestPlay(location, "Move To The Corners of Europe");
 		return;
 	} 
 	
