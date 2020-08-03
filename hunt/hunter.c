@@ -77,7 +77,7 @@ void decideHunterMove(HunterView hv)
 
 	// ---------------------------Move to random loc----------------------------
 	// Move to a random location, (safe option - due to timing limit)
-	srand(time)
+	//srand(time);
 
 	// ------------------If hunter health low, rest-----------------------------
 	int currHunterHealth = HvGetHealth(hv, currHunter);
@@ -113,6 +113,17 @@ void decideHunterMove(HunterView hv)
 		// Instead, do a random move
 		else {
 			// doRandomMove();
+			int numReturnedLocs;
+			PlaceId *canTravelTo = HvWhereCanIGo(hv, &numReturnedLocs);
+			int randomCityIndex = rand()%numReturnedLocs;
+			if (randomCityIndex == 0 || randomCityIndex >= numReturnedLocs) {
+				while (randomCityIndex !=0 && !(randomCityIndex >= numReturnedLocs))
+				{
+					randomCityIndex = rand()%numReturnedLocs;
+				}
+			}
+			char *nextMove = strcpy(nextMove, placeIdToAbbrev(canTravelTo[randomCityIndex]));
+			registerBestPlay(nextMove, "Moving Towards Drac");
 		}
 	} else if(currRound >= 6) {
 		// If Dracula's location not known, perform collab research
