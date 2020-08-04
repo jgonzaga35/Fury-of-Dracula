@@ -270,4 +270,7 @@ PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i);
 // Return the map
 Map getMap(GameView gv);
 
+// Return the trail of player
+PlaceId *GvGetTrail(GameView gv);
+
 #endif // !defined (FOD__GAME_VIEW_H_)

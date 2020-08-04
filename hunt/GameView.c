@@ -70,6 +70,7 @@ int isDoubleBack(PlaceId location);
 PlaceId traceHideByIndex(PlaceId *pastMoves, int i);
 PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i);
 Map getMap(GameView gv);
+PlaceId *GvGetTrail(GameView gv);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -346,6 +347,7 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 {
 	if (gv == NULL) return NULL;
 	if (!validPlayer(player)) return NULL;
+	if(from == UNKNOWN_PLACE) return NULL;
 	*numReturnedLocs = 0;
 
 	if (isHunter(player))
@@ -361,7 +363,8 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                               bool boat, int *numReturnedLocs)
 {
 	if (gv == NULL) return NULL;
-	if (!validPlayer(player)) return NULL;	
+	if (!validPlayer(player)) return NULL;
+	if(from == UNKNOWN_PLACE) return NULL;	
 	*numReturnedLocs = 0;
 	PlaceId *allowableCNC = malloc(MAX_REAL_PLACE * sizeof(PlaceId));
 	ConnList CNC = MapGetConnections(gv->map, from); // reachable connections
@@ -415,6 +418,11 @@ PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i)
 Map getMap(GameView gv) 
 {
 	return gv->map;
+}
+
+PlaceId *GvGetTrail(GameView gv)
+{
+	return gv->trails[PLAYER_DRACULA];
 }
 
 // Helper functions

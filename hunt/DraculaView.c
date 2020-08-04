@@ -25,6 +25,7 @@ struct draculaView {
 };
 
 static int isAdjacent (GameView gv, PlaceId src, PlaceId dest);
+PlaceId *DvGetTrail(DraculaView dv);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -383,3 +384,7 @@ static int isAdjacent (GameView gv, PlaceId src, PlaceId dest) {
 	return adjacent;
 }
 
+PlaceId *DvGetTrail(DraculaView dv)
+{
+    return GvGetTrail(dv->gv);
+}

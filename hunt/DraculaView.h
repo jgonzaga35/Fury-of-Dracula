@@ -179,5 +179,6 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 // Your own interface functions
 
 // TODO
+PlaceId *DvGetTrail(DraculaView dv);
 
 #endif // !defined(FOD__DRACULA_VIEW_H_)

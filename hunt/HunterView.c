@@ -222,7 +222,7 @@ PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
 	Player player = HvGetPlayer(hv);
 	PlaceId location = HvGetPlayerLocation(hv, player);
-	if (location == UNKNOWN) {*numReturnedLocs = 0; return NULL;}
+	if (location == CITY_UNKNOWN || location == SEA_UNKNOWN) {*numReturnedLocs = 0; return NULL;}
 	return GvGetReachable(hv->gv, player, HvGetRound(hv) + 1, location, numReturnedLocs);
 }
 
@@ -231,7 +231,7 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 {
 	Player player = HvGetPlayer(hv);
 	PlaceId location = HvGetPlayerLocation(hv, player);
-	if (location == UNKNOWN) {*numReturnedLocs = 0; return NULL;}
+	if (location == CITY_UNKNOWN || location == SEA_UNKNOWN) {*numReturnedLocs = 0; return NULL;}
 	return GvGetReachableByType(hv->gv, player, HvGetRound(hv) + 1, location, road, 
 								rail, boat, numReturnedLocs);
 }
