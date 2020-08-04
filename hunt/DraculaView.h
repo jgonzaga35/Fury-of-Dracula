@@ -180,5 +180,6 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 
 // TODO
 PlaceId *DvGetTrail(DraculaView dv);
+PlaceId *DvGetLocationHistory(DraculaView dv, int *numReturnedLocs);
 
 #endif // !defined(FOD__DRACULA_VIEW_H_)
