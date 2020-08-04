@@ -122,6 +122,7 @@ void decideDraculaMove(DraculaView dv)
 		//strcpy(play, placeIdToAbbrev(validLocs[index]));
 		free(validLocs);
 		//registerBestPlay(play, "Mwahahahaha");
+		return;
 	}
 
 	// Default: choose a random location
