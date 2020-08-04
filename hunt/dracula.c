@@ -44,7 +44,8 @@ void decideDraculaMove(DraculaView dv)
 	for (int player = 0; player < 4; player++) {
 		hunterLocs[player] = DvGetPlayerLocation(dv, player);
 	}
-
+	time_t t;
+	srand((unsigned) time(&t));
 	int pastNum = 0;
 	PlaceId *pastLocs = DvGetLocationHistory(dv, &pastNum);
 	// for (int i = 0; i < pastNum; i++) {
@@ -124,7 +125,18 @@ void decideDraculaMove(DraculaView dv)
 	for (int player = 0; player < 4; player++) {
 		// riskyLocs should never be null as hunters always have a valid move.
 		PlaceId *riskyLocs = DvWhereCanTheyGoByType(dv, player, true, false, true, &numRiskyLocs);
-		removeRiskyLocs(validMoves, riskyLocs, &numValidMoves, &numRiskyLocs);
+		for (int i = 0; i < numValidMoves; i++) {
+			// Compare with each risky location.
+			for (int j = 0; j < numRiskyLocs; j++) {
+				if (MoveToLocation(pastLocs, validMoves[i], &pastNum) == riskyLocs[j]) {
+					// Remove location from ValidLocs if it is a riskyLoc.
+					for (int c = i; c < numValidMoves - 1; c++) {
+						validMoves[c] = validMoves[c + 1];
+					}
+					numValidMoves = numValidMoves - 1;
+				}
+			}
+		}
 		free(riskyLocs);
 	}
 	
@@ -187,8 +199,8 @@ void decideDraculaMove(DraculaView dv)
 	// Default: choose a random location
 	// If Dracula can go to a location that is not "risky":
 	// Go to random location in ValidLocs (not necessarily a good move!)
-	time_t t;
-	srand((unsigned) time(&t));
+	if (numValidMoves != 0) validMoves = DvGetValidMoves(dv, &numValidMoves); 
+
 	int i = rand() % (numValidMoves);
 	//registerBestPlay(convertMove(trail, validLocs[random], draculaLoc), "Mwahahahaha");
 	strcpy(play, placeIdToAbbrev(validMoves[i]));
@@ -196,23 +208,6 @@ void decideDraculaMove(DraculaView dv)
 	free(play);
 	free(pastLocs);
 	free(validMoves);
-	return;
-}
-
-void removeRiskyLocs(PlaceId *ValidLocs, PlaceId *riskyLocs, int *numValidLocs, int *numRiskyLocs) {
-	// For each valid location of Dracula:
-	for (int i = 0; i < *numValidLocs; i++) {
-		// Compare with each risky location.
-		for (int j = 0; j < *numRiskyLocs; j++) {
-			if (ValidLocs[i] == riskyLocs[j]) {
-				// Remove location from ValidLocs if it is a riskyLoc.
-				for (int c = i; c < *numValidLocs - 1; c++) {
-					ValidLocs[c] = ValidLocs[c + 1];
-				}
-				*numValidLocs = *numValidLocs - 1;
-			}
-		}
-	}
 	return;
 }
  
