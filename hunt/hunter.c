@@ -80,8 +80,6 @@ void decideHunterMove(HunterView hv)
 	// Move to a random location, (safe option - due to timing limit)
 	// char *move = strcpy(move, placeIdToAbbrev(doRandom(hv, currHunter)));
 	// registerBestPlay(move, "rand");
-	
-	// srand(time);
 
 	// ------------------If hunter health low, rest-----------------------------
 	int currHunterHealth = HvGetHealth(hv, currHunter);
