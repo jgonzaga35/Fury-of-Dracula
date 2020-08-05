@@ -14,49 +14,12 @@
 #include "Game.h"
 #include "Map.h"
 #include "Places.h"
-#include "Queue.h"
 #include "GameView.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-#define TRUE			1
-#define FALSE			0
-#define NO_EXISTENCE	-1
-
-	/* Strategy Outline 
-	For the first round, Dracula picks STRASBOURG as the initial location 
-	as it has the most road connections.
-
-	For every other round:
-	- Get an array of all the locations Dracula can go to.
-	- Get an array of all the locations Hunters can go to.
-	- Remove common elements from Dracula's valid location array
-	so that the array only contains locations that are "safe",
-	e.g. cannot be reached by hunters in the next round. 
-	- Decide on a move (using some kind of priority system)
-
-	IDEAS
-	- prioritise Castle Dracula when low on health to get blood points.
-	- if there is a high chance of encountering a hunter, try to go to the sea instead.*/
-//----------------Prototypes-----------------------
-
-static char *convertMove(PlaceId trail[TRAIL_SIZE], PlaceId location, PlaceId draculaLoc);
-static int indexInTrail(PlaceId trail[TRAIL_SIZE], PlaceId location);
 PlaceId MoveToLocation(PlaceId *pastLocs, PlaceId location, int *numPastLocs);
-
-
-// TODO: At the moment, 
-// dracula.c cannot handle large strings due to 
-// dracula: malloc.c:2385: sysmalloc: 
-// Assertion `(old_top == initial_top (av) && old_size == 0) || ((unsigned long) (old_size) >= MINSIZE && 
-// prev_inuse (old_top) && ((unsigned long) old_end & (pagesize - 1)) == 0)' failed.
-// This error only applies to large strings
-// Cant figure out why though...
-
-// Also, DvGetValidMoves is incorrect for the string
-// "GED.... SGA.... HRO.... MGR.... DST.V.. GED.... SGA.... HRO.... MAL.... DBUT... GNS.... SGA.... HRO.... MAL.... DCOT... GAM.... SGA.... HRO.... MAL.... DFRT... GAM.... SGA.... HRO.... MAL.... DLIT... GAM.... SGA.... HRO.... MAL.... DBRT... GAM.... SGA.... HRO.... MAL.... DHAT.V. GAM.... SGA.... HRO.... MAL...." 
-// still trying to fix...
 
 void decideDraculaMove(DraculaView dv)
 {
@@ -75,7 +38,7 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 	srand((unsigned) time(&t));										// seed for random movements.  
 	int riskLevel[NUM_REAL_PLACES] = {0};							// Array containing risk levels for each place. 
 
-	// Needs to be freed
+
 	char *play = malloc(sizeof(char) *2); 		  					// The play to be made.
 
 	// Dracula picks STRASBOURG for the first round
@@ -89,17 +52,11 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 
 	// If Dracula has no valid moves, use TELEPORT.
 	PlaceId *validMoves = DvGetValidMoves(dv, &numValidMoves);
+
 	if (numValidMoves == 0) {
 		registerBestPlay("TP", "I love COMP2521");
-
 		return;
 	}
-
-	/* JUST PICK THE FIRST VALID MOVE AND RETURN */
-	// strcpy(play, placeIdToAbbrev(validMoves[0]));
-	// registerBestPlay(play, "COMP2521 > COMP1511");
-	// return;
-
 
 	// Go to Castle Dracula if possible - Dracula wants to gain 10 BP.
 	// Even if a hunter is there, it will be an even exchange. 
@@ -112,7 +69,9 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 			return;
 		} 
 	}
-
+	for (int i = 0; i < numValidMoves; i++) {
+		printf("the validMoves[%d] is %s\n", i, placeIdToName(MoveToLocation(pastLocs, validMoves[i], &numPastLocs)));
+	}
 	// Assign risk levels to each place.
 	for (int player = 0; player < 4; player++) {
 		// Locations reachable by hunters through ROAD have a risk of 2.
@@ -142,7 +101,7 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 		}
 		// TODO: Locations with a small number of road connections should increase risk by 1.
 	}
-
+	
 	// FIND THE MOVES WITH THE MINIMUM RISK LEVEL
 	int min = riskLevel[validMoves[0]];
 	PlaceId *lowRiskMoves = malloc(sizeof(PlaceId) *numValidMoves);
@@ -155,17 +114,34 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 			lowRiskNum++;
 		}
 	}	
+
+	// If there are no low risk moves pick a random valid move.
+	if (lowRiskNum == 0) {
+		int i = rand() % numValidMoves;
+		strcpy(play, placeIdToAbbrev(validMoves[i]));
+		registerBestPlay(play, "mwahahahah");
+		return;
+	}
 	
 	// If the lowest risk move is still "risky":
 	if (riskLevel[MoveToLocation(pastLocs, lowRiskMoves[0], &numPastLocs)] > 0) {
 		if (health <= 20 && health >= 4) {
+			// Go to the sea if possible.
+			for (int j = 0; j < numValidMoves; j++) {
+				if (placeIsSea(validMoves[j])) {
+					strcpy(play, placeIdToAbbrev(validMoves[j]));
+					registerBestPlay(play, "mwahahahah");
+					return;
+				}
+			}
+
+			// Pick a random risky location otherwise.
 			int i = rand() % (lowRiskNum);
-			// registerBestPlay(convertMove(trail, validMoves[i], draculaLoc), "Mwahahahaha");
 			strcpy(play, placeIdToAbbrev(lowRiskMoves[i]));
 			registerBestPlay(play, "mwahahahah");
-
 			return;
 		}
+
 		// If dracula is healthy go to the player's current location.
 		validMoves = DvGetValidMoves(dv, &numValidMoves); 
 		if (health >= 35 || health <= 5) {
@@ -174,7 +150,6 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 					if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == hunterLocs[player]) {
 						strcpy(play, placeIdToAbbrev(validMoves[i]));
 						registerBestPlay(play, "mwahahahhaa");
-						//registerBestPlay(convertMove(trail, hunterLocs[player], draculaLoc), "Mwahahahaha");
 						return;
 					}
 				}
@@ -188,7 +163,6 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 		} else {
 			i = 0;
 		}
-		//registerBestPlay(convertMove(trail, validLocs[random], draculaLoc), "Mwahahahaha");
 		
 		strcpy(play, placeIdToAbbrev(lowRiskMoves[i]));
 		
@@ -196,20 +170,17 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 		return;
 
 	}
-
+	printf("HELLO\n");
 	// Default: choose a random location
 	// If Dracula can go to a location that is not "risky":
 	// Go to random location in ValidLocs (not necessarily a good move!)
-	// for (int i = 0; i < lowRiskNum; i++) {
-	// 	printf("lowRiskMoves[%d] is %s\n", i, placeIdToName(lowRiskMoves[i]));
-	// }
 	int i;
 	if (lowRiskNum != 0) {
 		i = rand() % (lowRiskNum);
 	} else {
 		i = 0;
 	}
-	//registerBestPlay(convertMove(trail, validLocs[random], draculaLoc), "Mwahahahaha");
+
 	strcpy(play, placeIdToAbbrev(lowRiskMoves[i]));
 	registerBestPlay(play, "Mwahahahaha");
 	return;
@@ -240,25 +211,3 @@ PlaceId MoveToLocation(PlaceId *pastLocs, PlaceId location, int *numPastLocs) {
 	} 
 	return location;
 }
-
-
-// 	> Running player 4... 
-// Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DST.V.. GED.... SGA.... HRO.... MAL.... DBUT... GNS.... SGA.... HRO.... MAL.... DCOT... GAM.... SGA.... HRO.... MAL.... DFRT... GAM.... SGA.... HRO.... MAL.... DLIT... GAM.... SGA.... HRO.... MAL.... DBRT... GAM.... SGA.... HRO.... MAL.... DHAT.V. GAM.... SGA.... HRO.... MAL...."
-// ==============================================================
-// Program Output (0): 
-// ==============================================================
-// Move:  {
-//   "move": "AS",
-//   "message": "Mwahahahaha",
-//   "timer": 76
-// }
-// > Legal Drac moves: NS D1 D2 D3 D5 HI
-// > Player 4 disqualified for illegal move.
-// > +++ 
-//   move: AS
-//   message: Mwahahahaha
-//   timer: 76
-// > --- 
-// Default Dracula Move: "HI"
-// > End of Round:  7
-// > Starting Round:  8
