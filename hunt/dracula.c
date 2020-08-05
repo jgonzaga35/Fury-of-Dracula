@@ -95,7 +95,13 @@ void decideDraculaMove(DraculaView dv)
 	riskLevel[vampLoc] += 1;
 
 	// Bad places to go to 
+	// If drac goes here he always seems to
+	// go to NORTH SEA and loses health.
 	riskLevel[LISBON] = 5;
+
+	// FLORENCE only connects to PORT cities,
+	// which can be bad. 
+	riskLevel[FLORENCE] -= 1;
 
 	Map m = MapNew();
 	
@@ -153,6 +159,17 @@ void decideDraculaMove(DraculaView dv)
 		return;
 	}
 	
+	// If drac is currently at the same location as a player,
+	// do not go to any of the hunter current locations.
+	PlaceId dracLoc = DvGetPlayerLocation(dv, PLAYER_DRACULA);
+	for (int player = 0; player < 4; player++) {
+		if (hunterLocs[player] == dracLoc) {
+			riskLevel[hunterLocs[player]] += 10;
+			for (int i = 0; i < 4; i++) {
+				riskLevel[hunterLocs[i]] += 10;
+			}
+		}
+	}
 	// If the lowest risk move is still "risky":
 	if (riskLevel[MoveToLocation(pastLocs, lowRiskMoves[0], &numPastLocs)] > 0) {
 		// If dracula is healthy go to the player's current location.
