@@ -381,7 +381,6 @@ static int isAdjacent (GameView gv, PlaceId src, PlaceId dest) {
 		if (adjacentLocs[i] == dest) adjacent = true;
 	}
 
-	free(adjacentLocs);
 	return adjacent;
 }
 
