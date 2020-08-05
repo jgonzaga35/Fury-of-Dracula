@@ -70,7 +70,7 @@ void decideDraculaMove(DraculaView dv)
 		riskLevel[hunterLocs[player]] += 2;
 		PlaceId *riskyLocsRoad = DvWhereCanTheyGoByType(dv, player, true, false, true, &numRiskyLocs);
 		for (int i = 0; i < numRiskyLocs; i++) {
-			riskLevel[riskyLocsRoad[i]] += 2;
+			riskLevel[riskyLocsRoad[i]] += 3;
 		}
 
 		PlaceId *riskyLocsRail = DvWhereCanTheyGoByType(dv, player, false, true, false, &numRiskyLocs);
@@ -102,7 +102,9 @@ void decideDraculaMove(DraculaView dv)
 	// FLORENCE only connects to PORT cities,
 	// which can be bad. 
 	riskLevel[FLORENCE] -= 1;
-
+	riskLevel[STRASBOURG] -= 3;
+	riskLevel[NUREMBURG] -= 3;
+	
 	Map m = MapNew();
 	
 	// Assign a risk level to each location 
@@ -170,6 +172,7 @@ void decideDraculaMove(DraculaView dv)
 			}
 		}
 	}
+
 	// If the lowest risk move is still "risky":
 	if (riskLevel[MoveToLocation(pastLocs, lowRiskMoves[0], &numPastLocs)] > 0) {
 		// If dracula is healthy go to the player's current location.
@@ -206,14 +209,25 @@ void decideDraculaMove(DraculaView dv)
 	// Default: choose a random location
 	// If Dracula can go to a location that is not "risky":
 	// Go to random location in ValidLocs (not necessarily a good move!)
-	int i;
-	if (lowRiskNum != 0) {
-		i = rand() % (lowRiskNum);
-	} else {
-		i = 0;
-	}
+	// int i;
+	// if (lowRiskNum != 0) {
+	// 	i = rand() % (lowRiskNum);
+	// } else {
+	// 	i = 0;
+	// }
 
-	strcpy(play, placeIdToAbbrev(lowRiskMoves[i]));
+	// Find lowest risk in the lowRisk array
+	PlaceId minimum = -1;
+	for (int i = 0; i < lowRiskNum; i++) {
+		// If the risk level of the location in ValidMoves[i] <= min
+		if (riskLevel[MoveToLocation(pastLocs, lowRiskMoves[i], &numPastLocs)] <= min) {
+			min = riskLevel[MoveToLocation(pastLocs, lowRiskMoves[i], &numPastLocs)];
+			minimum = lowRiskMoves[i];
+		}
+	}	
+	
+	strcpy(play, placeIdToAbbrev(minimum));
+	// strcpy(play, placeIdToAbbrev(lowRiskMoves[i]));
 	registerBestPlay(play, "Mwahahahaha");
 	return;
 }
