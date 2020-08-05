@@ -110,15 +110,7 @@ void decideHunterMove(HunterView hv)
 			// use HvGetShortestPathTo.
 			// Instead, do a random move
 			else {
-				int numReturnedLocs;
-				PlaceId *canTravelTo = HvWhereCanIGo(hv, &numReturnedLocs);
-				int randomCityIndex = 0;
-				while (randomCityIndex == 0 || randomCityIndex >= numReturnedLocs)
-				{
-					randomCityIndex = rand()%numReturnedLocs;
-				}
-				char *nextMove = strdup(placeIdToAbbrev(canTravelTo[randomCityIndex]));
-				registerBestPlay(nextMove, "Moving To Random Location");
+				registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter))), "Moving To Random Location");
 			}
 		} else if(currRound >= 6) {
 			// If Dracula's location not known, perform collab research
@@ -155,5 +147,7 @@ PlaceId doRandom(HunterView hv, Player hunter) {
 	PlaceId *places = HvWhereCanIGo(hv, &numLocs);
 	if(places == NULL) return UNKNOWN_PLACE;
 	int loc = rand() % numLocs;
+	while (loc == 0 || loc > numLocs)
+		loc = rand() % numLocs;
 	return places[loc];
 }

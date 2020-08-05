@@ -1,0 +1,1066 @@
+[0;36mCreated a temp directory '/tmp/tmp.mKrXWBKCA2' for checking your submission[0m
+[0;36mCopying your files into '/tmp/tmp.mKrXWBKCA2'[0m
+[0;36mChecking that your submission includes all the required files[0m
+[0;36mChecking that your submission does NOT include files that shouldn't be modified[0m
+[0;36mCopying our versions of files that shouldn't be modified into '/tmp/tmp.mKrXWBKCA2'[0m
+[0;36mCopying in the remaining files that you weren't required to modify or submit[0m
+[0;36mCheck your Makefile for 'LIBS'[0m
+[0;36mChecking that your code compiles[0m
+gcc -Wall -Werror   -c -o dracula.o dracula.c
+gcc -Wall -Werror -DI_AM_DRACULA -c player.c -o playerDracula.o
+gcc -Wall -Werror   -c -o DraculaView.o DraculaView.c
+gcc -Wall -Werror   -c -o GameView.o GameView.c
+gcc -Wall -Werror   -c -o Map.o Map.c
+gcc -Wall -Werror   -c -o Places.o Places.c
+gcc -Wall -Werror   -c -o Queue.o Queue.c
+gcc -Wall -Werror   -c -o utils.o utils.c
+gcc   dracula.o playerDracula.o DraculaView.o GameView.o Map.o Places.o Queue.o utils.o   -o dracula
+gcc -Wall -Werror   -c -o hunter.o hunter.c
+gcc -Wall -Werror -c player.c -o playerHunter.o
+gcc -Wall -Werror   -c -o HunterView.o HunterView.c
+gcc   hunter.o playerHunter.o HunterView.o GameView.o Map.o Places.o Queue.o utils.o   -o hunter
+[0;32mCompilation succeeded![0m
+
+[0;32mDryrun succeeded![0m
+gcc -Wall -Werror   -c -o dracula.o dracula.c
+gcc -Wall -Werror -DI_AM_DRACULA -c player.c -o playerDracula.o
+gcc -Wall -Werror   -c -o DraculaView.o DraculaView.c
+gcc -Wall -Werror   -c -o GameView.o GameView.c
+gcc -Wall -Werror   -c -o Map.o Map.c
+gcc -Wall -Werror   -c -o Places.o Places.c
+gcc -Wall -Werror   -c -o Queue.o Queue.c
+gcc -Wall -Werror   -c -o utils.o utils.c
+gcc   dracula.o playerDracula.o DraculaView.o GameView.o Map.o Places.o Queue.o utils.o /usr/lib/x86_64-linux-gnu/libdl.so /usr/lib/x86_64-linux-gnu/libjansson.so   -o dracula
+gcc -Wall -Werror   -c -o hunter.o hunter.c
+gcc -Wall -Werror -c player.c -o playerHunter.o
+gcc -Wall -Werror   -c -o HunterView.o HunterView.c
+gcc   hunter.o playerHunter.o HunterView.o GameView.o Map.o Places.o Queue.o utils.o /usr/lib/x86_64-linux-gnu/libdl.so /usr/lib/x86_64-linux-gnu/libjansson.so   -o hunter
+   The FURY of DRACULA   
+          _..._          
+        .'     '.        
+       ; __   __ ;       
+       |/  \ /  \|       
+     |\| -- ' -- |/|     
+     |(| \o| |o/ |)|     
+     _\|    U    |/_     
+  .-'  | ,.___., |  '-.  
+  \    ;  V'-'V  ;    /  
+   `\   \       /   /`   
+     `\  '-...-'  /`     
+       `\  / \  /`       
+         `\\_//`         
+...........................
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "past_plays": ""
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "ED",
+  "message": "Move To The Corners of Europe",
+  "timer": 190
+}
+> Game score: 366
+> Moving from: undefined
+> Life Points: 9
+> Player 0 made move:
+> +++
+  move: ED
+  message: Move To The Corners of Europe
+  timer: 190
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "past_plays": "GED...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "GA",
+  "message": "Move To The Corners of Europe",
+  "timer": 88
+}
+> Game score: 366
+> Moving from: undefined
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: GA
+  message: Move To The Corners of Europe
+  timer: 88
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "past_plays": "GED.... SGA...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "RO",
+  "message": "Move To The Corners of Europe",
+  "timer": 88
+}
+> Game score: 366
+> Moving from: undefined
+> Life Points: 9
+> Player 2 made move:
+> +++
+  move: RO
+  message: Move To The Corners of Europe
+  timer: 88
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "past_plays": "GED.... SGA.... HRO...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "timer": 88,
+  "move": "GR",
+  "message": "Move To The Corners of Europe"
+}
+> Game score: 366
+> Moving from: undefined
+> Life Points: 9
+> Player 3 made move:
+> +++
+  timer: 88
+  move: GR
+  message: Move To The Corners of Europe
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "ST",
+  "timer": 352,
+  "message": "Mwahahahaha"
+}
+> Game score: 366
+> Moving from: undefined
+> Blood Points: 40
+> Player 4 made move:
+> +++
+  move: ST
+  timer: 352
+  message: Mwahahahaha
+> ---
+> End of Round:  0
+> Starting Round:  1
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "ED",
+  "message": "rand",
+  "timer": 162
+}
+> Game score: 365
+> Moving from: ED
+> Life Points: 9
+> Player 0 made move:
+> +++
+  move: ED
+  message: rand
+  timer: 162
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "BC",
+  "message": "rand",
+  "timer": 641
+}
+> Game score: 365
+> Moving from: GA
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: BC
+  message: rand
+  timer: 641
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "timer": 747,
+  "move": "RO",
+  "message": "rand"
+}
+> Game score: 365
+> Moving from: RO
+> Life Points: 9
+> Player 2 made move:
+> +++
+  timer: 747
+  move: RO
+  message: rand
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "AL",
+  "timer": 95,
+  "message": "rand"
+}
+> Game score: 365
+> Moving from: GR
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: AL
+  timer: 95
+  message: rand
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DST.V.. GED.... SBC.... HRO.... MAL...."
+==============================================================
+Program Output (253): validMoves[0] is Brussels
+validMoves[1] is Cologne
+validMoves[2] is Frankfurt
+validMoves[3] is Geneva
+validMoves[4] is Munich
+validMoves[5] is Nuremburg
+validMoves[6] is Paris
+validMoves[7] is Zurich
+validMoves[8] is Double Back 1
+validMoves[9] is Hide
+
+==============================================================
+Move:  {
+  "move": "BU",
+  "message": "Mwahahahaha",
+  "timer": 86
+}
+> Game score: 365
+> Moving from: ST
+> Blood Points: 40
+> Player 4 made move:
+> +++
+  move: BU
+  message: Mwahahahaha
+  timer: 86
+> ---
+> End of Round:  1
+> Starting Round:  2
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DC?T..."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "NS",
+  "message": "rand",
+  "timer": 572
+}
+> Game score: 364
+> Moving from: ED
+> Life Points: 9
+> Player 0 made move:
+> +++
+  move: NS
+  message: rand
+  timer: 572
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DC?T... GNS...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "SO",
+  "message": "rand",
+  "timer": 111
+}
+> Game score: 364
+> Moving from: BC
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: SO
+  message: rand
+  timer: 111
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DC?T... GNS.... SSO...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "TS",
+  "message": "rand",
+  "timer": 185
+}
+> Game score: 364
+> Moving from: RO
+> Life Points: 9
+> Player 2 made move:
+> +++
+  move: TS
+  message: rand
+  timer: 185
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DC?T... GNS.... SSO.... HTS...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "AL",
+  "timer": 404,
+  "message": "rand"
+}
+> Game score: 364
+> Moving from: AL
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: AL
+  timer: 404
+  message: rand
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DST.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL...."
+==============================================================
+Program Output (185): validMoves[0] is Amsterdam
+validMoves[1] is Cologne
+validMoves[2] is Le Havre
+validMoves[3] is Paris
+validMoves[4] is Double Back 1
+validMoves[5] is Double Back 2
+validMoves[6] is Hide
+
+==============================================================
+Move:  {
+  "timer": 89,
+  "move": "AM",
+  "message": "Mwahahahaha"
+}
+> Game score: 364
+> Moving from: BU
+> Blood Points: 40
+> Legal Drac moves: AM CO LE PA D1 D2 HI
+> Player 4 made move:
+> +++
+  timer: 89
+  move: AM
+  message: Mwahahahaha
+> ---
+> End of Round:  2
+> Starting Round:  3
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DC?T... GNS.... SSO.... HTS.... MAL.... DC?T..."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "AM",
+  "message": "rand",
+  "timer": 593
+}
+> Game score: 363
+> Moving from: NS
+> Life Points: 9
+> Player 0 made move:
+> +++
+  move: AM
+  message: rand
+  timer: 593
+> ---
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DC?T... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "BE",
+  "message": "Moving Towards Drac",
+  "timer": 155
+}
+> Game score: 363
+> Moving from: SO
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: BE
+  message: Moving Towards Drac
+  timer: 155
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DC?T... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "GO",
+  "message": "Moving Towards Drac",
+  "timer": 666
+}
+> Game score: 363
+> Moving from: TS
+> Life Points: 9
+> Player 2 made move:
+> +++
+  move: GO
+  message: Moving Towards Drac
+  timer: 666
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DC?T... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "SR",
+  "message": "Moving Towards Drac",
+  "timer": 154
+}
+> Game score: 363
+> Moving from: AL
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: SR
+  message: Moving Towards Drac
+  timer: 154
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DST.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR...."
+==============================================================
+Program Output (136): validMoves[0] is Cologne
+validMoves[1] is North Sea
+validMoves[2] is Double Back 1
+validMoves[3] is Double Back 2
+validMoves[4] is Hide
+
+==============================================================
+Move:  {
+  "move": "CO",
+  "message": "Mwahahahaha",
+  "timer": 89
+}
+> Game score: 363
+> Moving from: AM
+> Blood Points: 30
+> Legal Drac moves: CO NS D1 D2 HI
+> Player 4 made move:
+> +++
+  move: CO
+  message: Mwahahahaha
+  timer: 89
+> ---
+> End of Round:  3
+> Starting Round:  4
+--------------------------------------------------------------------------
+> Running player 0... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DC?T... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DC?T..."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "??",
+  "message": "Moving Towards Drac",
+  "timer": 536
+}
+> Player 0 disqualified for illegal move.
+> +++ 
+  move: ??
+  message: Moving Towards Drac
+  timer: 536
+> --- 
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DC?T... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DC?T... GAM...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "SZ",
+  "message": "Moving Towards Drac",
+  "timer": 154
+}
+> Game score: 362
+> Moving from: BE
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: SZ
+  message: Moving Towards Drac
+  timer: 154
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DC?T... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DC?T... GAM.... SSZ...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "message": "Moving Towards Drac",
+  "move": "MR",
+  "timer": 701
+}
+> Game score: 362
+> Moving from: GO
+> Life Points: 9
+> Player 2 made move:
+> +++
+  message: Moving Towards Drac
+  move: MR
+  timer: 701
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DC?T... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DC?T... GAM.... SSZ.... HMR...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "BU",
+  "message": "Moving Towards Drac",
+  "timer": 533
+}
+> Game score: 362
+> Moving from: SR
+> Life Points: 9
+> Player 3 made move:
+> +++
+  move: BU
+  message: Moving Towards Drac
+  timer: 533
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DST.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DCOT... GAM.... SSZ.... HMR.... MBUT..."
+==============================================================
+Program Output (223): validMoves[0] is Frankfurt
+validMoves[1] is Hamburg
+validMoves[2] is Leipzig
+validMoves[3] is Double Back 1
+validMoves[4] is Double Back 2
+validMoves[5] is Double Back 3
+validMoves[6] is Double Back 4
+validMoves[7] is Hide
+
+==============================================================
+Move:  {
+  "move": "FR",
+  "message": "Mwahahahaha",
+  "timer": 289
+}
+> Game score: 362
+> Moving from: CO
+> Blood Points: 30
+> Legal Drac moves: FR HA LI D1 D2 D3 D4 HI
+> Player 4 made move:
+> +++
+  move: FR
+  message: Mwahahahaha
+  timer: 289
+> ---
+> End of Round:  4
+> Starting Round:  5
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.0
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DC?T... GAM.... SSZ.... HMR.... MBUT... DC?T... GAM...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "VI",
+  "message": "Moving Towards Drac",
+  "timer": 155
+}
+> Game score: 361
+> Moving from: SZ
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: VI
+  message: Moving Towards Drac
+  timer: 155
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DC?T... GAM.... SSZ.... HMR.... MBUT... DC?T... GAM.... SVI...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "BU",
+  "message": "Moving Towards Drac",
+  "timer": 721
+}
+> Game score: 361
+> Moving from: MR
+> Life Points: 9
+> Player 2 made move:
+> +++
+  move: BU
+  message: Moving Towards Drac
+  timer: 721
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DC?T... GAM.... SSZ.... HMR.... MBUT... DC?T... GAM.... SVI.... HBU...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "AM",
+  "message": "Moving Towards Drac",
+  "timer": 490
+}
+> Game score: 361
+> Moving from: BU
+> Life Points: 7
+> Player 3 made move:
+> +++
+  move: AM
+  message: Moving Towards Drac
+  timer: 490
+> ---
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DST.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DCOT... GAM.... SSZ.... HMR.... MBUT... DFRT... GAM.... SVI.... HBU.... MAM...."
+==============================================================
+Program Output (167): validMoves[0] is Leipzig
+validMoves[1] is Nuremburg
+validMoves[2] is Double Back 1
+validMoves[3] is Double Back 2
+validMoves[4] is Double Back 5
+validMoves[5] is Hide
+
+==============================================================
+Move:  {
+  "move": "LI",
+  "message": "Mwahahahaha",
+  "timer": 1185
+}
+> Game score: 361
+> Moving from: FR
+> Blood Points: 30
+> Legal Drac moves: LI NU D1 D2 D5 HI
+> Player 4 made move:
+> +++
+  move: LI
+  message: Mwahahahaha
+  timer: 1185
+> ---
+> End of Round:  5
+> Starting Round:  6
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.0
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DC?T... GAM.... SSZ.... HMR.... MBUT... DC?T... GAM.... SVI.... HBU.... MAM.... DC?T... GAM...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "message": "Moving Towards Drac",
+  "move": "HA",
+  "timer": 600
+}
+> Game score: 360
+> Moving from: VI
+> Life Points: 9
+> Player 1 made move:
+> +++
+  message: Moving Towards Drac
+  move: HA
+  timer: 600
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DC?T... GAM.... SSZ.... HMR.... MBUT... DC?T... GAM.... SVI.... HBU.... MAM.... DC?T... GAM.... SHA...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "AM",
+  "timer": 162,
+  "message": "Moving Towards Drac"
+}
+> Game score: 360
+> Moving from: BU
+> Life Points: 9
+> Player 2 made move:
+> +++
+  move: AM
+  timer: 162
+  message: Moving Towards Drac
+> ---
+--------------------------------------------------------------------------
+> Running player 3... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DC?T... GAM.... SSZ.... HMR.... MBUT... DC?T... GAM.... SVI.... HBU.... MAM.... DC?T... GAM.... SHA.... HAM...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "??",
+  "message": "Moving Towards Drac",
+  "timer": 159
+}
+> Player 3 disqualified for illegal move.
+> +++ 
+  move: ??
+  message: Moving Towards Drac
+  timer: 159
+> --- 
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DST.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DCOT... GAM.... SSZ.... HMR.... MBUT... DFRT... GAM.... SVI.... HBU.... MAM.... DLIT... GAM.... SHA.... HAM.... MAM...."
+==============================================================
+Program Output (191): validMoves[0] is Berlin
+validMoves[1] is Hamburg
+validMoves[2] is Nuremburg
+validMoves[3] is Double Back 1
+validMoves[4] is Double Back 2
+validMoves[5] is Double Back 3
+validMoves[6] is Hide
+
+==============================================================
+Move:  {
+  "move": "BR",
+  "message": "Mwahahahaha",
+  "timer": 95
+}
+> Game score: 360
+> Moving from: LI
+> Blood Points: 30
+> Legal Drac moves: BR HA NU D1 D2 D3 HI
+> Player 4 made move:
+> +++
+  move: BR
+  message: Mwahahahaha
+  timer: 95
+> ---
+> End of Round:  6
+> Starting Round:  7
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.0
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DC?T... GAM.... SSZ.... HMR.... MBUT... DC?T... GAM.... SVI.... HBU.... MAM.... DC?T... GAM.... SHA.... HAM.... MAM.... DC?T.V. GAM...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "CO",
+  "message": "Moving Towards Drac",
+  "timer": 610
+}
+> Game score: 346
+> Moving from: HA
+> Life Points: 9
+> Player 1 made move:
+> +++
+  move: CO
+  message: Moving Towards Drac
+  timer: 610
+> ---
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DCOT... GAM.... SSZ.... HMR.... MBUT... DC?T... GAM.... SVI.... HBU.... MAM.... DC?T... GAM.... SHA.... HAM.... MAM.... DC?T.V. GAM.... SCOT..."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "CO",
+  "message": "Moving Towards Drac",
+  "timer": 605
+}
+> Game score: 346
+> Moving from: AM
+> Life Points: 9
+> Player 2 made move:
+> +++
+  move: CO
+  message: Moving Towards Drac
+  timer: 605
+> ---
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.3
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DST.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DCOT... GAM.... SSZ.... HMR.... MBUT... DFRT... GAM.... SVI.... HBU.... MAM.... DLIT... GAM.... SHA.... HAM.... MAM.... DBRT.V. GAM.... SCOT... HCO.... MAM...."
+==============================================================
+Program Output (133): validMoves[0] is Hamburg
+validMoves[1] is Prague
+validMoves[2] is Double Back 1
+validMoves[3] is Double Back 2
+validMoves[4] is Hide
+
+==============================================================
+Move:  {
+  "move": "HA",
+  "message": "Mwahahahaha",
+  "timer": 115
+}
+> Game score: 346
+> Moving from: BR
+> Blood Points: 30
+> Legal Drac moves: HA PR D1 D2 HI
+> Player 4 made move:
+> +++
+  move: HA
+  message: Mwahahahaha
+  timer: 115
+> ---
+> End of Round:  7
+> Starting Round:  8
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.0
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+> Running player 1... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DCOT... GAM.... SSZ.... HMR.... MBUT... DC?T... GAM.... SVI.... HBU.... MAM.... DC?T... GAM.... SHA.... HAM.... MAM.... DC?T.V. GAM.... SCOT... HCO.... MAM.... DC?T... GAM...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "??",
+  "timer": 627,
+  "message": "Moving Towards Drac"
+}
+> Player 1 disqualified for illegal move.
+> +++ 
+  move: ??
+  timer: 627
+  message: Moving Towards Drac
+> --- 
+Default Hunter Move "CO"
+--------------------------------------------------------------------------
+> Running player 2... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DC?.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DCOT... GAM.... SSZ.... HMR.... MBUT... DC?T... GAM.... SVI.... HBU.... MAM.... DC?T... GAM.... SHA.... HAM.... MAM.... DC?T.V. GAM.... SCOT... HCO.... MAM.... DC?T... GAM.... SCO...."
+==============================================================
+Program Output (0): 
+==============================================================
+Move:  {
+  "move": "??",
+  "timer": 251,
+  "message": "Moving Towards Drac"
+}
+> Player 2 disqualified for illegal move.
+> +++ 
+  move: ??
+  timer: 251
+  message: Moving Towards Drac
+> --- 
+Default Hunter Move "CO"
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.3
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DST.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DCOT... GAM.... SSZ.... HMR.... MBUT... DFRT... GAM.... SVI.... HBU.... MAM.... DLIT... GAM.... SHA.... HAM.... MAM.... DBRT.V. GAM.... SCOT... HCO.... MAM.... DHAT... GAM.... SCO.... HCO.... MAM...."
+==============================================================
+Program Output (173): validMoves[0] is North Sea
+validMoves[1] is Double Back 1
+validMoves[2] is Double Back 2
+validMoves[3] is Double Back 3
+validMoves[4] is Double Back 5
+validMoves[5] is Hide
+
+==============================================================
+Move:  {
+  "move": "NS",
+  "message": "Mwahahahaha",
+  "timer": 350
+}
+> Game score: 345
+> Moving from: HA
+> Blood Points: 30
+> Legal Drac moves: NS D1 D2 D3 D5 HI
+> Player 4 made move:
+> +++
+  move: NS
+  message: Mwahahahaha
+  timer: 350
+> ---
+> End of Round:  8
+> Starting Round:  9
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.0
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.1
+Default Hunter Move "CO"
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.2
+Default Hunter Move "CO"
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.3
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DST.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DCOT... GAM.... SSZ.... HMR.... MBUT... DFRT... GAM.... SVI.... HBU.... MAM.... DLIT... GAM.... SHA.... HAM.... MAM.... DBRT.V. GAM.... SCOT... HCO.... MAM.... DHAT... GAM.... SCO.... HCO.... MAM.... DNS.... GAM.... SCO.... HCO.... MAM...."
+==============================================================
+Program Output (181): validMoves[0] is Amsterdam
+validMoves[1] is Atlantic Ocean
+validMoves[2] is Edinburgh
+validMoves[3] is English Channel
+validMoves[4] is Double Back 1
+validMoves[5] is Double Back 2
+
+==============================================================
+Move:  {
+  "move": "AM",
+  "message": "Mwahahahaha",
+  "timer": 247
+}
+> Game score: 344
+> Moving from: NS
+> Blood Points: 28
+> Legal Drac moves: AM ED EC AO D1 D2
+> Player 4 made move:
+> +++
+  move: AM
+  message: Mwahahahaha
+  timer: 247
+> ---
+> End of Round:  9
+> Starting Round:  10
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.0
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.1
+Default Hunter Move "CO"
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.2
+Default Hunter Move "CO"
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.3
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DST.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DCOT... GAM.... SSZ.... HMR.... MBUT... DFRT... GAM.... SVI.... HBU.... MAM.... DLIT... GAM.... SHA.... HAM.... MAM.... DBRT.V. GAM.... SCOT... HCO.... MAM.... DHAT... GAM.... SCO.... HCO.... MAM.... DNS.... GAM.... SCO.... HCO.... MAM.... DAMT... GAMTD.. SCO.... HCO.... MAMD..."
+==============================================================
+Program Output (135): validMoves[0] is Brussels
+validMoves[1] is Cologne
+validMoves[2] is Double Back 1
+validMoves[3] is Double Back 2
+validMoves[4] is Hide
+
+==============================================================
+Move:  {
+  "move": "BU",
+  "message": "mwahahahah",
+  "timer": 206
+}
+> Game score: 343
+> Moving from: AM
+> Blood Points: 8
+> Legal Drac moves: BU CO D1 D2 HI
+> Player 4 made move:
+> +++
+  move: BU
+  message: mwahahahah
+  timer: 206
+> ---
+> End of Round:  10
+> Starting Round:  11
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.0
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.1
+Default Hunter Move "CO"
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.2
+Default Hunter Move "CO"
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.3
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+> Running player 4... 
+Running with input: "past_plays": "GED.... SGA.... HRO.... MGR.... DST.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DCOT... GAM.... SSZ.... HMR.... MBUT... DFRT... GAM.... SVI.... HBU.... MAM.... DLIT... GAM.... SHA.... HAM.... MAM.... DBRT.V. GAM.... SCOT... HCO.... MAM.... DHAT... GAM.... SCO.... HCO.... MAM.... DNS.... GAM.... SCO.... HCO.... MAM.... DAMT... GAMTD.. SCO.... HCO.... MAMD... DBUT.M. GAM.... SCO.... HCO.... MAM...."
+==============================================================
+Program Output (186): validMoves[0] is Cologne
+validMoves[1] is Le Havre
+validMoves[2] is Paris
+validMoves[3] is Strasbourg
+validMoves[4] is Double Back 1
+validMoves[5] is Double Back 2
+validMoves[6] is Hide
+
+==============================================================
+Move:  {
+  "move": "CO",
+  "message": "mwahahahah",
+  "timer": 1138
+}
+> Game score: 342
+> Moving from: BU
+> Blood Points: 8
+> Legal Drac moves: CO LE PA ST D1 D2 HI
+> Player 4 made move:
+> +++
+  move: CO
+  message: mwahahahah
+  timer: 1138
+> ---
+> End of Round:  11
+> Starting Round:  12
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.0
+Default Hunter Move "AM"
+--------------------------------------------------------------------------
+Player is currently disqualified. Making a move on their behalf.1
+Default Hunter Move "CO"
+--------------------------------------------------------------------------
+> End of game: 
+> +++
+  score: 341
+  revealedPastPlays: GED.... SGA.... HRO.... MGR.... DST.V.. GED.... SBC.... HRO.... MAL.... DBUT... GNS.... SSO.... HTS.... MAL.... DAMT... GAMTD.. SBE.... HGO.... MSR.... DCOT... GAM.... SSZ.... HMR.... MBUT... DFRT... GAM.... SVI.... HBU.... MAM.... DLIT... GAM.... SHA.... HAM.... MAM.... DBRT.V. GAM.... SCOT... HCO.... MAM.... DHAT... GAM.... SCO.... HCO.... MAM.... DNS.... GAM.... SCO.... HCO.... MAM.... DAMT... GAMTD.. SCO.... HCO.... MAMD... DBUT.M. GAM.... SCO.... HCO.... MAM.... DCOT.M. GAM.... SCOTD..
+  messages: ["Move To The Corners of Europe","Move To The Corners of Europe","Move To The Corners of Europe","Move To The Corners of Europe","Mwahahahaha","rand","rand","rand","rand","Mwahahahaha","rand","rand","rand","rand","Mwahahahaha","rand","Moving Towards Drac","Moving Towards Drac","Moving Towards Drac","Mwahahahaha","===== Generating default move...player disqualified... =====","Moving Towards Drac","Moving Towards Drac","Moving Towards Drac","Mwahahahaha","===== Generating default move...player disqualified... =====","Moving Towards Drac","Moving Towards Drac","Moving Towards Drac","Mwahahahaha","===== Generating default move...player disqualified... =====","Moving Towards Drac","Moving Towards Drac","===== Generating default move...player disqualified... =====","Mwahahahaha","===== Generating default move...player disqualified... =====","Moving Towards Drac","Moving Towards Drac","===== Generating default move...player disqualified... =====","Mwahahahaha","===== Generating default move...player disqualified... =====","===== Generating default move...player disqualified... =====","===== Generating default move...player disqualified... =====","===== Generating default move...player disqualified... =====","Mwahahahaha","===== Generating default move...player disqualified... =====","===== Generating default move...player disqualified... =====","===== Generating default move...player disqualified... =====","===== Generating default move...player disqualified... =====","Mwahahahaha","===== Generating default move...player disqualified... =====","===== Generating default move...player disqualified... =====","===== Generating default move...player disqualified... =====","===== Generating default move...player disqualified... =====","mwahahahah","===== Generating default move...player disqualified... =====","===== Generating default move...player disqualified... =====","===== Generating default move...player disqualified... =====","===== Generating default move...player disqualified... =====","mwahahahah","===== Generating default move...player disqualified... =====","===== Generating default move...player disqualified... ====="]
+> ---
+> Game Over
+Final score: 341
+Final round: 12
+Player 0 was disqualified? true
+Player 1 was disqualified? true
+Player 2 was disqualified? true
+Player 3 was disqualified? true
+Final score: 341
+Final round: 12
