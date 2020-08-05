@@ -41,7 +41,7 @@ void decideDraculaMove(DraculaView dv)
 	// as this has the most road connections (8) and thus
 	// it is hard for the hunters to corner him. 
 	if (round == 0) {
-		registerBestPlay("ST", "Mwahahahaha");
+		registerBestPlay("PA", "Mwahahahaha");
 		return;
 	}
 
@@ -59,12 +59,12 @@ void decideDraculaMove(DraculaView dv)
 		if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == CASTLE_DRACULA) {
 			strcpy(play, placeIdToAbbrev(validMoves[i]));
 			registerBestPlay(play, "COMP2521 > COMP1511");
-
 			return;
 		} 
 	}
 
 	// Assign risk levels to each place.
+	// int CastleProximity = 0;
 	for (int player = 0; player < 4; player++) {
 		// Locations reachable by hunters through ROAD have a risk of 2.
 		riskLevel[hunterLocs[player]] += 2;
@@ -75,10 +75,13 @@ void decideDraculaMove(DraculaView dv)
 
 		PlaceId *riskyLocsRail = DvWhereCanTheyGoByType(dv, player, false, true, false, &numRiskyLocs);
 		for (int i = 0; i < numRiskyLocs; i++) {
+			if (health <= 15) {
+				riskLevel[riskyLocsRail[i]] += 1;
+			}
 			riskLevel[riskyLocsRail[i]] += 1;
 		}
 	}
-	
+
 	// Dracula should prioritise places with traps in them to stack traps.
 	int numTraps = 0;
 	PlaceId *TrapLocs = DvGetTrapLocations(dv, &numTraps);
@@ -90,7 +93,10 @@ void decideDraculaMove(DraculaView dv)
 	// from activating it prematurely.
 	PlaceId vampLoc = DvGetVampireLocation(dv);
 	riskLevel[vampLoc] += 1;
+
+	// Bad places to go to 
 	riskLevel[LISBON] = 5;
+
 	Map m = MapNew();
 	
 	// Assign a risk level to each location 
@@ -101,12 +107,13 @@ void decideDraculaMove(DraculaView dv)
 			if (health <= 20) {
 				riskLevel[i] += 10;
 			}
+			// Don't suicide at sea!
 			if (health <= 10) {
 				riskLevel[i] += 20;
 			}
 		}
 		else if (isPortCity(i)) {
-			riskLevel[i] += 3;
+			riskLevel[i] += 1;
 		}
 
 		ConnList list = MapGetConnections(m, i);
@@ -150,7 +157,7 @@ void decideDraculaMove(DraculaView dv)
 	if (riskLevel[MoveToLocation(pastLocs, lowRiskMoves[0], &numPastLocs)] > 0) {
 		// If dracula is healthy go to the player's current location.
 		validMoves = DvGetValidMoves(dv, &numValidMoves); 
-		if (health >= 35) {
+		if (health >= 60) {
 			for (int player = 0; player < 4; player++) {
 				for (int i = 0; i < numValidMoves; i++) {
 					if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == hunterLocs[player]) {
@@ -161,7 +168,7 @@ void decideDraculaMove(DraculaView dv)
 				}
 			}
 		}
-		if (health >= 40) {
+		if (health >= 40 || (health >= 8 && health <= 16)) {
 			// Go to the sea if possible.
 			for (int j = 0; j < numValidMoves; j++) {
 				if (placeIsSea(validMoves[j])) {
