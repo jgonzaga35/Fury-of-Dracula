@@ -38,7 +38,7 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 	srand((unsigned) time(&t));										// seed for random movements.  
 	int riskLevel[NUM_REAL_PLACES] = {0};							// Array containing risk levels for each place. 
 
-	// Needs to be freed
+
 	char *play = malloc(sizeof(char) *2); 		  					// The play to be made.
 
 	// Dracula picks STRASBOURG for the first round
@@ -52,15 +52,12 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 
 	// If Dracula has no valid moves, use TELEPORT.
 	PlaceId *validMoves = DvGetValidMoves(dv, &numValidMoves);
+
 	if (numValidMoves == 0) {
 		registerBestPlay("TP", "I love COMP2521");
-
 		return;
 	}
 
-	for (int i = 0; i < numValidMoves; i++) {
-		printf("validMoves[%d] is %s\n", i, placeIdToName(validMoves[i]));
-	}
 	// Go to Castle Dracula if possible - Dracula wants to gain 10 BP.
 	// Even if a hunter is there, it will be an even exchange. 
 	PlaceId *pastLocs = DvGetLocationHistory(dv, &numPastLocs);  
@@ -72,7 +69,9 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 			return;
 		} 
 	}
-
+	for (int i = 0; i < numValidMoves; i++) {
+		printf("the validMoves[%d] is %s\n", i, placeIdToName(MoveToLocation(pastLocs, validMoves[i], &numPastLocs)));
+	}
 	// Assign risk levels to each place.
 	for (int player = 0; player < 4; player++) {
 		// Locations reachable by hunters through ROAD have a risk of 2.
@@ -102,7 +101,7 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 		}
 		// TODO: Locations with a small number of road connections should increase risk by 1.
 	}
-
+	
 	// FIND THE MOVES WITH THE MINIMUM RISK LEVEL
 	int min = riskLevel[validMoves[0]];
 	PlaceId *lowRiskMoves = malloc(sizeof(PlaceId) *numValidMoves);
@@ -116,6 +115,14 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 		}
 	}	
 
+	// If there are no low risk moves pick a random valid move.
+	if (lowRiskNum == 0) {
+		int i = rand() % numValidMoves;
+		strcpy(play, placeIdToAbbrev(validMoves[i]));
+		registerBestPlay(play, "mwahahahah");
+		return;
+	}
+	
 	// If the lowest risk move is still "risky":
 	if (riskLevel[MoveToLocation(pastLocs, lowRiskMoves[0], &numPastLocs)] > 0) {
 		if (health <= 20 && health >= 4) {
@@ -163,7 +170,7 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 		return;
 
 	}
-
+	printf("HELLO\n");
 	// Default: choose a random location
 	// If Dracula can go to a location that is not "risky":
 	// Go to random location in ValidLocs (not necessarily a good move!)
