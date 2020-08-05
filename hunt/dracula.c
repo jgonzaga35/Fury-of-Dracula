@@ -20,40 +20,34 @@
 #include <stdlib.h>
 
 PlaceId MoveToLocation(PlaceId *pastLocs, PlaceId location, int *numPastLocs);
-
+bool isPortCity(PlaceId i);
 void decideDraculaMove(DraculaView dv)
 {
-int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
-	int numValidMoves = 0;						  					// Number of Valid Locations for Dracula.	
-	int numRiskyLocs = 0;					      					// Number of Risky Locations for Dracula.
-	int numPastLocs = 0;											// Number of Past Locations in Dracula's move history.
-							    // Dracula's trail
-	PlaceId hunterLocs[4];                                          // Array of current hunter locations.
+	int health = DvGetHealth(dv, PLAYER_DRACULA);  		// Dracula's Blood Points.
+	int numValidMoves = 0;						  		// Number of Valid Locations for Dracula.	
+	int numRiskyLocs = 0;					      		// Number of Risky Locations for Dracula.
+	int numPastLocs = 0;								// Number of Past Locations in Dracula's move history.
+	PlaceId hunterLocs[4];                              // Array of current hunter locations.
 	for (int player = 0; player < 4; player++) {
 		hunterLocs[player] = DvGetPlayerLocation(dv, player);
 	}
-	Round round = DvGetRound(dv);				  					// The current round in the game.
-
+	Round round = DvGetRound(dv);				  		// The current round in the game.
 	time_t t;
-	srand((unsigned) time(&t));										// seed for random movements.  
-	int riskLevel[NUM_REAL_PLACES] = {0};							// Array containing risk levels for each place. 
-
-
-	char *play = malloc(sizeof(char) *2); 		  					// The play to be made.
+	srand((unsigned) time(&t));							// seed for random movements.  
+	int riskLevel[NUM_REAL_PLACES] = {0};				// Array containing risk levels for each place. 
+	char *play = malloc(sizeof(char) *2); 		  		// The play to be made.
 
 	// Dracula picks STRASBOURG for the first round
 	// as this has the most road connections (8) and thus
 	// it is hard for the hunters to corner him. 
 	if (round == 0) {
 		registerBestPlay("ST", "Mwahahahaha");
-
 		return;
 	}
 
 	// If Dracula has no valid moves, use TELEPORT.
 	PlaceId *validMoves = DvGetValidMoves(dv, &numValidMoves);
-
-	if (numValidMoves == 0) {
+	if (numValidMoves == 0 || validMoves == NULL) {
 		registerBestPlay("TP", "I love COMP2521");
 		return;
 	}
@@ -62,22 +56,26 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 	// Even if a hunter is there, it will be an even exchange. 
 	PlaceId *pastLocs = DvGetLocationHistory(dv, &numPastLocs);  
 	for (int i = 0; i < numValidMoves; i++) {
-		if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == CASTLE_DRACULA && health >= 25) {
+		if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == CASTLE_DRACULA) {
 			strcpy(play, placeIdToAbbrev(validMoves[i]));
 			registerBestPlay(play, "COMP2521 > COMP1511");
 
 			return;
 		} 
 	}
-	for (int i = 0; i < numValidMoves; i++) {
-		printf("the validMoves[%d] is %s\n", i, placeIdToName(MoveToLocation(pastLocs, validMoves[i], &numPastLocs)));
-	}
+
 	// Assign risk levels to each place.
 	for (int player = 0; player < 4; player++) {
 		// Locations reachable by hunters through ROAD have a risk of 2.
+		riskLevel[hunterLocs[player]] += 2;
 		PlaceId *riskyLocsRoad = DvWhereCanTheyGoByType(dv, player, true, false, true, &numRiskyLocs);
 		for (int i = 0; i < numRiskyLocs; i++) {
 			riskLevel[riskyLocsRoad[i]] += 2;
+		}
+
+		PlaceId *riskyLocsRail = DvWhereCanTheyGoByType(dv, player, false, true, false, &numRiskyLocs);
+		for (int i = 0; i < numRiskyLocs; i++) {
+			riskLevel[riskyLocsRail[i]] += 1;
 		}
 	}
 	
@@ -92,18 +90,43 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 	// from activating it prematurely.
 	PlaceId vampLoc = DvGetVampireLocation(dv);
 	riskLevel[vampLoc] += 1;
-
+	riskLevel[LISBON] = 5;
+	Map m = MapNew();
+	
 	// Assign a risk level to each location 
 	for (int i = 0; i < NUM_REAL_PLACES; i++) {
 		// Sea locations have risk of 1.
 		if (placeIsSea(i)) {
-			riskLevel[i] += 1;
+			riskLevel[i] += 2;
+			if (health <= 20) {
+				riskLevel[i] += 10;
+			}
+			if (health <= 10) {
+				riskLevel[i] += 20;
+			}
+		}
+		else if (isPortCity(i)) {
+			riskLevel[i] += 3;
+		}
+
+		ConnList list = MapGetConnections(m, i);
+		ConnList curr = list->next;
+		int count = 0;
+		while (curr != NULL) {
+			count++;
+			curr = curr->next;
+		}
+		if (count <= 3) {
+			riskLevel[i] += 2;
 		}
 		// TODO: Locations with a small number of road connections should increase risk by 1.
 	}
-	
+	MapFree(m);
+
+	// Note: Once Dracula's health is between 20 and 30, try to return to CD.
 	// FIND THE MOVES WITH THE MINIMUM RISK LEVEL
-	int min = riskLevel[validMoves[0]];
+	
+	int min = riskLevel[MoveToLocation(pastLocs, validMoves[numValidMoves - 1], &numPastLocs)];
 	PlaceId *lowRiskMoves = malloc(sizeof(PlaceId) *numValidMoves);
 	int lowRiskNum = 0;
 	for (int i = 0; i < numValidMoves; i++) {
@@ -125,7 +148,20 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 	
 	// If the lowest risk move is still "risky":
 	if (riskLevel[MoveToLocation(pastLocs, lowRiskMoves[0], &numPastLocs)] > 0) {
-		if (health <= 20 && health >= 4) {
+		// If dracula is healthy go to the player's current location.
+		validMoves = DvGetValidMoves(dv, &numValidMoves); 
+		if (health >= 35) {
+			for (int player = 0; player < 4; player++) {
+				for (int i = 0; i < numValidMoves; i++) {
+					if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == hunterLocs[player]) {
+						strcpy(play, placeIdToAbbrev(validMoves[i]));
+						registerBestPlay(play, "mwahahahhaa");
+						return;
+					}
+				}
+			}
+		}
+		if (health >= 40) {
 			// Go to the sea if possible.
 			for (int j = 0; j < numValidMoves; j++) {
 				if (placeIsSea(validMoves[j])) {
@@ -141,36 +177,8 @@ int health = DvGetHealth(dv, PLAYER_DRACULA);  					// Dracula's Blood Points.
 			registerBestPlay(play, "mwahahahah");
 			return;
 		}
-
-		// If dracula is healthy go to the player's current location.
-		validMoves = DvGetValidMoves(dv, &numValidMoves); 
-		if (health >= 35 || health <= 5) {
-			for (int player = 0; player < 4; player++) {
-				for (int i = 0; i < numValidMoves; i++) {
-					if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == hunterLocs[player]) {
-						strcpy(play, placeIdToAbbrev(validMoves[i]));
-						registerBestPlay(play, "mwahahahhaa");
-						return;
-					}
-				}
-			}
-		}
-
-		// Default: Dracula picks a random risky location.
-		int i;
-		if (lowRiskNum != 0) {
-			i = rand() % (lowRiskNum);
-		} else {
-			i = 0;
-		}
-		
-		strcpy(play, placeIdToAbbrev(lowRiskMoves[i]));
-		
-		registerBestPlay(play, "Mwahahahaha");
-		return;
-
 	}
-	printf("HELLO\n");
+
 	// Default: choose a random location
 	// If Dracula can go to a location that is not "risky":
 	// Go to random location in ValidLocs (not necessarily a good move!)
@@ -210,4 +218,102 @@ PlaceId MoveToLocation(PlaceId *pastLocs, PlaceId location, int *numPastLocs) {
 		}
 	} 
 	return location;
+}
+
+bool isPortCity(PlaceId i) {
+	switch (i) {
+		case BARI:
+			i = -2;
+			break;
+		case ALICANTE:
+			i = -2;
+			break;
+		case AMSTERDAM:
+			i = -2;
+			break;
+		case ATHENS:
+			i = -2;
+			break;
+		case CADIZ:
+			i = -2;
+			break;
+		case GALWAY:
+			i = -2;
+			break;
+		case LISBON:
+			i = -2;
+			break;
+		case BARCELONA:
+			i = -2;
+			break;
+		case BORDEAUX:
+			i = -2;
+			break;
+		case NANTES:
+			i = -2;
+			break;
+		case SANTANDER:
+			i = -2;
+			break;
+		case CONSTANTA:
+			i = -2;
+			break;
+		case VARNA:
+			i = -2;
+			break;
+		case CAGLIARI:
+			i = -2;
+			break;
+		case DUBLIN:
+			i = -2;
+			break;
+		case EDINBURGH:
+			i = -2;
+			break;
+		case LE_HAVRE:
+			i = -2;
+			break;
+		case LONDON:
+			i = -2;
+			break;
+		case PLYMOUTH:
+			i = -2;
+			break;
+		case GENOA:
+			i = -2;
+			break;
+		case HAMBURG:
+			i = -2;
+			break;
+		case SALONICA:
+			i = -2;
+			break;
+		case VALONA:
+			i = -2;
+			break;
+		case LIVERPOOL:
+			i = -2;
+			break;
+		case SWANSEA:
+			i = -2;
+			break;
+		case MARSEILLES:
+			i = -2;
+			break;
+		case NAPLES:
+			i = -2;
+			break;
+		case ROME:
+			i = -2;
+			break;
+		default:
+			i = -1;
+	}
+
+	if (i == -1) {
+		return false;
+	} else if (i == -2) {
+		return true;
+	}
+	return false;
 }
