@@ -155,5 +155,7 @@ PlaceId doRandom(HunterView hv, Player hunter) {
 	PlaceId *places = HvWhereCanIGo(hv, &numLocs);
 	if(places == NULL) return UNKNOWN_PLACE;
 	int loc = rand() % numLocs;
+	while (loc == 0 || loc > numLocs)
+		loc = rand() % numLocs;
 	return places[loc];
 }
