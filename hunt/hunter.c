@@ -144,10 +144,16 @@ void decideHunterMove(HunterView hv)
 PlaceId doRandom(HunterView hv, Player hunter) {
 	srand(time(0));
 	int numLocs = -1;
-	PlaceId *places = HvWhereCanIGo(hv, &numLocs);
-	if(places == NULL) return UNKNOWN_PLACE;
+	PlaceId currLoc = HvGetPlayerLocation(hv, hunter);
+	PlaceId *places = HvWhereCanTheyGo(hv, hunter, &numLocs);
+	printf("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+	for(int i = 0; i < numLocs; i++)
+		printf("%d %s %s\n", places[i], placeIdToAbbrev(places[i]), placeIdToName(places[i]));
+	printf("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+	if(places == NULL) return currLoc;
+
 	int loc = rand() % numLocs;
-	while (loc == 0 || loc > numLocs)
+	while (places[loc] == currLoc)
 		loc = rand() % numLocs;
 	return places[loc];
 }
