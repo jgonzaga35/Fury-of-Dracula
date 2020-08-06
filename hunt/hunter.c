@@ -16,7 +16,9 @@
 #include "hunter.h"
 #include "HunterView.h"
 
-#define TRUE	
+#define TRUE				1
+#define FALSE				0
+#define NUM_LOCS_NEAR_CD 	12
 
 PlaceId doRandom(HunterView hv, Player hunter, PlaceId *places, int numLocs);
 PlaceId moveComplement(HunterView hv, Player currHunter);
@@ -25,8 +27,7 @@ static void getHunterLocs(HunterView hv, PlaceId hunterLocs[]);
 static int isKnown(PlaceId location);
 static void closestToVampire(HunterView hv, Player currHunter, int *locRank);
 
-void decideHunterMove(HunterView hv)
-{
+void decideHunterMove(HunterView hv) {
 	Round round = HvGetRound(hv);
 	Player name = HvGetPlayer(hv); // Which hunter?
 	
@@ -51,41 +52,34 @@ void decideHunterMove(HunterView hv)
 		
 		registerBestPlay(location, "Move To The Corners of Europe");
 		return;
-	} else if(round == 1) { // do research in first round
-		char *nextMove = strdup(placeIdToAbbrev(HvGetPlayerLocation(hv, HvGetPlayer(hv))));
-		registerBestPlay(nextMove, "Resting");
-		return;
 	} else {
 		// for all other rounds
+
+		// ---------------Initialize some variables to be used--------------------
 		Player currHunter = HvGetPlayer(hv);
 		PlaceId hunterLocs[4]; 
 		getHunterLocs(hv, hunterLocs); 
 		
-		// // ---------------Get current location of the hunter--------------------
 		PlaceId HunterLoc = HvGetPlayerLocation(hv, currHunter);
+		int locRank[NUM_REAL_PLACES] = {0};		// REVIEW: Array containing the weighting of each places
 
 		// if(currHunter != PLAYER_DR_SEWARD) {
 		// 	printf("hunterLoc is %d %s %s\n", HunterLoc, placeIdToAbbrev(HunterLoc), placeIdToName(HunterLoc));
 
-		// --------------- Find reachables --------------------
 		int numLocs = -1;
 		PlaceId *places = HvWhereCanIGo(hv, &numLocs);
 
-		// ---------------------------Move to random loc----------------------------
-		// Move to a random location, (safe option - due to timing limit)
+		// ------------------Move to random loc (Safe with timing)------------------
 		registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter, places, numLocs))), "general random");
-
-		int locRank[NUM_REAL_PLACES] = {0};		// REVIEW: Array containing the weighting of each places
 
 		// ------------------If hunter health low, rest-----------------------------
 		int currHunterHealth = HvGetHealth(hv, currHunter);
 		if(currHunterHealth <= 3) {
 			char *nextMove = strdup(placeIdToAbbrev(HunterLoc));
+			locRank[HunterLoc] += 2;	// REVIEW: At low health: the currLocation +2 Weight
 			registerBestPlay(nextMove, "Resting");
 		}
-		// At low health: the currLocation +2 Weight
-		locRank[HunterLoc] += 2;	// REVIEW:
-
+		
 		// -----------------Get last known Dracula location-------------------------
 		/** Gets  Dracula's  last  known  real  location  as revealed in the 
 			 * play string and sets *round to the number of the  latest  round  in  
@@ -103,7 +97,7 @@ void decideHunterMove(HunterView hv)
 				int pathLength = -1;
 				PlaceId *path = HvGetShortestPathTo(hv, currHunter, 
 													DraculaLoc, &pathLength);
-				// NOTE:: call to above function is very expensive and should be placed
+				// NOTE: call to above function is very expensive and should be placed
 				// near the end i.e. enough time + last resort
 				printf("The value of curr round: %d\n", HvGetRound(hv));
 				printf("The value of Dracula Loc : %d %s %s\n", DraculaLoc, placeIdToAbbrev(DraculaLoc), placeIdToName(DraculaLoc));
@@ -113,6 +107,7 @@ void decideHunterMove(HunterView hv)
 					printf("/////////////////////////////////////////////////////////////////////////////\n");
 					printf("%d %s %s\n", path[i], placeIdToAbbrev(path[i]), placeIdToName(path[i]));
 				}
+
 				if(pathLength == 0) { // already at pos
 					registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter, path, numLocs))), "already at \"dracloc\"");
 					if (diff == 1) {
@@ -137,6 +132,7 @@ void decideHunterMove(HunterView hv)
 				} else {
 					registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter, places, numLocs))), "dracula trail random");
 				}
+			}
 		// 		// Note:: If the move was a HIDE/DOUBLE_BACK move, then the move that
 		// 		// the HIDE/DOUBLE_BACK refers to will be revealed (and so on
 		// 		// until LOCATION is revealed)
@@ -144,20 +140,9 @@ void decideHunterMove(HunterView hv)
 		// 		char *nextMove = strdup(placeIdToAbbrev(HunterLoc));
 		// 		registerBestPlay(nextMove, "Research"); // sends currLocofHunter back
 		// 	}
-			
-		// 	// ------------------------If Dracula health <= x---------------------------
-		// 	if(HvGetHealth(hv, PLAYER_DRACULA) <= 20) {
-		// 		printf("HELLO\n");
-		// 		// If Dracula's health is less than x, move towards Castle Dracula
-		// 		int pathLength = -1;
-		// 		PlaceId *path = HvGetShortestPathTo(hv, currHunter, CASTLE_DRACULA, &pathLength);
-		// 		char *nextMove = strdup(placeIdToAbbrev(path[0]));
-		// 		if(pathLength == 0) {registerBestPlay(strdup(placeIdToAbbrev(HunterLoc)), "stay");}
-		// 		else registerBestPlay(nextMove,"Moving to CD");
-		// 	}
 		}
 
-		if (true) {
+		if (currHunter == PLAYER_DR_SEWARD) {
 			// Dr. Sewards Job is to stay around CD
 			char *LocsNearCD[] = 
 			{
@@ -176,13 +161,14 @@ void decideHunterMove(HunterView hv)
 			return;
 		}
 
-		
+			
 		// ------------------------If Dracula health <= x---------------------------
 		if(HvGetHealth(hv, PLAYER_DRACULA) <= 20) {
 			printf("HELLO\n");
 			// If Dracula's health is less than x, move towards Castle Dracula
 			int pathLength = -1;
 			PlaceId *path = HvGetShortestPathTo(hv, currHunter, CASTLE_DRACULA, &pathLength);
+			locRank[path[0]] += 2;		// REVIEW: If life of dracula low, go towards dracula
 			char *nextMove = strdup(placeIdToAbbrev(path[0]));
 			if(pathLength == 0) {registerBestPlay(strdup(placeIdToAbbrev(HunterLoc)), "stay");}
 			else registerBestPlay(nextMove,"Moving to CD");
@@ -223,7 +209,6 @@ PlaceId moveComplement(HunterView hv, Player currHunter) {
 	return MAX_REAL_PLACE - HvGetPlayerLocation(hv, currHunter);
 }
 
-<<<<<<< HEAD
 // Get the location of the other hunters
 static void getHunterLocs(HunterView hv, PlaceId hunterLocs[]) {
 	for (int player = 0; player < 4; player++) {
