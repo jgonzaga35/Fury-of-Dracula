@@ -42,7 +42,7 @@ void decideDraculaMove(DraculaView dv)
 
 	// Where is the best city to start? Unsure...
 	if (round == 0) {
-		registerBestPlay("PA", "Mwahahahaha");
+		registerBestPlay("PA", "durr hurr where am i");
 		return;
 	}
 
@@ -161,7 +161,7 @@ void decideDraculaMove(DraculaView dv)
 	if (lowRiskNum == 0) {
 		int i = rand() % numValidMoves;
 		strcpy(play, placeIdToAbbrev(validMoves[i]));
-		registerBestPlay(play, "mwahahahah");
+		registerBestPlay(play, "registering best play");
 		return;
 	}
 	
@@ -192,7 +192,7 @@ void decideDraculaMove(DraculaView dv)
 	// If the minimum hasn't been found, pick the first lowRiskMove.
 	if (minimum == -1) minimum = lowRiskMoves[0];
 	strcpy(play, placeIdToAbbrev(minimum));
-	registerBestPlay(play, "Mwahahahaha");
+	registerBestPlay(play, "come and fight me bro");
 	return;
 }
 
