@@ -120,20 +120,21 @@ void decideHunterMove(HunterView hv) {
 					locRank[path[0]] += 100;		// REVIEW: If dracula's location is known and within 5 round goes there
 					registerBestPlay(nextMove, "Moving Towards Drac");
 				}
+			} else {
+				// Else Dracula was seen a pretty long time ago, no point trying to
+				// use HvGetShortestPathTo. Instead, move towards opposite side of map
+				// int pathLength = -1;
+				// PlaceId *path = HvGetShortestPathTo(hv, currHunter, moveComplement(hv, currHunter),&pathLength);
+				// if(pathLength == 0) { // already at pos
+				// 	registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter, path, numLocs))), "already at \"dracloc\"");
+				// } else if(HvGetRound(hv) % 5 <= 2){ // so doesn't get stuck in loop
+				// 	registerBestPlay(strdup(placeIdToAbbrev(path[0])), "move complement");
+				// } else {
+				// 	registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter, places, numLocs))), "dracula trail random");
+				// }
+				registerBestPlay(HunterLoc, "Research");
+				locRank[HunterLoc] += 10;
 			}
-			// } else {
-			// 	// Else Dracula was seen a pretty long time ago, no point trying to
-			// 	// use HvGetShortestPathTo. Instead, move towards opposite side of map
-			// 	int pathLength = -1;
-			// 	PlaceId *path = HvGetShortestPathTo(hv, currHunter, moveComplement(hv, currHunter),&pathLength);
-			// 	if(pathLength == 0) { // already at pos
-			// 		registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter, path, numLocs))), "already at \"dracloc\"");
-			// 	} else if(HvGetRound(hv) % 5 <= 2){ // so doesn't get stuck in loop
-			// 		registerBestPlay(strdup(placeIdToAbbrev(path[0])), "move complement");
-			// 	} else {
-			// 		registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter, places, numLocs))), "dracula trail random");
-			// 	}
-			// }
 		// 		// Note:: If the move was a HIDE/DOUBLE_BACK move, then the move that
 		// 		// the HIDE/DOUBLE_BACK refers to will be revealed (and so on
 		// 		// until LOCATION is revealed)
