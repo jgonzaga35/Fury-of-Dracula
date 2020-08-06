@@ -60,7 +60,7 @@ typedef DraculaView View;
 # define decideMove decideDraculaMove
 # define ViewFree DvFree
 
-# define xPastPlays "GED.... SGA.... HRO.... MGR.... DPA.V.. GMN.... SKL.... HMI.... MAL.... DGET... GSW.... SGA.... HVE.... MMS.... DCFT... GMN.... SKL.... HMU.... MMR.... DBOT... GLO.... SGA.... HST.... MTO.... DBB.... GSW.... SKL.... HFR.... MSR.... DAO.... GSW.... SKL.... HFR.... MSR.... DD1..V. GED.... SBD.... HLI.... MBOT... DEC..M. GNS.... SVI.... HCO.... MMR.... DLET.M. GED.... SBR.... HLETD.. MCF.... DBUT... GLO.... SCO.... HPA.... MBO.... DCOT... GED.... SLI.... HBUT... MBU.... DHAT... GNS.... SCOT... HCO.... MCO.... DBRT... GAM.... SHAT... HHA.... MHA...."
+# define xPastPlays "GED.... SGA.... HRO.... MGR.... DPA.V.. GNS.... SSZ.... HNP.... MMA.... DSTT... GED.... SZA.... HTS.... MGR.... DHIT... GSW.... SSJ.... HIO.... MMA.... DD2T... GLO.... SZA.... HBS.... MSR.... DNUT... GSW.... SSJ.... HVR.... MBO.... DPRT... GSW.... SSJ.... HVR.... MBO.... DVIT.V. GED.... SBE.... HBS.... MBU.... DZAT.M. GNS.... SSZ.... HCN.... MFR.... DSJT.M. GED.... SBE.... HBD.... MNUT... DVAT.M. GNS.... SSZ.... HVIT... MMU.... DD2T... GHA.... SBD.... HZAT... MZA.... DSOT.M. GBR.... SZA.... HSJTT.. MSJ.... DBCT... GLI.... SSJ.... HZA.... MZA.... DHI.V.. GMU.... SZA.... HSJ.... MSJ.... DKLT... GZA.... SSJ.... HZA.... MZA...."
 # define xMsgs { "", "", "", "" }
 
 #else
