@@ -31,6 +31,7 @@ struct hunterView {
 static PlaceId *hunterBfs(HunterView hv, Player hunter, PlaceId src,
                           Round r);
 static Round playerNextRound(HunterView hv, Player player);
+PlaceId *HvGetMoveHistory(HunterView hv, Player player, int *numReturnedMoves, bool *canFree);
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -234,5 +235,10 @@ static Round playerNextRound(HunterView hv, Player player) {
 
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
+
+PlaceId *HvGetLocationHistory(HunterView hv, Player player, int *numReturnedMoves, bool *canFree)
+{
+	return GvGetLocationHistory(hv->gv, player, numReturnedMoves, canFree);
+}
 
 // TODO
