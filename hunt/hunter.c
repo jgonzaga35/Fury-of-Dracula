@@ -177,7 +177,7 @@ void decideHunterMove(HunterView hv) {
 		// ---------------shouldn't go to where other hunters are already at--------------------
 		for (int i = 0; i < numLocs; i++) {
 			for (int player = 0; player < 4; player++) {
-				if (places[i] == hunterLocs[player])	locRank[places[i]] -= 1;
+				if (places[i] == hunterLocs[player]) locRank[places[i]] -= 1;
 			}
 		}
 
