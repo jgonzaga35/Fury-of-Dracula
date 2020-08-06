@@ -16,15 +16,21 @@
 #include "hunter.h"
 #include "HunterView.h"
 
-PlaceId doRandom(HunterView hv, Player hunter);
+#define TRUE	
+
+PlaceId doRandom(HunterView hv, Player hunter, PlaceId *places, int numLocs);
 PlaceId moveComplement(HunterView hv, Player currHunter);
+static void getHunterLocs(HunterView hv, PlaceId hunterLocs[]);
+static int isKnown(PlaceId location);
+static void closestToVampire(HunterView hv, Player currHunter, int *locRank);
 
 void decideHunterMove(HunterView hv)
 {
 	Round round = HvGetRound(hv);
 	Player name = HvGetPlayer(hv); // Which hunter?
+	
 	if (round == 0) { // FIRST ROUND
-		char *location;
+		char *location = NULL;
 		switch(name) {
 			case PLAYER_LORD_GODALMING:
 				location = "MN";
@@ -47,6 +53,8 @@ void decideHunterMove(HunterView hv)
 	} else {
 		// for all other rounds
 		Player currHunter = HvGetPlayer(hv);
+		PlaceId hunterLocs[4]; 
+		getHunterLocs(hv, hunterLocs); 
 		
 		// ---------------Get current location of the hunter--------------------
 		PlaceId HunterLoc = 0;
@@ -69,9 +77,15 @@ void decideHunterMove(HunterView hv)
 
 		printf("hunterLoc is %d %s %s\n", HunterLoc, placeIdToAbbrev(HunterLoc), placeIdToName(HunterLoc));
 
+		// --------------- Find reachables --------------------
+		int numLocs = -1;
+		PlaceId *places = HvWhereCanIGo(hv, &numLocs);
+
 		// ---------------------------Move to random loc----------------------------
 		// Move to a random location, (safe option - due to timing limit)
-		registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter))), "general random");
+		registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter, places, numLocs))), "general random");
+
+		int locRank[NUM_REAL_PLACES] = {0};		// REVIEW: Array containing the weighting of each places
 
 		// ------------------If hunter health low, rest-----------------------------
 		int currHunterHealth = HvGetHealth(hv, currHunter);
@@ -79,6 +93,9 @@ void decideHunterMove(HunterView hv)
 			char *nextMove = strdup(placeIdToAbbrev(HunterLoc));
 			registerBestPlay(nextMove, "Resting");
 		}
+
+		// At low health: the currLocation +2 Weight
+		locRank[HunterLoc] += 2;	// REVIEW:
 
 		// -----------------Get last known Dracula location-------------------------
 		/** Gets  Dracula's  last  known  real  location  as revealed in the 
@@ -108,9 +125,15 @@ void decideHunterMove(HunterView hv)
 					printf("%d %s %s\n", path[i], placeIdToAbbrev(path[i]), placeIdToName(path[i]));
 				}
 				if(pathLength == 0) { // already at pos
-					registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter))), "already at \"dracloc\"");
+					registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter, path, numLocs))), "already at \"dracloc\"");
+					if (diff == 1) {
+						registerBestPlay(strdup(placeIdToAbbrev(HunterLoc)), "already at \"dracloc\"");
+						locRank[HunterLoc] += 300;	// REVIEW:Stay in the position if dracula move in to the same city, as move happen before encounter
+						printf("Dracula moved into hunter place, stay in the same city\n");
+					}
 				} else {
 					char *nextMove = strdup(placeIdToAbbrev(path[0]));
+					locRank[path[0]] += 100;		// REVIEW: If dracula's location is known and within 5 round goes there
 					registerBestPlay(nextMove, "Moving Towards Drac");
 				}
 			} else {
@@ -119,11 +142,11 @@ void decideHunterMove(HunterView hv)
 				int pathLength = -1;
 				PlaceId *path = HvGetShortestPathTo(hv, currHunter, moveComplement(hv, currHunter),&pathLength);
 				if(pathLength == 0) { // already at pos
-					registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter))), "already at \"dracloc\"");
+					registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter, path, numLocs))), "already at \"dracloc\"");
 				} else if(HvGetRound(hv) % 5 <= 2){ // so doesn't get stuck in loop
 					registerBestPlay(strdup(placeIdToAbbrev(path[0])), "move complement");
 				} else {
-					registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter))), "dracula trail random");
+					registerBestPlay(strdup(placeIdToAbbrev(doRandom(hv, currHunter, places, numLocs))), "dracula trail random");
 				}
 			}
 		} else if(HvGetRound(hv) >= 6) {
@@ -150,15 +173,24 @@ void decideHunterMove(HunterView hv)
 			if(pathLength == 0) {registerBestPlay(strdup(placeIdToAbbrev(HunterLoc)), "stay");}
 			else registerBestPlay(nextMove,"Moving to CD");
 		}
+
+		// ---------------shouldn't go to where other hunters are already at--------------------
+		for (int i = 0; i < numLocs; i++) {
+			for (int player = 0; player < 4; player++) {
+				if (places[i] == hunterLocs[player])	locRank[places[i]] -= 1;
+			}
+		}
+
+		// ----------Go to the vampire's location if it's known and the current player is the closest to vampire--------
+		closestToVampire(hv, currHunter, &locRank[0]);
 	}
 }
 
-PlaceId doRandom(HunterView hv, Player hunter) {
+// Return a random valid move
+PlaceId doRandom(HunterView hv, Player hunter, PlaceId *places, int numLocs) {
 	srand(time(0));
 	PlaceId currLoc = HvGetPlayerLocation(hv, hunter);
-	int numLocs = -1;
-	PlaceId *places = HvWhereCanIGo(hv, &numLocs);
-
+	
 	for (int i = 0; i < numLocs; i++) {
 		printf("places[%d] is %s\n", i, placeIdToName(places[i]));
 	}
@@ -175,4 +207,35 @@ PlaceId moveComplement(HunterView hv, Player currHunter) {
 	printf("MAX - Loc = %d %s %s ", MAX_REAL_PLACE - HvGetPlayerLocation(hv, currHunter), placeIdToAbbrev( MAX_REAL_PLACE - HvGetPlayerLocation(hv, currHunter)), placeIdToName( MAX_REAL_PLACE - HvGetPlayerLocation(hv, currHunter)));
 	printf("/////////////////////////////////////////////////////////////////////////\n");
 	return MAX_REAL_PLACE - HvGetPlayerLocation(hv, currHunter);
+}
+
+// Get the location of the other hunters
+static void getHunterLocs(HunterView hv, PlaceId hunterLocs[]) {
+	for (int player = 0; player < 4; player++) {
+		hunterLocs[player] = HvGetPlayerLocation(hv, player);
+	}
+}
+
+static void closestToVampire(HunterView hv, Player currHunter, int *locRank) {
+	PlaceId vampireLoc = HvGetVampireLocation(hv);
+	if (!isKnown(vampireLoc)) return;
+
+	int pathLength[NUM_PLAYERS];
+	PlaceId *paths[NUM_PLAYERS];
+	for (int player = 0; player < 4; player++) {
+		paths[player] = HvGetShortestPathTo(hv, player, vampireLoc, &pathLength[player]);
+	}
+
+	Player closest = PLAYER_LORD_GODALMING;
+	for (int player = 0; player < 4; player++) {
+		if (pathLength[player] < pathLength[closest]) closest = player;
+	}
+
+	if (closest == currHunter) locRank[paths[currHunter][0]] += 3;	// REVIEW: If hunter is closest to vampire, increase the rank
+
+	return;
+}
+
+static int isKnown(PlaceId location) {
+	return (location != CITY_UNKNOWN && location != NOWHERE && location != SEA_UNKNOWN);
 }
