@@ -183,7 +183,7 @@ void decideDraculaMove(DraculaView dv)
 			}
 		}
 
-		if (DvGetHealth(dv, player) <= 5 && health >= 20) {
+		if (DvGetHealth(dv, player) < 5 && health > 20) {
 			riskLevel[hunterLocs[player]] = 0;
 		}
 	}
