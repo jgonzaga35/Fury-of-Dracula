@@ -76,7 +76,7 @@ void decideDraculaMove(DraculaView dv)
 		// If any of the Valid Moves correspond to CASTLE_DRACULA:
 		if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == CASTLE_DRACULA) {	
 			// If there are hunters at/around CASTLE_DRACULA
-			if (shouldIGoToCastle(hunterLocs) && health >= 30) {									
+			if (shouldIGoToCastle(hunterLocs)) {									
 				registerBestPlay(strdup(placeIdToAbbrev(validMoves[i])), "oi, you want fight?");
 				return;
 			}
@@ -138,7 +138,7 @@ void decideDraculaMove(DraculaView dv)
 			count++;
 			curr = curr->next;
 		}
-		if (count <= 4) riskLevel[i] += 2;
+		if (count <= 3) riskLevel[i] += 2;
 	}
 	MapFree(m);
 
@@ -291,6 +291,12 @@ bool shouldIGoToCastle(PlaceId hunterLocs[]) {
 			return false; 
 		}
 		if (hunterLocs[player] == SARAJEVO) {
+			return false; 
+		}
+		if (hunterLocs[player] == VIENNA) {
+			return false; 
+		}
+		if (hunterLocs[player] == VARNA) {
 			return false; 
 		}
 	}
