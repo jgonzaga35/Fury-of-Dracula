@@ -18,7 +18,9 @@
 #include "Game.h"
 #include "GameView.h"
 #include "Map.h"
+#include "Places.h"
 // add your own #includes here
+#include "Queue.h"
 #include "utils.h"
 
 struct draculaView {

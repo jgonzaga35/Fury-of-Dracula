@@ -23,6 +23,8 @@ PlaceId MoveToLocation(PlaceId *pastLocs, PlaceId location, int *numPastLocs);
 bool isPortCity(PlaceId i);
 void getHunterLocs(DraculaView dv, PlaceId hunterLocs[]);
 bool shouldIGoToCastle(PlaceId hunterLocs[]);
+int isDoubleBack(PlaceId location);
+
 void decideDraculaMove(DraculaView dv)
 {
 	int health = DvGetHealth(dv, PLAYER_DRACULA); // Dracula's Blood Points.
@@ -36,7 +38,7 @@ void decideDraculaMove(DraculaView dv)
 	time_t t;
 	srand((unsigned) time(&t));					  // seed for random movements.  
 	int riskLevel[NUM_REAL_PLACES] = {0};		  // Array containing risk levels for each place. 
-	char *play = malloc(sizeof(char) *2); 		  // The play to be made.
+	char *play = malloc(sizeof(char) * 2); 		  // The play to be made.
 
 	// Where is the best city to start? Unsure...
 	if (round == 0) {
@@ -59,14 +61,14 @@ void decideDraculaMove(DraculaView dv)
 	// 	printf("validMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLocation(pastLocs, validMoves[i], &numPastLocs)), riskLevel[MoveToLocation(pastLocs, validMoves[i], &numPastLocs)]);
 	// }
 	for (int i = 0; i < numValidMoves; i++) {
-		if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == CASTLE_DRACULA) {
+		if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == CASTLE_DRACULA) {	// If any of the valid move is CD
 			for (int player = 0; player < 4; player++) {
-				if (!shouldIGoToCastle(hunterLocs)) {
+				if (!shouldIGoToCastle(hunterLocs)) {										// If there is hunters arround CD
 					hunterAtCastle = true;
 					break;
 				}
 			}
-			if (!hunterAtCastle) {
+			if (!hunterAtCastle) {															// If there's no hunter near, we go to CD
 				strcpy(play, placeIdToAbbrev(validMoves[i]));
 				registerBestPlay(play, "COMP2521 > COMP1511");
 				return;
@@ -246,26 +248,18 @@ void decideDraculaMove(DraculaView dv)
 
 // Converts the move to location
 PlaceId MoveToLocation(PlaceId *pastLocs, PlaceId location, int *numPastLocs) {
-
 	if (location == HIDE)
 		location = pastLocs[*numPastLocs - 1];
-	else if (location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5) 
-	{
-		if (location == DOUBLE_BACK_1) {
-			location = pastLocs[*numPastLocs - 1]; 
+		if (isDoubleBack(location)) 
+		{
+			int index = location - 102;
+			location = pastLocs[*numPastLocs - 1 - index]; 
 		}
-		if (location == DOUBLE_BACK_2) {
-			location = pastLocs[*numPastLocs - 2]; 
-		}
-		if (location == DOUBLE_BACK_3) {
-			location = pastLocs[*numPastLocs - 3]; 
-		}
-		if (location == DOUBLE_BACK_4) {
-			location = pastLocs[*numPastLocs - 4]; 
-		}
-		if (location == DOUBLE_BACK_5) {
-			location = pastLocs[*numPastLocs - 5]; 
-		}
+	else if (isDoubleBack(location)) 
+	{	
+		int index = location - 102;
+		location = pastLocs[*numPastLocs - index]; 
+		if (location == HIDE) location = pastLocs[*numPastLocs - index - 1]; 
 	} 
 	return location;
 }
@@ -410,4 +404,9 @@ bool shouldIGoToCastle(PlaceId hunterLocs[]) {
 		}
 	}
 	return true;
+}
+
+int isDoubleBack(PlaceId location)
+{
+	return (location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5);
 }
