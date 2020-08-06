@@ -56,23 +56,7 @@ void decideHunterMove(HunterView hv)
 		Player currHunter = HvGetPlayer(hv);
 		
 		// ---------------Get current location of the hunter--------------------
-		PlaceId HunterLoc = 0;
-		switch(currHunter) {
-			case PLAYER_LORD_GODALMING:
-				HunterLoc = HvGetPlayerLocation(hv, currHunter);
-				break;
-			case PLAYER_DR_SEWARD:
-				HunterLoc = HvGetPlayerLocation(hv, currHunter);
-				break;
-			case PLAYER_VAN_HELSING:
-				HunterLoc = HvGetPlayerLocation(hv, currHunter);
-				break;
-			case PLAYER_MINA_HARKER:
-				HunterLoc = HvGetPlayerLocation(hv, currHunter);
-				break;
-			default:
-				break;
-		}
+		PlaceId HunterLoc = HvGetPlayerLocation(hv, currHunter);
 
 		if(currHunter != PLAYER_DR_SEWARD) {
 			printf("hunterLoc is %d %s %s\n", HunterLoc, placeIdToAbbrev(HunterLoc), placeIdToName(HunterLoc));

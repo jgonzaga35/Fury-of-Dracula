@@ -248,13 +248,14 @@ void decideDraculaMove(DraculaView dv)
 
 // Converts the move to location
 PlaceId MoveToLocation(PlaceId *pastLocs, PlaceId location, int *numPastLocs) {
-	if (location == HIDE)
+	if (location == HIDE) {
 		location = pastLocs[*numPastLocs - 1];
 		if (isDoubleBack(location)) 
 		{
 			int index = location - 102;
 			location = pastLocs[*numPastLocs - 1 - index]; 
 		}
+	}
 	else if (isDoubleBack(location)) 
 	{	
 		int index = location - 102;
