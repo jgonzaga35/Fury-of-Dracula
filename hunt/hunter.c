@@ -140,19 +140,16 @@ void decideHunterMove(HunterView hv)
 			registerBestPlay(nextMove, "Research"); // sends currLocofHunter back
 		}
 		
-		// // ------------------------If Dracula health <= x---------------------------
-		// if(HvGetHealth(hv, PLAYER_DRACULA) <= 15) {
-		// 	printf("HELLO\n");
-		// 	// If Dracula's health is less than x, move towards Castle Dracula
-		// 	if(LastDracRoundSeen != -1) {
-		// 		int pathLength = -1;
-		// 		PlaceId *path = HvGetShortestPathTo(hv, currHunter, CASTLE_DRACULA, &pathLength);
-		// 		char *nextMove = strdup(placeIdToAbbrev(path[0]));
-		// 		registerBestPlay(nextMove,"Moving to CD");
-		// 	}
-
-		// 	// HOWEVER, if he is really far away, then try and kill him
-		// }
+		// ------------------------If Dracula health <= x---------------------------
+		if(HvGetHealth(hv, PLAYER_DRACULA) <= 20) {
+			printf("HELLO\n");
+			// If Dracula's health is less than x, move towards Castle Dracula
+			int pathLength = -1;
+			PlaceId *path = HvGetShortestPathTo(hv, currHunter, CASTLE_DRACULA, &pathLength);
+			char *nextMove = strdup(placeIdToAbbrev(path[0]));
+			if(pathLength == 0) {registerBestPlay(strdup(placeIdToAbbrev(HunterLoc)), "stay");}
+			else registerBestPlay(nextMove,"Moving to CD");
+		}
 	}
 }
 
