@@ -284,7 +284,6 @@ void bfsPath(Map m, PlaceId *visited, PlaceId from,
  * Note :: 'i' is iterated over in the following for loops to stop 
  * buffer overflow in allowableCNC array. otherwise, it serves no other
  * purpose in the function.*/
-
 void getRoadCNC(ConnList CNC, PlaceId *allowableCNC, int *numReturnedLocs, Player p) {
 	if (CNC == NULL) return;
 	ConnList curr = CNC;
@@ -331,8 +330,8 @@ void getRailCNC(ConnList CNC, PlaceId from, PlaceId *allowableCNC, int *numRetur
 				if (Dup(allowableCNC, curr->p, numReturnedLocs)) 
 					continue; // do not add if already present in array
 				int dist = EdgeDistLen(visited, from, curr->p);
-				if (0 < dist && dist <= sum) // add all distances less than max allowable dist
-				{ 
+				if (0 < dist && dist <= sum)
+				{ // add all distances less than max allowable dist
 					allowableCNC[*numReturnedLocs] = curr->p; 
 					*numReturnedLocs += 1;
 				}
