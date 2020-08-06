@@ -1,0 +1,4 @@
+[0;36mCreated a temp directory '/tmp/tmp.CLOLxz1x8h' for checking your submission[0m
+[0;36mCopying your files into '/tmp/tmp.CLOLxz1x8h'[0m
+[0;31mError: file 'Makefil' doesn't exist[0m
+[0;31mDryrun failed - can't proceed.[0m
