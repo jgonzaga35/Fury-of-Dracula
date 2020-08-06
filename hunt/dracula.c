@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
+void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]);
 PlaceId MoveToLocation(PlaceId *pastLocs, PlaceId location, int *numPastLocs);
 bool isPortCity(PlaceId i);
 void getHunterLocs(DraculaView dv, PlaceId hunterLocs[]);
@@ -143,6 +143,10 @@ void decideDraculaMove(DraculaView dv)
 	}
 	MapFree(m);
 
+	// Head to drac if its safe.
+	if (shouldIGoToCastle(hunterLocs)) {
+		prioritiseCastleDrac(riskLevel, hunterLocs);
+	}
 	// Note: Once Dracula's health is between 20 and 30, try to return to CD.
 	// FIND THE MOVES WITH THE MINIMUM RISK LEVEL
 	int min = riskLevel[MoveToLocation(pastLocs, validMoves[numValidMoves - 1], &numPastLocs)];
@@ -156,7 +160,9 @@ void decideDraculaMove(DraculaView dv)
 			lowRiskNum++;
 		}
 	}	
-
+	for (int i = 0; i < lowRiskNum; i++) {
+		printf("lowRiskMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLocation(pastLocs, lowRiskMoves[i], &numPastLocs)), riskLevel[MoveToLocation(pastLocs, lowRiskMoves[i], &numPastLocs)]);
+	}
 	// If there are no low risk moves pick a random valid move.
 	if (lowRiskNum == 0) {
 		int i = rand() % numValidMoves;
@@ -319,6 +325,23 @@ void getHunterLocs(DraculaView dv, PlaceId hunterLocs[]) {
 	for (int player = 0; player < 4; player++) {
 		hunterLocs[player] = DvGetPlayerLocation(dv, player);
 	}
+}
+
+void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]) {
+	if (shouldIGoToCastle(hunterLocs)) {
+		riskLevel[CASTLE_DRACULA] -= 2;
+		riskLevel[BUDAPEST] -= 2;
+		riskLevel[KLAUSENBURG] -= 2;
+		riskLevel[SZEGED] -= 2;
+		riskLevel[BELGRADE] -= 2;
+		riskLevel[BUCHAREST] -= 2;
+		riskLevel[SOFIA] -= 2;
+		riskLevel[CONSTANTA] -= 2;
+		riskLevel[ZAGREB] -= 2;
+		riskLevel[SARAJEVO] -= 2;
+		riskLevel[VIENNA] -= 2;
+	}
+	return;
 }
 
 bool shouldIGoToCastle(PlaceId hunterLocs[]) {
