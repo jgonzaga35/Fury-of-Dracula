@@ -217,4 +217,6 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 
 // TODO
 
+PlaceId *HvGetLocationHistory(HunterView hv, Player player,
+                          int *numReturnedMoves, bool *canFree);
 #endif // !defined (FOD__HUNTER_VIEW_H_)
