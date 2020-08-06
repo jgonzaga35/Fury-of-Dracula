@@ -76,7 +76,7 @@ void decideDraculaMove(DraculaView dv)
 		// If any of the Valid Moves correspond to CASTLE_DRACULA:
 		if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == CASTLE_DRACULA) {	
 			// If there are hunters at/around CASTLE_DRACULA
-			if (shouldIGoToCastle(hunterLocs) && health >= 40) {									
+			if (shouldIGoToCastle(hunterLocs) && health >= 30) {									
 				registerBestPlay(strdup(placeIdToAbbrev(validMoves[i])), "oi, you want fight?");
 				return;
 			}
@@ -96,15 +96,12 @@ void decideDraculaMove(DraculaView dv)
 		// Locations reachable by road: +3 Risk
 		// **Note that locations reachable by multiple hunters will have up to +12 Risk!
 		PlaceId *riskyLocsRoad = DvWhereCanTheyGoByType(dv, player, true, false, true, &numRiskyLocs);
-		for (int i = 0; i < numRiskyLocs; i++) {
-			riskLevel[riskyLocsRoad[i]] += 3;
-		}
+		for (int i = 0; i < numRiskyLocs; i++) riskLevel[riskyLocsRoad[i]] += 3;
 
 		// Locations reachable by rail: +2 Risk
 		PlaceId *riskyLocsRail = DvWhereCanTheyGoByType(dv, player, false, true, false, &numRiskyLocs);
-		for (int i = 0; i < numRiskyLocs; i++) {
-			riskLevel[riskyLocsRail[i]] += 2;
-		}
+		for (int i = 0; i < numRiskyLocs; i++) riskLevel[riskyLocsRail[i]] += 2;
+		
 	}
 
 	// --------------LOCATIONS WITH TRAPS OR VAMPIRES PLACED--------------
