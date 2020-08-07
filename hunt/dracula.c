@@ -109,8 +109,8 @@ void decideDraculaMove(DraculaView dv)
 		// Locations reachable by road: +3 Risk
 		// **Note that locations reachable by multiple hunters will have up to +12 Risk!
 		PlaceId *riskyLocsRoad = DvWhereCanTheyGoByType(dv, player, true, false, false, &numRiskyLocs);
-		for (int i = 0; i < numRiskyLocs; i++) riskLevel[riskyLocsRoad[i]] += 3;
 
+		for (int i = 0; i < numRiskyLocs; i++) riskLevel[riskyLocsRoad[i]] += 3;
 		// Locations reachable by rail: +2 Risk
 		PlaceId *riskyLocsRail = DvWhereCanTheyGoByType(dv, player, false, true, false, &numRiskyLocs);
 		for (int i = 0; i < numRiskyLocs; i++) riskLevel[riskyLocsRail[i]] += 2;
@@ -144,8 +144,16 @@ void decideDraculaMove(DraculaView dv)
 		}
 
 		// Prefer to travel by road, don't lose health at sea.
-		else if (isPortCity(i, PortCities)) riskLevel[i] += 1;
-
+		else if (isPortCity(i, PortCities)) {
+			riskLevel[i] += 1;
+			if (health <= 30) {
+				for (int player = 0; player < 4; player++) {
+					if (hunterLocs[player] == i) {
+						riskLevel[i] += 25;
+					}
+				}
+			}
+		}
 		// If there are not many connections in the city,
 		// it is easy for Dracula to get cornered!
 		ConnList list = MapGetConnections(m, i);
@@ -171,7 +179,7 @@ void decideDraculaMove(DraculaView dv)
 
 	// Head to drac if its safe.
 	if (huntersNearCastle(hunterLocs) == 0) prioritiseCastleDrac(riskLevel, hunterLocs);
-	if (huntersNearCastle(hunterLocs) == 1 && health >= 15) prioritiseCastleDrac(riskLevel, hunterLocs);
+	if (huntersNearCastle(hunterLocs) == 1 && health >= 60) prioritiseCastleDrac(riskLevel, hunterLocs);
 
 
 	// FIND THE MOVES WITH THE MINIMUM RISK LEVEL
@@ -269,19 +277,19 @@ void getHunterLocs(DraculaView dv, PlaceId hunterLocs[]) {
 }
 
 void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]) {
-	riskLevel[CASTLE_DRACULA] = -1;
-	riskLevel[GALATZ] = -1;
-	riskLevel[BUDAPEST] = 0;
-	riskLevel[KLAUSENBURG] = 0;
-	riskLevel[SZEGED] = 0;
-	riskLevel[BELGRADE] = 0;
-	riskLevel[BUCHAREST] = -1;
-	riskLevel[SOFIA] = -1;
-	riskLevel[CONSTANTA] = -1;
-	riskLevel[ZAGREB] = 0;
-	riskLevel[SARAJEVO] = 0;
-	riskLevel[VIENNA] = 0;
-	riskLevel[VARNA] = -1;
+	riskLevel[CASTLE_DRACULA] = -2;
+	riskLevel[GALATZ] = -2;
+	riskLevel[BUDAPEST] -= 1;
+	riskLevel[KLAUSENBURG] -= 1;
+	riskLevel[SZEGED] -= 1;
+	riskLevel[BELGRADE] -= 1;
+	riskLevel[BUCHAREST] -= 1;
+	riskLevel[SOFIA] -= 1;
+	riskLevel[CONSTANTA] -= 1;
+	riskLevel[ZAGREB] -= 1;
+	riskLevel[SARAJEVO] -= 0;
+	riskLevel[VIENNA] -= 0;
+	riskLevel[VARNA] -= 1;
 	return;
 }
 
