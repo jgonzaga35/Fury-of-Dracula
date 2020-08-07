@@ -113,23 +113,24 @@ void decideHunterMove(HunterView hv) {
 
 				// If we can arrive where Dracula is right now in two move
 				if (pathLength == 2 && diff == 1) {
-					// TODO: If we can also move to the neighbouring of there in two move, move to the neighbouring.
+					// If we can also move to the neighbouring of there in two move, move to the neighbouring.
 					// If not, just go to where dracula is right now
 					registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac");
 				}	
 
 				//if (pathLength > 2 && diff == 1) {
 					// If it's too far, we go to the neighbouring of Dracula's location. Each hunter go to a different one, communicate via message
+					// TODO: Let the hunter go to different neightbouting citys
 					PlaceId placeToGo = neighbourCities(hv, DraculaLoc, currHunter, hunterLocs);
 					registerBestPlay(strdup(placeIdToAbbrev(placeToGo)), "Moving Towards Drac's neighbouring");
 				// }
 
 				// if (diff >= 2 && diff <= 3) {
-				// 	// TODO: go to the neighbouring cities of where dracula is
+				// 	// go to the neighbouring cities of where dracula is
 				// }
 
 				// if (diff >= 4) {
-				// 	// TODO: go to the second/ third level childs of where dracula is
+				// 	// go to the second/ third level childs of where dracula is
 				// }
 
 			// If Dracula isn't there recently, do research
@@ -229,7 +230,7 @@ static void closestToVampire(HunterView hv, Player currHunter, int locRank[NUM_R
 		if (pathLength[player] < pathLength[closest]) closest = player;
 	}
 
-	if (closest == currHunter) locRank[paths[currHunter][0]] += 3;	// REVIEW: If hunter is closest to vampire, increase the rank
+	if (closest == currHunter) locRank[paths[currHunter][0]] += 3;
 
 	return;
 }
@@ -285,7 +286,7 @@ PlaceId lowestRiskForDracula(HunterView hv, PlaceId *places, int numLocs, PlaceI
 	PlaceId min = places[0];
 	for (int i = 1; i < numLocs; i++) {
 		for (int player = 0; player < 4; player++) {
-			// REVIEW: Prevent hunters from bunching
+			// FIXME: Prevent hunters from bunching, not sure if it works
 			if (hunterLocs[player] == places[i]) riskLevel[places[i]] += player;
 		}
 		if (riskLevel[places[i]] <= riskLevel[min]) min = places[i];
