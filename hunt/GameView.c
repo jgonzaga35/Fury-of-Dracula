@@ -76,7 +76,6 @@ struct gameView {
 static int     max(int num1, int num2);
 static int     min(int num1, int num2);
 
-
 ////////////////////////////////////////////////////////////////////////
 // Constructor
 
