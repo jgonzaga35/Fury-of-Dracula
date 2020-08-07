@@ -121,8 +121,15 @@ void decideHunterMove(HunterView hv) {
 				//if (pathLength > 2 && diff == 1) {
 					// If it's too far, we go to the neighbouring of Dracula's location. Each hunter go to a different one, communicate via message
 					// TODO: Let the hunter go to different neightbouting citys
-					PlaceId placeToGo = neighbourCities(hv, DraculaLoc, currHunter, hunterLocs);
-					registerBestPlay(strdup(placeIdToAbbrev(placeToGo)), "Moving Towards Drac's neighbouring");
+
+					// At very low health, better rest
+					int currHunterHealth = HvGetHealth(hv, currHunter);
+					if (currHunterHealth <= 3) {
+						registerBestPlay(strdup(placeIdToAbbrev(hunterLocs[currHunter])), "Moving Towards Drac's neighbouring");
+					} else {
+						PlaceId placeToGo = neighbourCities(hv, DraculaLoc, currHunter, hunterLocs);
+						registerBestPlay(strdup(placeIdToAbbrev(placeToGo)), "Moving Towards Drac's neighbouring");
+					}
 				// }
 
 				// if (diff >= 2 && diff <= 3) {
