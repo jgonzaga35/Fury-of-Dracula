@@ -205,14 +205,6 @@ PlaceId doRandom(HunterView hv, Player hunter, PlaceId *places, int numLocs) {
 	return places[loc];
 }
 
-PlaceId moveComplement(HunterView hv, Player currHunter) {
-	printf("/////////////////////////////////////////////////////////////////////////\n");
-	printf("value ot Player loc: %d\n", HvGetPlayerLocation(hv, currHunter));
-	printf("MAX - Loc = %d %s %s ", MAX_REAL_PLACE - HvGetPlayerLocation(hv, currHunter), placeIdToAbbrev( MAX_REAL_PLACE - HvGetPlayerLocation(hv, currHunter)), placeIdToName( MAX_REAL_PLACE - HvGetPlayerLocation(hv, currHunter)));
-	printf("/////////////////////////////////////////////////////////////////////////\n");
-	return MAX_REAL_PLACE - HvGetPlayerLocation(hv, currHunter);
-}
-
 // Get the location of the other hunters
 static void getHunterLocs(HunterView hv, PlaceId hunterLocs[]) {
 	for (int player = 0; player < 4; player++) {
@@ -318,7 +310,7 @@ bool isCountry(PlaceId country[], PlaceId location, int size) {
 	return false;
 }
 
-// Return the next step to go to a neighbouring city of Dracula's location
+// Return the next move in order to get to a neighbouring city of Dracula's location
 PlaceId neighbourCities(HunterView hv, PlaceId DraculaLoc, Player currHunter, PlaceId hunterLocs[4]) {
 	Map m = MapNew();	
 
