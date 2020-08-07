@@ -18,6 +18,16 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+#define NUM_PORT_CITIES 28
+#define SIZE_OF_ENGLAND 6
+#define SIZE_OF_SPAIN 6
+#define SIZE_OF_ITALY 7
+#define SIZE_OF_CENTRAL_EUROPE 12
+#define SIZE_OF_EAST_EUROPE 12
+#define SIZE_OF_WEST_SEAS 5
+#define SIZE_OF_CENTRAL_SEAS 4
+
 void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]);
 PlaceId MoveToLocation(PlaceId *pastLocs, PlaceId location, int *numPastLocs);
 bool isPortCity(PlaceId i);
@@ -39,10 +49,29 @@ void decideDraculaMove(DraculaView dv)
 	srand((unsigned) time(&t));					  // seed for random movements.  
 	int riskLevel[NUM_REAL_PLACES] = {0};		  // Array containing risk levels for each place. 
 	char *play = malloc(sizeof(char) * 2); 		  // The play to be made.
+	PlaceId PortCities[] = {BARI, ALICANTE, AMSTERDAM, ATHENS, CADIZ, GALWAY,
+							LISBON, BARCELONA, BORDEAUX, NANTES, SANTANDER,
+							CONSTANTA, VARNA, CAGLIARI, DUBLIN, EDINBURGH, 
+							LE_HAVRE, LONDON, PLYMOUTH, GENOA, HAMBURG,
+							SALONICA, VALONA, LIVERPOOL, SWANSEA, MARSEILLES,
+							NAPLES, ROME};
+	PlaceId England[] = {EDINBURGH, LONDON, MANCHESTER, LIVERPOOL, SWANSEA, PLYMOUTH};
+	// PlaceId Ireland[] = {GALWAY, DUBLIN, IRISH_SEA};
+	// PlaceId Portugal[] = {LISBON};
+	// PlaceId WesternSeas[] = {NORTH_SEA, ENGLISH_CHANNEL, IRISH_SEA, BAY_OF_BISCAY, ATLANTIC_OCEAN};
+	// PlaceId CentralSeas[] = {MEDITERRANEAN_SEA, TYRRHENIAN_SEA, ADRIATIC_SEA, IONIAN_SEA};
+	// PlaceId EastEurope[] = {VIENNA, SARAJEVO, ZAGREB, BUDAPEST, KLAUSENBURG, CASTLE_DRACULA,
+	// 						GALATZ, CONSTANTA, BUCHAREST, SOFIA, SZEGED, VARNA};
+	// PlaceId CentralEurope[] = {STRASBOURG, BRUSSELS, COLOGNE, AMSTERDAM, HAMBURG, LEIPZIG,
+	// 							PRAGUE, NUREMBURG, ZURICH, MUNICH, FRANKFURT, BERLIN};
+	PlaceId Spain[] = {MADRID, GRANADA, ALICANTE, SARAGOSSA, BARCELONA, SANTANDER, LISBON};
+	// PlaceId France[] = {TOULOUSE, CLERMONT_FERRAND, PARIS, MARSEILLES, LE_HAVRE, NANTES,
+	// 					GENEVA, STRASBOURG};
+	PlaceId Italy[] = {GENOA, FLORENCE, ROME, NAPLES, BAY_OF_BISCAY, VENICE, MILAN};
 
 	// Where is the best city to start? Unsure...
 	if (round == 0) {
-		registerBestPlay("PA", "durr hurr where am i");
+		registerBestPlay("PA", "come at me bro");
 		return;
 	}
 
@@ -61,16 +90,11 @@ void decideDraculaMove(DraculaView dv)
 	// 	printf("validMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLocation(pastLocs, validMoves[i], &numPastLocs)), riskLevel[MoveToLocation(pastLocs, validMoves[i], &numPastLocs)]);
 	// }
 	for (int i = 0; i < numValidMoves; i++) {
-		if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == CASTLE_DRACULA) {	// If any of the valid move is CD
-			for (int player = 0; player < 4; player++) {
-				if (!shouldIGoToCastle(hunterLocs)) {										// If there is hunters arround CD
-					hunterAtCastle = true;
-					break;
-				}
-			}
-			if (!hunterAtCastle) {															// If there's no hunter near, we go to CD
-				strcpy(play, placeIdToAbbrev(validMoves[i]));
-				registerBestPlay(play, "COMP2521 > COMP1511");
+		// If any of the Valid Moves correspond to CASTLE_DRACULA:
+		if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == CASTLE_DRACULA) {	
+			// If there are hunters at/around CASTLE_DRACULA
+			if ((health <= 10 && huntersNearCastle(hunterLocs) <= 2) || (huntersNearCastle(hunterLocs) <= 1 && huntersInCountry(Italy, hunterLocs, SIZE_OF_ITALY) < 1)) {									
+				registerBestPlay(strdup(placeIdToAbbrev(validMoves[i])), "oi, you want fight?");
 				return;
 			}
 		} 
@@ -82,19 +106,19 @@ void decideDraculaMove(DraculaView dv)
 		riskLevel[hunterLocs[player]] += 2;
 
 		// Locations reachable by road: +3 Risk
-		PlaceId *riskyLocsRoad = DvWhereCanTheyGoByType(dv, player, true, false, true, &numRiskyLocs);
-		for (int i = 0; i < numRiskyLocs; i++) {
-			riskLevel[riskyLocsRoad[i]] += 3;
-		}
-
-		// Locations reachable by rail: +1 Risk if healthy, +2 Risk if low health
+		// **Note that locations reachable by multiple hunters will have up to +12 Risk!
+		PlaceId *riskyLocsRoad = DvWhereCanTheyGoByType(dv, player, true, false, false, &numRiskyLocs);
+		
+		// Dracula will take risks if he is healthy enough...
+		int riskNum = 0;
+		if (DvGetHealth(dv, player) <= 6 && health >= 40) riskNum = 0;
+		if (DvGetHealth(dv, player) <= 6 && health < 40) riskNum = 2;
+		else riskNum = 3;
+		for (int i = 0; i < numRiskyLocs; i++) riskLevel[riskyLocsRoad[i]] += riskNum;
+		
+		// Locations reachable by rail: +2 Risk
 		PlaceId *riskyLocsRail = DvWhereCanTheyGoByType(dv, player, false, true, false, &numRiskyLocs);
-		for (int i = 0; i < numRiskyLocs; i++) {
-			if (health <= 15) {
-				riskLevel[riskyLocsRail[i]] += 1;
-			}
-			riskLevel[riskyLocsRail[i]] += 1;
-		}
+		for (int i = 0; i < numRiskyLocs; i++) riskLevel[riskyLocsRail[i]] += 2;
 	}
 
 	// Dracula should prioritise places with traps in them to stack traps.
@@ -117,7 +141,15 @@ void decideDraculaMove(DraculaView dv)
 	
 	// Assign a risk level to each location 
 	for (int i = 0; i < NUM_REAL_PLACES; i++) {
-		// Sea locations have risk of 1.
+		// These countries are very sea-dependent and so should 
+		// not be taken if low on health
+		if (health <= 30) {
+			if (isCountry(England, i, SIZE_OF_ENGLAND)) riskLevel[i] += 1;
+			if (isCountry(Spain, i, SIZE_OF_SPAIN)) riskLevel[i] += 1;
+			if (isCountry(Italy, i, SIZE_OF_ITALY)) riskLevel[i] += 1;
+		}
+
+		// Sea locations have +2 Risk.
 		if (placeIsSea(i)) {
 			riskLevel[i] += 2;
 			if (health <= 20) {
@@ -198,7 +230,7 @@ void decideDraculaMove(DraculaView dv)
 	// If the minimum hasn't been found, pick the first lowRiskMove.
 	if (minimum == -1) minimum = lowRiskMoves[0];
 	strcpy(play, placeIdToAbbrev(minimum));
-	registerBestPlay(play, "come and fight me bro");
+	registerBestPlay(play, "gg noob");
 	return;
 }
 
