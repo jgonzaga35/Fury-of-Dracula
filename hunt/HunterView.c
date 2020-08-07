@@ -33,6 +33,9 @@ static PlaceId *hunterBfs(HunterView hv, Player hunter, PlaceId src,
 static Round playerNextRound(HunterView hv, Player player);
 PlaceId *HvGetMoveHistory(HunterView hv, Player player, int *numReturnedMoves, bool *canFree);
 
+bool isDoubleBack(PlaceId location);
+PlaceId traceHideByIndex(PlaceId *pastMoves, int i);
+PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i);
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
@@ -100,8 +103,18 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 	                                     &numLocs, &canFree);
 	PlaceId location = NOWHERE;
 	for (Round i = numLocs - 1; i >= 0; i--) {
-		if (placeIsReal(locs[i])) {
-			location = locs[i];
+		PlaceId temp = locs[i];
+		if (placeIsReal(temp)) {
+			location = temp;
+			*round = i;
+			break;
+		// REVIEW: Changed here
+		} else if (isDoubleBack(temp)) {
+			location = traceDoubleBackByIndex(locs, i);
+			*round = i;
+			break;
+		} else if (temp == HIDE) {
+			location = traceHideByIndex(locs, i);
 			*round = i;
 			break;
 		}
@@ -241,4 +254,26 @@ PlaceId *HvGetLocationHistory(HunterView hv, Player player, int *numReturnedMove
 	return GvGetLocationHistory(hv->gv, player, numReturnedMoves, canFree);
 }
 
-// TODO
+// Return the real location that hide refers
+PlaceId traceHideByIndex(PlaceId *pastMoves, int i)
+{
+	PlaceId location = pastMoves[i - 1];
+	if (location == TELEPORT) return CASTLE_DRACULA;
+	if (isDoubleBack(location)) return traceDoubleBackByIndex(pastMoves, i - 1);
+	return location;
+}
+
+// Return the real location that double back refers
+PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i)
+{
+	int backIndex = pastMoves[i] - 102;
+	if (pastMoves[i - backIndex] == TELEPORT) return CASTLE_DRACULA;
+	if (pastMoves[i - backIndex] == HIDE) return pastMoves[i - backIndex - 1]; 
+	return pastMoves[i - backIndex];
+}
+
+// Check if the location is Double back
+bool isDoubleBack(PlaceId location) 
+{
+	return (location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5);
+}
