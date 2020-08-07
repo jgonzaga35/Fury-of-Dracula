@@ -144,8 +144,16 @@ void decideDraculaMove(DraculaView dv)
 		}
 
 		// Prefer to travel by road, don't lose health at sea.
-		else if (isPortCity(i, PortCities)) riskLevel[i] += 1;
-
+		else if (isPortCity(i, PortCities)) {
+			riskLevel[i] += 1;
+			if (health <= 30) {
+				for (int player = 0; player < 4; player++) {
+					if (hunterLocs[player] == i) {
+						riskLevel[i] += 25;
+					}
+				}
+			}
+		}
 		// If there are not many connections in the city,
 		// it is easy for Dracula to get cornered!
 		ConnList list = MapGetConnections(m, i);
