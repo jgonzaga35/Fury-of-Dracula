@@ -20,6 +20,9 @@
 #include <stdlib.h>
 
 #define NUM_PORT_CITIES 28
+#define SIZE_OF_ENGLAND 6
+#define SIZE_OF_SPAIN 6
+#define SIZE_OF_ITALY 7
 
 void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]);
 PlaceId MoveToLocation(PlaceId *pastLocs, PlaceId location, int *numPastLocs);
@@ -27,6 +30,7 @@ bool isPortCity(PlaceId i, PlaceId PortCities[]);
 void getHunterLocs(DraculaView dv, PlaceId hunterLocs[]);
 bool shouldIGoToCastle(PlaceId hunterLocs[]);
 int isDoubleBack(PlaceId location);
+bool isCountry (PlaceId country[], PlaceId location, int size);
 
 void decideDraculaMove(DraculaView dv)
 {
@@ -48,13 +52,21 @@ void decideDraculaMove(DraculaView dv)
 							LE_HAVRE, LONDON, PLYMOUTH, GENOA, HAMBURG,
 							SALONICA, VALONA, LIVERPOOL, SWANSEA, MARSEILLES,
 							NAPLES, ROME};
+	PlaceId England[] = {EDINBURGH, LONDON, MANCHESTER, LIVERPOOL, SWANSEA, PLYMOUTH};
+	// PlaceId Ireland[] = {GALWAY, DUBLIN, IRISH_SEA};
+	// PlaceId Portugal[] = {LISBON};
+	PlaceId Spain[] = {MADRID, GRANADA, ALICANTE, SARAGOSSA, BARCELONA, SANTANDER};
+	// PlaceId France[] = {TOULOUSE, CLERMONT_FERRAND, PARIS, MARSEILLES, LE_HAVRE, NANTES,
+	// 					GENEVA, STRASBOURG};
+	PlaceId Italy[] = {GENOA, FLORENCE, ROME, NAPLES, BAY_OF_BISCAY, VENICE, MILAN};
 
 	///////////////////////////////////////////////////////////////////
 	// ----------------------STARTING ROUND------------------------- //
 	///////////////////////////////////////////////////////////////////
 
+	// Dracula has the most movement options in STRASBOURG.
 	if (round == 0) {
-		registerBestPlay("PA", "come at me bro");
+		registerBestPlay("ST", "come at me bro");
 		return;
 	}
 
@@ -76,7 +88,7 @@ void decideDraculaMove(DraculaView dv)
 		// If any of the Valid Moves correspond to CASTLE_DRACULA:
 		if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == CASTLE_DRACULA) {	
 			// If there are hunters at/around CASTLE_DRACULA
-			if (shouldIGoToCastle(hunterLocs)) {									
+			if (round != 0 && shouldIGoToCastle(hunterLocs)) {									
 				registerBestPlay(strdup(placeIdToAbbrev(validMoves[i])), "oi, you want fight?");
 				return;
 			}
@@ -108,7 +120,7 @@ void decideDraculaMove(DraculaView dv)
 	// Dracula should prioritise places with traps in them to stack traps.
 	int numTraps = 0;
 	PlaceId *TrapLocs = DvGetTrapLocations(dv, &numTraps);
-	for (int i = 0; i < numTraps; i++) riskLevel[TrapLocs[i]] -= 1;
+	for (int i = 0; i < numTraps; i++) riskLevel[TrapLocs[i]] -= 2;
 
 	// Vampire Location: Risk +1 (don't want hunters to trigger it too early!)
 	riskLevel[DvGetVampireLocation(dv)] += 1;
@@ -116,6 +128,10 @@ void decideDraculaMove(DraculaView dv)
 	// -------------LOCATIONS CONNECTED TO THE SEA-------------------------
 	Map m = MapNew();	
 	for (int i = 0; i < NUM_REAL_PLACES; i++) {
+		// These countries are easy for hunters to corner Dracula.
+		if (isCountry(England, i, SIZE_OF_ENGLAND)) riskLevel[i] += 1;
+		if (isCountry(Spain, i, SIZE_OF_SPAIN)) riskLevel[i] += 1;
+		if (isCountry(Italy, i, SIZE_OF_ITALY)) riskLevel[i] += 1;
 
 		// Sea locations have +2 Risk.
 		if (placeIsSea(i)) {
@@ -306,4 +322,13 @@ bool shouldIGoToCastle(PlaceId hunterLocs[]) {
 int isDoubleBack(PlaceId location)
 {
 	return (location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5);
+}
+
+bool isCountry (PlaceId country[], PlaceId location, int size) {
+	for (int i = 0; i < size; i++) {
+		if (location == country[i]) {
+			return true;
+		}
+	}
+	return false;
 }
