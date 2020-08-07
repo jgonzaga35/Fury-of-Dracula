@@ -28,7 +28,8 @@ void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]);
 PlaceId MoveToLocation(PlaceId *pastLocs, PlaceId location, int *numPastLocs);
 bool isPortCity(PlaceId i, PlaceId PortCities[]);
 void getHunterLocs(DraculaView dv, PlaceId hunterLocs[]);
-bool shouldIGoToCastle(PlaceId hunterLocs[]);
+int huntersNearCastle(PlaceId hunterLocs[]);
+int huntersInCountry (PlaceId country[], PlaceId hunterLocs[], int size);
 int isDoubleBack(PlaceId location);
 bool isCountry (PlaceId country[], PlaceId location, int size);
 
@@ -88,7 +89,7 @@ void decideDraculaMove(DraculaView dv)
 		// If any of the Valid Moves correspond to CASTLE_DRACULA:
 		if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == CASTLE_DRACULA) {	
 			// If there are hunters at/around CASTLE_DRACULA
-			if (round != 0 && shouldIGoToCastle(hunterLocs)) {									
+			if (huntersNearCastle(hunterLocs) <= 1 && huntersInCountry(Italy, hunterLocs, SIZE_OF_ITALY) < 1) {									
 				registerBestPlay(strdup(placeIdToAbbrev(validMoves[i])), "oi, you want fight?");
 				return;
 			}
@@ -107,7 +108,7 @@ void decideDraculaMove(DraculaView dv)
 
 		// Locations reachable by road: +3 Risk
 		// **Note that locations reachable by multiple hunters will have up to +12 Risk!
-		PlaceId *riskyLocsRoad = DvWhereCanTheyGoByType(dv, player, true, false, true, &numRiskyLocs);
+		PlaceId *riskyLocsRoad = DvWhereCanTheyGoByType(dv, player, true, false, false, &numRiskyLocs);
 		for (int i = 0; i < numRiskyLocs; i++) riskLevel[riskyLocsRoad[i]] += 3;
 
 		// Locations reachable by rail: +2 Risk
@@ -158,13 +159,18 @@ void decideDraculaMove(DraculaView dv)
 	}
 	MapFree(m);
 
+	if (huntersInCountry(Italy, hunterLocs, SIZE_OF_ITALY) >= 2) {
+		riskLevel[VARNA] += 3;
+		riskLevel[SALONICA] += 3;
+		riskLevel[ATHENS] += 3;
+	}
 
 	/////////////////////////////////////////////////////////////////////////////
 	// ---------------------COMPUTING LOWEST RISK MOVE------------------------ //
 	/////////////////////////////////////////////////////////////////////////////
 
 	// Head to drac if its safe.
-	if (shouldIGoToCastle(hunterLocs)) prioritiseCastleDrac(riskLevel, hunterLocs);
+	if (huntersNearCastle(hunterLocs) == 0) prioritiseCastleDrac(riskLevel, hunterLocs);
 
 	// FIND THE MOVES WITH THE MINIMUM RISK LEVEL
 	int min = riskLevel[MoveToLocation(pastLocs, validMoves[numValidMoves - 1], &numPastLocs)];
@@ -261,7 +267,7 @@ void getHunterLocs(DraculaView dv, PlaceId hunterLocs[]) {
 }
 
 void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]) {
-	if (shouldIGoToCastle(hunterLocs)) {
+	if (huntersNearCastle(hunterLocs) == 0) {
 		riskLevel[CASTLE_DRACULA] -= 2;
 		riskLevel[BUDAPEST] -= 2;
 		riskLevel[KLAUSENBURG] -= 2;
@@ -277,46 +283,47 @@ void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]) {
 	return;
 }
 
-bool shouldIGoToCastle(PlaceId hunterLocs[]) {
+int huntersNearCastle(PlaceId hunterLocs[]) {
+	int count = 0;
 	for (int player = 0; player < 4; player++) {
 		if (hunterLocs[player] == CASTLE_DRACULA) {
-			return false; 
+			count++;
 		}
 		if (hunterLocs[player] == BUDAPEST) {
-			return false; 
+			count++;
 		}
 		if (hunterLocs[player] == KLAUSENBURG) {
-			return false; 
+			count++;
 		}
 		if (hunterLocs[player] == SZEGED) {
-			return false; 
+			count++;
 		}
 		if (hunterLocs[player] == BELGRADE) {
-			return false; 
+			count++;
 		}
 		if (hunterLocs[player] == BUCHAREST) {
-			return false; 
+			count++;
 		}
 		if (hunterLocs[player] == SOFIA) {
-			return false; 
+			count++;
 		}
 		if (hunterLocs[player] == CONSTANTA) {
-			return false; 
+			count++;
 		}
 		if (hunterLocs[player] == ZAGREB) {
-			return false; 
+			count++;
 		}
 		if (hunterLocs[player] == SARAJEVO) {
-			return false; 
+			count++;
 		}
 		if (hunterLocs[player] == VIENNA) {
-			return false; 
+			count++;
 		}
 		if (hunterLocs[player] == VARNA) {
-			return false; 
+			count++;
 		}
 	}
-	return true;
+	return count;
 }
 
 int isDoubleBack(PlaceId location)
@@ -331,4 +338,15 @@ bool isCountry (PlaceId country[], PlaceId location, int size) {
 		}
 	}
 	return false;
+}
+
+int huntersInCountry (PlaceId country[], PlaceId hunterLocs[], int size) {
+	int count = 0;
+	for (int player = 0; player < 4; player++) {
+		if (isCountry(country, hunterLocs[player], size)) {
+			count++;
+		}
+	}
+
+	return count;
 }
