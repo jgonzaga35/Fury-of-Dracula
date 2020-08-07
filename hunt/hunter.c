@@ -30,8 +30,8 @@ PlaceId doRandom(HunterView hv, Player hunter, PlaceId *places, int numLocs);
 PlaceId moveComplement(HunterView hv, Player currHunter);
 int isHunterAtLoc(HunterView hv, Player hunter, PlaceId loc);
 static void getHunterLocs(HunterView hv, PlaceId hunterLocs[]);
-// static int isKnown(PlaceId location);
-//static void closestToVampire(HunterView hv, Player currHunter, int *locRank);
+static int isKnown(PlaceId location);
+static void closestToVampire(HunterView hv, Player currHunter, int *locRank);
 PlaceId lowestRiskForDracula(HunterView hv, PlaceId *places, int numLocs, PlaceId hunterLocs[4]);
 int hasHuntersThere(PlaceId hunterLocs[4], PlaceId location);
 bool isCountry(PlaceId country[], PlaceId location, int size);
@@ -181,7 +181,7 @@ void decideHunterMove(HunterView hv) {
 		}
 
 		// ----------Go to the vampire's location if it's known and the current player is the closest to vampire--------
-		//closestToVampire(hv, currHunter, locRank);
+		closestToVampire(hv, currHunter, locRank);
 
 		// ----------- Don't go to the same location ----------
 		int numReturnedMoves;
@@ -240,29 +240,29 @@ static void getHunterLocs(HunterView hv, PlaceId hunterLocs[]) {
 	}
 }
 
-// static void closestToVampire(HunterView hv, Player currHunter, int *locRank) {
-// 	PlaceId vampireLoc = HvGetVampireLocation(hv);
-// 	if (!isKnown(vampireLoc)) return;
+static void closestToVampire(HunterView hv, Player currHunter, int *locRank) {
+	PlaceId vampireLoc = HvGetVampireLocation(hv);
+	if (!isKnown(vampireLoc)) return;
 
-// 	int pathLength[NUM_PLAYERS];
-// 	PlaceId *paths[NUM_PLAYERS];
-// 	for (int player = 0; player < 4; player++) {
-// 		paths[player] = HvGetShortestPathTo(hv, player, vampireLoc, &pathLength[player]);
-// 	}
+	int pathLength[NUM_PLAYERS];
+	PlaceId *paths[NUM_PLAYERS];
+	for (int player = 0; player < 4; player++) {
+		paths[player] = HvGetShortestPathTo(hv, player, vampireLoc, &pathLength[player]);
+	}
 
-// 	Player closest = PLAYER_LORD_GODALMING;
-// 	for (int player = 0; player < 4; player++) {
-// 		if (pathLength[player] < pathLength[closest]) closest = player;
-// 	}
+	Player closest = PLAYER_LORD_GODALMING;
+	for (int player = 0; player < 4; player++) {
+		if (pathLength[player] < pathLength[closest]) closest = player;
+	}
 
-// 	if (closest == currHunter) locRank[paths[currHunter][0]] += 3;	// REVIEW: If hunter is closest to vampire, increase the rank
+	if (closest == currHunter) locRank[paths[currHunter][0]] += 3;	// REVIEW: If hunter is closest to vampire, increase the rank
 
-// 	return;
-// }
+	return;
+}
 
-// static int isKnown(PlaceId location) {
-// 	return (location != CITY_UNKNOWN && location != NOWHERE && location != SEA_UNKNOWN);
-// }
+static int isKnown(PlaceId location) {
+	return (location != CITY_UNKNOWN && location != NOWHERE && location != SEA_UNKNOWN);
+}
 
 int isHunterAtLoc(HunterView hv, Player hunter, PlaceId loc) {
 	if(HvGetPlayerLocation(hv, hunter) == loc) return 0;
