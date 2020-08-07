@@ -85,7 +85,7 @@ void decideHunterMove(HunterView hv) {
 		/////////////////////////////////////////////////////////////////////////////
 		// --------------------When we know where is Dracula---------------------- //
 		/////////////////////////////////////////////////////////////////////////////
-
+		int rest = FALSE;
 		int draculaFound = FALSE;
 		if(DraculaLoc != NOWHERE) { 	//  && LastDracRoundSeen != -1
 			int diff = HvGetRound(hv) - LastDracRoundSeen; // how many rounds ago
@@ -135,6 +135,7 @@ void decideHunterMove(HunterView hv) {
 
 			// If Dracula isn't there recently, do research
 			} else if (HvGetRound(hv) >= 6 && HvGetRound(hv) % 4 == 0) {
+				int rest = TRUE;
 				registerBestPlay(strdup(placeIdToAbbrev(currLoc)), "Research");
 				locRank[currLoc] += 10;
 			}
@@ -180,7 +181,7 @@ void decideHunterMove(HunterView hv) {
 		}
 
 		// ----------Go to the locaion with the highest rank---------
-		if (draculaFound == FALSE) {
+		if (draculaFound == FALSE && rest == FALSE) {
 			PlaceId max = places[0];
 			for (int i = 0; i < numLocs; i++) {
 				if (locRank[places[i]] > locRank[max]) max = places[i];
@@ -283,12 +284,16 @@ PlaceId lowestRiskForDracula(HunterView hv, PlaceId *places, int numLocs, PlaceI
 		if (isCountry(Italy, i, SIZE_OF_ITALY)) riskLevel[i] += 1;
 	}
 
-	PlaceId min = places[0];
+	// FIXME: Prevent hunters from bunching by increasing the risk of players there, not sure if it works
 	for (int i = 1; i < numLocs; i++) {
 		for (int player = 0; player < 4; player++) {
-			// FIXME: Prevent hunters from bunching, not sure if it works
-			if (hunterLocs[player] == places[i]) riskLevel[places[i]] += player;
+			if (hunterLocs[player] == places[i]) riskLevel[places[i]] += 2;
 		}
+	}
+
+
+	PlaceId min = places[0];
+	for (int i = 1; i < numLocs; i++) {
 		if (riskLevel[places[i]] <= riskLevel[min]) min = places[i];
 	}
 
