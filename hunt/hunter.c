@@ -116,11 +116,11 @@ void decideHunterMove(HunterView hv) {
 					// If not, just go to where dracula is right now
 					registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac");
 
-					PlaceId placeToGo = neighbourCities(hv, DraculaLoc, currHunter, hunterLocs);
-					int pathLength = -1;
-					PlaceId *path = HvGetShortestPathTo(hv, currHunter, placeToGo, &pathLength);
+					// PlaceId placeToGo = neighbourCities(hv, DraculaLoc, currHunter, hunterLocs);
+					// int pathLength = -1;
+					// PlaceId *path = HvGetShortestPathTo(hv, currHunter, placeToGo, &pathLength);
 
-					if (pathLength == 2) registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac's neighbouring");
+					// if (pathLength == 2) registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac's neighbouring");
 				}	
 
 				// If it's too far, we go to the neighbouring of Dracula's location.
