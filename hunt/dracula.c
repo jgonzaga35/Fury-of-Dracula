@@ -121,7 +121,7 @@ void decideDraculaMove(DraculaView dv)
 	// Dracula should prioritise places with traps in them to stack traps.
 	int numTraps = 0;
 	PlaceId *TrapLocs = DvGetTrapLocations(dv, &numTraps);
-	for (int i = 0; i < numTraps; i++) riskLevel[TrapLocs[i]] -= 2;
+	for (int i = 0; i < numTraps; i++) riskLevel[TrapLocs[i]] -= 0;
 
 	// Vampire Location: Risk +1 (don't want hunters to trigger it too early!)
 	riskLevel[DvGetVampireLocation(dv)] += 1;
@@ -171,6 +171,8 @@ void decideDraculaMove(DraculaView dv)
 
 	// Head to drac if its safe.
 	if (huntersNearCastle(hunterLocs) == 0) prioritiseCastleDrac(riskLevel, hunterLocs);
+	if (huntersNearCastle(hunterLocs) == 1 && health >= 15) prioritiseCastleDrac(riskLevel, hunterLocs);
+
 
 	// FIND THE MOVES WITH THE MINIMUM RISK LEVEL
 	int min = riskLevel[MoveToLocation(pastLocs, validMoves[numValidMoves - 1], &numPastLocs)];
@@ -267,19 +269,19 @@ void getHunterLocs(DraculaView dv, PlaceId hunterLocs[]) {
 }
 
 void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]) {
-	if (huntersNearCastle(hunterLocs) == 0) {
-		riskLevel[CASTLE_DRACULA] -= 2;
-		riskLevel[BUDAPEST] -= 2;
-		riskLevel[KLAUSENBURG] -= 2;
-		riskLevel[SZEGED] -= 2;
-		riskLevel[BELGRADE] -= 2;
-		riskLevel[BUCHAREST] -= 2;
-		riskLevel[SOFIA] -= 2;
-		riskLevel[CONSTANTA] -= 2;
-		riskLevel[ZAGREB] -= 2;
-		riskLevel[SARAJEVO] -= 2;
-		riskLevel[VIENNA] -= 2;
-	}
+	riskLevel[CASTLE_DRACULA] = -1;
+	riskLevel[GALATZ] = -1;
+	riskLevel[BUDAPEST] = 0;
+	riskLevel[KLAUSENBURG] = 0;
+	riskLevel[SZEGED] = 0;
+	riskLevel[BELGRADE] = 0;
+	riskLevel[BUCHAREST] = -1;
+	riskLevel[SOFIA] = -1;
+	riskLevel[CONSTANTA] = -1;
+	riskLevel[ZAGREB] = 0;
+	riskLevel[SARAJEVO] = 0;
+	riskLevel[VIENNA] = 0;
+	riskLevel[VARNA] = -1;
 	return;
 }
 
