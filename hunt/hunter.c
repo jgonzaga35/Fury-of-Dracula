@@ -93,7 +93,7 @@ void decideHunterMove(HunterView hv) {
 			int diff = HvGetRound(hv) - LastDracRoundSeen; // how many rounds ago
 
 			// If Dracula is there in the past 10 rounds
-			if (0 <= diff && diff <= 10) {
+			if (0 <= diff && diff <= 8) {
 				int pathLength = -1;
 				PlaceId *path = HvGetShortestPathTo(hv, currHunter, 
 													DraculaLoc, &pathLength);
