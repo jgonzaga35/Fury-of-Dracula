@@ -142,7 +142,7 @@ void decideHunterMove(HunterView hv) {
 
 			// If Dracula isn't there recently, do research
 			} else if (HvGetRound(hv) >= 6 && HvGetRound(hv) % 4 == 0) {
-				int rest = TRUE;
+				rest = TRUE;
 				registerBestPlay(strdup(placeIdToAbbrev(currLoc)), "Research");
 				locRank[currLoc] += 10;
 			}
