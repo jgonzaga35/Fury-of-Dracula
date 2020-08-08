@@ -29,6 +29,7 @@
 
 PlaceId doRandom(HunterView hv, Player hunter, PlaceId *places, int numLocs);
 PlaceId moveComplement(HunterView hv, Player currHunter);
+int isHunterAtLoc(HunterView hv, Player hunter, PlaceId loc);
 static void getHunterLocs(HunterView hv, PlaceId hunterLocs[]);
 static int isKnown(PlaceId location);
 static void closestToVampire(HunterView hv, Player currHunter, int *locRank);
@@ -41,8 +42,6 @@ void decideHunterMove(HunterView hv) {
 	Round round = HvGetRound(hv);
 	Player currHunter = HvGetPlayer(hv); // Which hunter?
 	
-	int rest = FALSE;
-	int draculaFound = FALSE;
 	if (round == 0) { // FIRST ROUND
 		char *location = NULL;
 		switch(currHunter) {
@@ -53,10 +52,10 @@ void decideHunterMove(HunterView hv) {
 				location = "GA";
 				break;
 			case PLAYER_VAN_HELSING:
-				location = "NU";
+				location = "RO";
 				break;
 			case PLAYER_MINA_HARKER:
-				location = "TO";
+				location = "GR";
 				break;
 			default:
 				break;
@@ -86,6 +85,8 @@ void decideHunterMove(HunterView hv) {
 		/////////////////////////////////////////////////////////////////////////////
 		// --------------------When we know where is Dracula---------------------- //
 		/////////////////////////////////////////////////////////////////////////////
+		int rest = FALSE;
+		int draculaFound = FALSE;
 		if(DraculaLoc != NOWHERE) { 	//  && LastDracRoundSeen != -1
 			int diff = HvGetRound(hv) - LastDracRoundSeen; // how many rounds ago
 
@@ -115,20 +116,16 @@ void decideHunterMove(HunterView hv) {
 					// If we can also move to the neighbouring of there in two move, move to the neighbouring.
 					// If not, just go to where dracula is right now
 					registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac");
-
-					PlaceId placeToGo = neighbourCities(hv, DraculaLoc, currHunter, hunterLocs);
-					int pathLength = -1;
-					PlaceId *path = HvGetShortestPathTo(hv, currHunter, placeToGo, &pathLength);
-
-					if (pathLength == 2) registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac's neighbouring");
 				}	
 
-				// If it's too far, we go to the neighbouring of Dracula's location.
-				// if (pathLength > 2 && diff == 1) {
+				//if (pathLength > 2 && diff == 1) {
+					// If it's too far, we go to the neighbouring of Dracula's location. Each hunter go to a different one, communicate via message
+					// TODO: Let the hunter go to different neightbouting citys
+
 					// At very low health, better rest
 					int currHunterHealth = HvGetHealth(hv, currHunter);
 					if (currHunterHealth <= 3) {
-						registerBestPlay(strdup(placeIdToAbbrev(currLoc)), "Moving Towards Drac's neighbouring");
+						registerBestPlay(strdup(placeIdToAbbrev(hunterLocs[currHunter])), "Moving Towards Drac's neighbouring");
 					} else {
 						PlaceId placeToGo = neighbourCities(hv, DraculaLoc, currHunter, hunterLocs);
 						registerBestPlay(strdup(placeIdToAbbrev(placeToGo)), "Moving Towards Drac's neighbouring");
@@ -147,6 +144,7 @@ void decideHunterMove(HunterView hv) {
 			} else if (HvGetRound(hv) >= 6 && HvGetRound(hv) % 4 == 0) {
 				rest = TRUE;
 				registerBestPlay(strdup(placeIdToAbbrev(currLoc)), "Research");
+				locRank[currLoc] += 10;
 			}
 		} 
 
@@ -175,7 +173,7 @@ void decideHunterMove(HunterView hv) {
 		}
 
 		// ----------Go to the vampire's location if it's known and the current player is the closest to vampire--------
-		if (false) closestToVampire(hv, currHunter, locRank);
+		closestToVampire(hv, currHunter, locRank);
 
 		// ----------- Don't go to the same location / SEA----------
 		int numReturnedMoves;
@@ -223,7 +221,6 @@ static void getHunterLocs(HunterView hv, PlaceId hunterLocs[]) {
 	}
 }
 
-// TODO: the logic is incorrect, if this is of high priority, then go there, increase the rank for the first step is useless
 // Increase the rank if the currHunter is the closest to the vampire
 static void closestToVampire(HunterView hv, Player currHunter, int locRank[NUM_REAL_PLACES]) {
 	PlaceId vampireLoc = HvGetVampireLocation(hv);
@@ -251,7 +248,12 @@ static int isKnown(PlaceId location) {
 	return (location != CITY_UNKNOWN && location != NOWHERE && location != SEA_UNKNOWN);
 }
 
-// Compute the least risky location from Dracula's perspective
+int isHunterAtLoc(HunterView hv, Player hunter, PlaceId loc) {
+	if(HvGetPlayerLocation(hv, hunter) == loc) return 0;
+	return 1;
+}
+
+// Compute the least risky location Dracula will go
 PlaceId lowestRiskForDracula(HunterView hv, PlaceId *places, int numLocs, PlaceId hunterLocs[4]) {
 	// PlaceId PortCities[] = {BARI, ALICANTE, AMSTERDAM, ATHENS, CADIZ, GALWAY,
 	// 						LISBON, BARCELONA, BORDEAUX, NANTES, SANTANDER,
