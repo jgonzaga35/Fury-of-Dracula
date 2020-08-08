@@ -23,13 +23,14 @@
 #define SIZE_OF_ENGLAND 6
 #define SIZE_OF_SPAIN 6
 #define SIZE_OF_ITALY 7
+#define SIZE_OF_FRANCE 8
 #define SIZE_OF_CENTRAL_EUROPE 12
 #define SIZE_OF_EAST_EUROPE 12
 #define SIZE_OF_WEST_SEAS 5
 #define SIZE_OF_CENTRAL_SEAS 4
 
 void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]);
-PlaceId MoveToLocation(PlaceId *pastLocs, PlaceId location, int *numPastLocs);
+PlaceId MoveToLoc(PlaceId *pastLocs, PlaceId location, int *numPastLocs);
 bool isPortCity(PlaceId i, PlaceId PortCities[]);
 void getHunterLocs(DraculaView dv, PlaceId hunterLocs[]);
 int huntersNearCastle(PlaceId hunterLocs[]);
@@ -67,8 +68,8 @@ void decideDraculaMove(DraculaView dv)
 	// PlaceId CentralEurope[] = {STRASBOURG, BRUSSELS, COLOGNE, AMSTERDAM, HAMBURG, LEIPZIG,
 	// 							PRAGUE, NUREMBURG, ZURICH, MUNICH, FRANKFURT, BERLIN};
 	PlaceId Spain[] = {MADRID, GRANADA, ALICANTE, SARAGOSSA, BARCELONA, SANTANDER, LISBON};
-	// PlaceId France[] = {TOULOUSE, CLERMONT_FERRAND, PARIS, MARSEILLES, LE_HAVRE, NANTES,
-	// 					GENEVA, STRASBOURG};
+	PlaceId France[] = {TOULOUSE, CLERMONT_FERRAND, PARIS, MARSEILLES, LE_HAVRE, NANTES,
+						GENEVA, STRASBOURG};
 	PlaceId Italy[] = {GENOA, FLORENCE, ROME, NAPLES, BAY_OF_BISCAY, VENICE, MILAN};
 
 	///////////////////////////////////////////////////////////////////
@@ -77,7 +78,7 @@ void decideDraculaMove(DraculaView dv)
 
 	// Dracula has the most movement options in STRASBOURG.
 	if (round == 0) {
-		registerBestPlay("PA", "come at me bro");
+		registerBestPlay("KL", "come at me bro");
 		return;
 	}
 
@@ -92,19 +93,154 @@ void decideDraculaMove(DraculaView dv)
 		return;
 	}
 
-	// Go to Castle Dracula if possible - Dracula wants to gain 10 BP.
-	// Even if a hunter is there, it will be an even exchange. 
+	// Go to Castle Dracula if it is safe.
 	PlaceId *pastLocs = DvGetLocationHistory(dv, &numPastLocs);  
 	for (int i = 0; i < numValidMoves; i++) {
 		// If any of the Valid Moves correspond to CASTLE_DRACULA:
-		if (MoveToLocation(pastLocs, validMoves[i], &numPastLocs) == CASTLE_DRACULA) {	
+		if (MoveToLoc(pastLocs, validMoves[i], &numPastLocs) == CASTLE_DRACULA) {	
 			// If there are hunters at/around CASTLE_DRACULA
-			if ((health <= 10 && huntersNearCastle(hunterLocs) <= 2) || (huntersNearCastle(hunterLocs) <= 1 && huntersInCountry(Italy, hunterLocs, SIZE_OF_ITALY) < 1)) {									
+			if ((huntersNearCastle(hunterLocs) <= 2) || (huntersNearCastle(hunterLocs) <= 1)) {									
 				registerBestPlay(strdup(placeIdToAbbrev(validMoves[i])), "oi, you want fight?");
 				return;
-			}
+			} 
 		} 
 	}
+
+	if (pastLocs[numPastLocs - 1] == KLAUSENBURG) {
+		registerBestPlay("CD", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == CASTLE_DRACULA) {
+		registerBestPlay("GA", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == GALATZ) {
+		registerBestPlay("CN", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == CONSTANTA) {
+		registerBestPlay("BS", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == BLACK_SEA) {
+		registerBestPlay("IO", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == IONIAN_SEA) {
+		registerBestPlay("TS", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == TYRRHENIAN_SEA) {
+		registerBestPlay("MS", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == ALICANTE) {
+		if (huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN)
+		+ huntersInCountry(France, hunterLocs, SIZE_OF_FRANCE) >= 3) {
+			registerBestPlay("MS", "n");
+			return;
+		}
+		for (int player = 0; player < 4; player++) {
+			if (hunterLocs[player] == MEDITERRANEAN_SEA) {
+				registerBestPlay("MS", "n");
+				return;
+			}
+		}
+		registerBestPlay("SR", "n");
+		return;
+	} 
+	if (pastLocs[numPastLocs - 1] == SARAGOSSA) {
+		if ((huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN) + huntersInCountry(France, hunterLocs, SIZE_OF_FRANCE)) >= 1) {
+			registerBestPlay("BA", "n");
+			return;
+		}
+		registerBestPlay("MA", "n");
+		return;
+	} 	
+	if (pastLocs[numPastLocs - 1] ==BARCELONA) {
+		registerBestPlay("MS", "n");
+		return;
+	} 
+	if (pastLocs[numPastLocs - 1] == MADRID) {
+		if ((huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN) + huntersInCountry(France, hunterLocs, SIZE_OF_FRANCE)) >= 1) {
+			registerBestPlay("SN", "n");
+			return;
+		}
+		registerBestPlay("LS", "n");
+		return;
+	} 
+	if (pastLocs[numPastLocs - 1] == SANTANDER) {
+		registerBestPlay("BB", "n");
+		return;
+	} 
+	if (pastLocs[numPastLocs - 1] ==BAY_OF_BISCAY) {
+		registerBestPlay("AO", "n");
+		return;
+	} 
+	if (pastLocs[numPastLocs - 1] == LISBON) {
+		registerBestPlay("CA", "n");
+		return;
+	} 
+	if (pastLocs[numPastLocs - 1] == CADIZ) {
+		registerBestPlay("GR", "n");
+		return;
+	} 
+	if (pastLocs[numPastLocs - 1] == GRANADA) {
+		registerBestPlay("AL", "n");
+		return;
+	} 
+	if (pastLocs[numPastLocs - 1] == MEDITERRANEAN_SEA) {
+		if (huntersNearCastle(hunterLocs) >= 3) {
+			registerBestPlay("AL", "n");
+			return;
+		}
+		registerBestPlay("AO", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == ATLANTIC_OCEAN) {
+		registerBestPlay("NS", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == NORTH_SEA) {
+		registerBestPlay("HA", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == HAMBURG) {
+		registerBestPlay("BR", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == BRUSSELS) {
+		registerBestPlay("PR", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == PRAGUE) {
+		registerBestPlay("VI", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == VIENNA) {
+		registerBestPlay("ZA", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == ZAGREB) {
+		registerBestPlay("SJ", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == SARAJEVO) {
+		registerBestPlay("SO", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == SOFIA) {
+		registerBestPlay("BC", "noice");
+		return;
+	}
+	if (pastLocs[numPastLocs - 1] == BUCHAREST) {
+		registerBestPlay("KL", "noice");
+		return;
+	}
+
+	// for (int i = 0; i < numValidMoves; i++) {
+	// 	printf("validMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLoc(pastLocs, validMoves[i], &numPastLocs)), riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)]);
+	// }
 
 	////////////////////////////////////////////////////////////////////
 	// --------------ASSIGNING RISK LEVELS TO EACH LOCATION---------- //
@@ -117,21 +253,24 @@ void decideDraculaMove(DraculaView dv)
 		riskLevel[hunterLocs[player]] += 2;
 
 		// Locations reachable by road: +3 Risk
-		// **Note that locations reachable by multiple hunters will have up to +12 Risk!
 		PlaceId *riskyLocsRoad = DvWhereCanTheyGoByType(dv, player, true, false, false, &numRiskyLocs);
 		
 		// Dracula will take risks if he is healthy enough...
-		int riskNum = 0;
-		if (DvGetHealth(dv, player) <= 6 && health >= 40) riskNum = 0;
-		if (DvGetHealth(dv, player) <= 6 && health < 40) riskNum = 2;
-		else riskNum = 3;
-		for (int i = 0; i < numRiskyLocs; i++) riskLevel[riskyLocsRoad[i]] += riskNum;
+		for (int i = 0; i < numRiskyLocs; i++) riskLevel[riskyLocsRoad[i]] += 3;
 		
 		// Locations reachable by rail: +2 Risk
 		PlaceId *riskyLocsRail = DvWhereCanTheyGoByType(dv, player, false, true, false, &numRiskyLocs);
-		for (int i = 0; i < numRiskyLocs; i++) riskLevel[riskyLocsRail[i]] += 2;
-	}
+		for (int i = 0; i < numRiskyLocs; i++) riskLevel[riskyLocsRail[i]] += 4;
 
+		PlaceId *riskyLocsSea = DvWhereCanTheyGoByType(dv, player, false, false, true, &numRiskyLocs);
+		for (int i = 0; i < numRiskyLocs; i++) {
+			if (placeIsLand(riskyLocsSea[i]))
+				riskLevel[riskyLocsSea[i]] += 3;
+			// if (placeIsSea(riskyLocsSea[i]))
+			// 	riskLevel[riskyLocsSea[i]] -= 1;
+		}
+	}
+	riskLevel[LIVERPOOL] += 1;
 	// --------------LOCATIONS WITH TRAPS OR VAMPIRES PLACED--------------
 	// Dracula should prioritise places with traps in them to stack traps.
 	int numTraps = 0;
@@ -140,6 +279,11 @@ void decideDraculaMove(DraculaView dv)
 
 	// Vampire Location: Risk +1 (don't want hunters to trigger it too early!)
 	riskLevel[DvGetVampireLocation(dv)] += 1;
+				if (isCountry(England, DvGetPlayerLocation(dv, PLAYER_DRACULA), SIZE_OF_ENGLAND)
+					||  isCountry(Italy, DvGetPlayerLocation(dv, PLAYER_DRACULA), SIZE_OF_ITALY))
+				riskLevel[pastLocs[numPastLocs - 1]] += 50;
+				riskLevel[pastLocs[numPastLocs - 2]] += 40;
+				riskLevel[pastLocs[numPastLocs - 3]] += 40;
 
 	// -------------LOCATIONS CONNECTED TO THE SEA-------------------------
 	Map m = MapNew();	
@@ -147,7 +291,7 @@ void decideDraculaMove(DraculaView dv)
 		// These countries are very sea-dependent and so should 
 		// not be taken if low on health
 		if (health <= 30) {
-			if (isCountry(England, i, SIZE_OF_ENGLAND)) riskLevel[i] += 1;
+			if (isCountry(England, i, SIZE_OF_ENGLAND)) riskLevel[i] += 30;
 			if (isCountry(Spain, i, SIZE_OF_SPAIN)) riskLevel[i] += 1;
 			if (isCountry(Italy, i, SIZE_OF_ITALY)) riskLevel[i] += 1;
 		}
@@ -155,6 +299,21 @@ void decideDraculaMove(DraculaView dv)
 		// Sea locations have +2 Risk.
 		if (placeIsSea(i)) {
 			riskLevel[i] += 2;
+			if (huntersNearCastle(hunterLocs) >= 3) {
+
+				if (health > 48) {
+					riskLevel[i] -= 29;
+				}
+				riskLevel[pastLocs[numPastLocs - 1]] += 50;
+				riskLevel[pastLocs[numPastLocs - 2]] += 40;
+				riskLevel[pastLocs[numPastLocs - 3]] += 40;
+				// riskLevel[SALONICA] += 10;
+			}
+			// riskLevel[VARNA] += 10;
+			// riskLevel[ATHENS] += 10;
+			// riskLevel[VALONA] += 10;
+			// if (DvGetPlayerLocation(dv, PLAYER_DRACULA) == MANCHESTER)
+			// 	riskLevel[LIVERPOOL] += 5;
 
 			// Don't suicide at sea!
 			if (health <= 20) riskLevel[i] += 10;
@@ -162,7 +321,7 @@ void decideDraculaMove(DraculaView dv)
 		}
 
 		// Prefer to travel by road, don't lose health at sea.
-		else if (isPortCity(i, PortCities)) {
+		else if (health < 50 && isPortCity(i, PortCities)) {
 			riskLevel[i] += 1;
 			if (health <= 30) {
 				for (int player = 0; player < 4; player++) {
@@ -181,43 +340,70 @@ void decideDraculaMove(DraculaView dv)
 			count++;
 			curr = curr->next;
 		}
-		if (count <= 3) riskLevel[i] += 2;
+		// if (count <= 3) riskLevel[i] += 2;
 	}
+
+	// if (huntersInCountry(Italy, hunterLocs, SIZE_OF_ITALY) >= 2) {
+	// 	riskLevel[VARNA] += 3;
+	// 	riskLevel[SALONICA] += 3;
+	// 	riskLevel[ATHENS] += 3;
+	// }
+	// if (DvGetPlayerLocation(dv, PLAYER_DRACULA) == CASTLE_DRACULA) {
+	// 	riskLevel[GALATZ] -= 3;
+	// }
+
+	// If hunters are approaching, don't repeat trail
+	int average = 0;
+	for (int i = 0; i < numValidMoves; i++) {
+		average += riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)];
+	}
+	average = average / numValidMoves;
+	if (average > 9) {
+		riskLevel[pastLocs[numPastLocs - 1]] += 6;
+		riskLevel[pastLocs[numPastLocs - 2]] += 6;
+		riskLevel[pastLocs[numPastLocs - 3]] += 6;
+		riskLevel[pastLocs[numPastLocs - 4]] += 6;
+		riskLevel[pastLocs[numPastLocs - 5]] += 6;
+		for (int i = 1; i < 5; i++) {
+			ConnList list = MapGetConnections(m, pastLocs[numPastLocs - i]);
+			ConnList curr = list->next;
+			int count = 0;
+			while (curr != NULL) {
+				for (int player = 0; player < 4; player++) {
+					if (curr->p == hunterLocs[player]) {
+						riskLevel[curr->p] += 1;
+						riskLevel[pastLocs[numPastLocs - i]] += 2; 
+					}
+				}
+				riskLevel[curr->p] += 1;
+				curr = curr->next;
+			}
+		}
+	}
+	
+
 	MapFree(m);
-
-	if (huntersInCountry(Italy, hunterLocs, SIZE_OF_ITALY) >= 2) {
-		riskLevel[VARNA] += 3;
-		riskLevel[SALONICA] += 3;
-		riskLevel[ATHENS] += 3;
-	}
-	if (DvGetPlayerLocation(dv, PLAYER_DRACULA) == CASTLE_DRACULA) {
-		riskLevel[GALATZ] -= 3;
-	}
-
 	/////////////////////////////////////////////////////////////////////////////
 	// ---------------------COMPUTING LOWEST RISK MOVE------------------------ //
 	/////////////////////////////////////////////////////////////////////////////
 
 	// Head to drac if its safe.
-	if (huntersNearCastle(hunterLocs) == 0) prioritiseCastleDrac(riskLevel, hunterLocs);
+	if (huntersNearCastle(hunterLocs) <= 1) prioritiseCastleDrac(riskLevel, hunterLocs);
 	if (huntersNearCastle(hunterLocs) == 1 && health >= 60) prioritiseCastleDrac(riskLevel, hunterLocs);
 	if (huntersNearCastle(hunterLocs) == 4) {
-		riskLevel[ZAGREB] -= 3;
-		riskLevel[MUNICH] -= 3;
-		riskLevel[VIENNA] -= 3;
-		riskLevel[SARAJEVO] -= 3;
-		riskLevel[BLACK_SEA] -= 3;
-	}
 
+	riskLevel[KLAUSENBURG] += 4;
+
+}
 	// FIND THE MOVES WITH THE MINIMUM RISK LEVEL
-	int min = riskLevel[MoveToLocation(pastLocs, validMoves[numValidMoves - 1], &numPastLocs)];
+	int min = riskLevel[MoveToLoc(pastLocs, validMoves[numValidMoves - 1], &numPastLocs)];
 	PlaceId *lowRiskMoves = malloc(sizeof(PlaceId) *numValidMoves);
 	int lowRiskNum = 0;
 
 	for (int i = 0; i < numValidMoves; i++) {
 		// If the risk level of the location in ValidMoves[i] <= min
-		if (riskLevel[MoveToLocation(pastLocs, validMoves[i], &numPastLocs)] <= min) {
-			min = riskLevel[MoveToLocation(pastLocs, validMoves[i], &numPastLocs)];
+		if (riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)] <= min) {
+			min = riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)];
 			lowRiskMoves[lowRiskNum] = validMoves[i];
 			lowRiskNum++;
 		}
@@ -248,14 +434,15 @@ void decideDraculaMove(DraculaView dv)
 	}
 
 	// for (int i = 0; i < lowRiskNum; i++) {
-	// 	printf("lowRiskMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLocation(pastLocs, lowRiskMoves[i], &numPastLocs)), riskLevel[MoveToLocation(pastLocs, lowRiskMoves[i], &numPastLocs)]);
+	// 	printf("lowRiskMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLoc(pastLocs, lowRiskMoves[i], &numPastLocs)), riskLevel[MoveToLoc(pastLocs, lowRiskMoves[i], &numPastLocs)]);
 	// }
+	// printf("risk of BLACK SEA is %d\n", riskLevel[BLACK_SEA]);
 
 	PlaceId minimum = -1;
 	for (int i = 0; i < lowRiskNum; i++) {
 		// If the risk level of the location in ValidMoves[i] <= min
-		if (riskLevel[MoveToLocation(pastLocs, lowRiskMoves[i], &numPastLocs)] <= min) {
-			min = riskLevel[MoveToLocation(pastLocs, lowRiskMoves[i], &numPastLocs)];
+		if (riskLevel[MoveToLoc(pastLocs, lowRiskMoves[i], &numPastLocs)] <= min) {
+			min = riskLevel[MoveToLoc(pastLocs, lowRiskMoves[i], &numPastLocs)];
 			minimum = lowRiskMoves[i];
 		}
 	}	
@@ -267,7 +454,7 @@ void decideDraculaMove(DraculaView dv)
 }
 
 // Converts the move to location
-PlaceId MoveToLocation(PlaceId *pastLocs, PlaceId location, int *numPastLocs) {
+PlaceId MoveToLoc(PlaceId *pastLocs, PlaceId location, int *numPastLocs) {
 	if (location == HIDE) {
 		location = pastLocs[*numPastLocs - 1];
 		if (isDoubleBack(location)) 
@@ -313,10 +500,11 @@ void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]) {
 	riskLevel[BUCHAREST] -= 1;
 	riskLevel[SOFIA] -= 1;
 	riskLevel[CONSTANTA] -= 1;
-	riskLevel[ZAGREB] -= 1;
+	riskLevel[ZAGREB] -= 3;
 	riskLevel[SARAJEVO] -= 0;
 	riskLevel[VIENNA] -= 0;
 	riskLevel[VARNA] -= 1;
+	riskLevel[PRAGUE] -= 2;
 	return;
 }
 
@@ -357,6 +545,27 @@ int huntersNearCastle(PlaceId hunterLocs[]) {
 			count++;
 		}
 		if (hunterLocs[player] == VARNA) {
+			count++;
+		}
+		if (hunterLocs[player] == SALONICA) {
+			count++;
+		}
+		if (hunterLocs[player] == BLACK_SEA) {
+			count++;
+		}
+		if (hunterLocs[player] == IONIAN_SEA) {
+			count++;
+		}
+		if (hunterLocs[player] == MUNICH) {
+			count++;
+		}
+		if (hunterLocs[player] == VENICE) {
+			count++;
+		}
+		if (hunterLocs[player] == PRAGUE) {
+			count++;
+		}
+		if (hunterLocs[player] == GALATZ) {
 			count++;
 		}
 	}
