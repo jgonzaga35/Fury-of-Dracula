@@ -91,8 +91,8 @@ void decideHunterMove(HunterView hv) {
 
 			// If Dracula is there in the past 10 rounds
 			if (1 <= diff && diff <= 8) {
-				int pathLength = -1;
 				draculaFound = TRUE;
+				int pathLength = -1;
 				PlaceId *path = HvGetShortestPathTo(hv, currHunter, DraculaLoc, &pathLength);
 
 				// If we are with Dracula this round / we can arrive at where Dracula is right now in a move, definitely stay / move to encounter
@@ -108,14 +108,14 @@ void decideHunterMove(HunterView hv) {
 					printf("////////////////////////////////////////\n");
 					registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac");
 
-					PlaceId placeToGo = neighbourCities(hv, DraculaLoc, currHunter, hunterLocs);
+					//PlaceId placeToGo = neighbourCities(hv, DraculaLoc, currHunter, hunterLocs);
 					
-					if(MIN_REAL_PLACE <= placeToGo && placeToGo <= MAX_REAL_PLACE) {
-						int pathLength = -1;
-						PlaceId *path = HvGetShortestPathTo(hv, currHunter, placeToGo, &pathLength);
-						printf("/////////////////////////1234567///////////////\n");
-						if (pathLength <= 2) registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac's neighbouring");
-					}
+					// if(MIN_REAL_PLACE <= placeToGo && placeToGo <= MAX_REAL_PLACE) {
+					// 	int pathLength = -1;
+					// 	PlaceId *path = HvGetShortestPathTo(hv, currHunter, placeToGo, &pathLength);
+					// 	printf("/////////////////////////1234567///////////////\n");
+					// 	if (pathLength <= 2) registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac's neighbouring");
+					// }
 				}	
 
 				// If it's too far, we go to the neighbouring of Dracula's location.
@@ -126,7 +126,19 @@ void decideHunterMove(HunterView hv) {
 						//printf("///////////////567899//////////////\n");
 						registerBestPlay(strdup(placeIdToAbbrev(currLoc)), "Moving Towards Drac's neighbouring");
 					} else {
-						PlaceId placeToGo = neighbourCities(hv, DraculaLoc, currHunter, hunterLocs);
+						Map m = MapNew();	
+
+						ConnList list = MapGetConnections(m, DraculaLoc);
+						ConnList curr = list;
+						PlaceId neighbouringCity[NUM_REAL_PLACES];
+						int i = 0;
+						while (curr != NULL) {
+							neighbouringCity[i] = curr->p;
+							i++;
+							curr = curr->next;
+						}
+
+						PlaceId placeToGo = lowestRiskForDracula(hv, neighbouringCity, i, hunterLocs);
 						if(MIN_REAL_PLACE <= placeToGo && placeToGo <= MAX_REAL_PLACE) {
 							int pathLength = -1;
 							PlaceId *path = HvGetShortestPathTo(hv, currHunter, placeToGo, &pathLength);
@@ -356,7 +368,7 @@ PlaceId neighbourCities(HunterView hv, PlaceId DraculaLoc, Player currHunter, Pl
 	// NOTE: Error checking: If there's no neighbouring city from DraculaLoc
 	// if (i == 0) return hunterLocs[currHunter];
 
-	return lowestRiskForDracula(hv, neighbouringCity, i, hunterLocs);
+	// return lowestRiskForDracula(hv, neighbouringCity, i, hunterLocs);
 
 	// int pathLengthToNeighbouring = -1;
 	// PlaceId *pathToNeighbouring = HvGetShortestPathTo(hv, currHunter, placeToGo, &pathLengthToNeighbouring);
