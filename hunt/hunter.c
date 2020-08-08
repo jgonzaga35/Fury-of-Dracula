@@ -105,17 +105,7 @@ void decideHunterMove(HunterView hv) {
 				if (pathLength == 2 && diff == 1) {
 					// If we can also move to the neighbouring of there in two move, move to the neighbouring.
 					// If not, just go to where dracula is right now
-					printf("////////////////////////////////////////\n");
 					registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac");
-
-					//PlaceId placeToGo = neighbourCities(hv, DraculaLoc, currHunter, hunterLocs);
-					
-					// if(MIN_REAL_PLACE <= placeToGo && placeToGo <= MAX_REAL_PLACE) {
-					// 	int pathLength = -1;
-					// 	PlaceId *path = HvGetShortestPathTo(hv, currHunter, placeToGo, &pathLength);
-					// 	printf("/////////////////////////1234567///////////////\n");
-					// 	if (pathLength <= 2) registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac's neighbouring");
-					// }
 				}	
 
 				// If it's too far, we go to the neighbouring of Dracula's location.
@@ -144,6 +134,8 @@ void decideHunterMove(HunterView hv) {
 							PlaceId *path = HvGetShortestPathTo(hv, currHunter, placeToGo, &pathLength);
 							//printf("////////////=======================//////////////\n");
 							registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac's neighbouring");
+						} else {
+							registerBestPlay(strdup(placeIdToAbbrev(currLoc)), "Moving Towards Drac's neighbouring");
 						}
 					}
 				// }
