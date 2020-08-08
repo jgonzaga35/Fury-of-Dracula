@@ -110,22 +110,22 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 			*round = i;
 			break;
 		// REVIEW: Changed here
-		} else if (isDoubleBack(temp)) {
-			location = traceDoubleBackByIndex(locs, i);
-			if (!placeIsReal(location)) {
-				location = UNKNOWN;
-				continue;
-			}
-			*round = i;
-			break;
-		} else if (temp == HIDE) {
-			location = traceHideByIndex(locs, i);
-			if (!placeIsReal(location)) {
-				location = UNKNOWN;
-				continue;
-			}
-			*round = i;
-			break;
+		// } else if (isDoubleBack(temp)) {
+		// 	location = traceDoubleBackByIndex(locs, i);
+		// 	if (!placeIsReal(location)) {
+		// 		location = UNKNOWN;
+		// 		continue;
+		// 	}
+		// 	*round = i;
+		// 	break;
+		// } else if (temp == HIDE) {
+		// 	location = traceHideByIndex(locs, i);
+		// 	if (!placeIsReal(location)) {
+		// 		location = UNKNOWN;
+		// 		continue;
+		// 	}
+		// 	*round = i;
+		// 	break;
 		}
 	}
 	
