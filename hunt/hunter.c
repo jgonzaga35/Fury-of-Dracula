@@ -86,7 +86,7 @@ void decideHunterMove(HunterView hv) {
 		/////////////////////////////////////////////////////////////////////////////
 		// --------------------When we know where is Dracula---------------------- //
 		/////////////////////////////////////////////////////////////////////////////
-		if(DraculaLoc != NOWHERE) { 	//  && LastDracRoundSeen != -1
+		if(DraculaLoc != NOWHERE) { 	//  
 			int diff = HvGetRound(hv) - LastDracRoundSeen; // how many rounds ago
 
 			// If Dracula is there in the past 10 rounds
@@ -262,6 +262,8 @@ static int isKnown(PlaceId location) {
 
 // Compute the least risky location from Dracula's perspective
 PlaceId lowestRiskForDracula(HunterView hv, PlaceId *places, int numLocs, PlaceId hunterLocs[4]) {
+	if (numLocs <= 0 || places == NULL) return hunterLocs[HvGetPlayer(hv)];
+
 	// PlaceId PortCities[] = {BARI, ALICANTE, AMSTERDAM, ATHENS, CADIZ, GALWAY,
 	// 						LISBON, BARCELONA, BORDEAUX, NANTES, SANTANDER,
 	// 						CONSTANTA, VARNA, CAGLIARI, DUBLIN, EDINBURGH, 
@@ -280,7 +282,7 @@ PlaceId lowestRiskForDracula(HunterView hv, PlaceId *places, int numLocs, PlaceI
 	for (int i = 0; i < numLocs; i++) {
 		PlaceId location = places[i];
 		if (placeIdToType(location) == SEA) riskLevel[location] += 2;
-		if (hasHuntersThere(hunterLocs, location)) riskLevel[location] += 3;
+		if (hasHuntersThere(hunterLocs, location)) riskLevel[location] += 3;	// NOTE: Prevent Hunters from bunching together
 	}
 
 	// Locations that are reachable by hunters
@@ -297,14 +299,6 @@ PlaceId lowestRiskForDracula(HunterView hv, PlaceId *places, int numLocs, PlaceI
 		if (isCountry(Spain, i, SIZE_OF_SPAIN)) riskLevel[i] += 1;
 		if (isCountry(Italy, i, SIZE_OF_ITALY)) riskLevel[i] += 1;
 	}
-
-	// FIXME: Prevent hunters from bunching by increasing the risk of players there, not sure if it works
-	for (int i = 1; i < numLocs; i++) {
-		for (int player = 0; player < 4; player++) {
-			if (hunterLocs[player] == places[i]) riskLevel[places[i]] += 2;
-		}
-	}
-
 
 	PlaceId min = places[0];
 	for (int i = 1; i < numLocs; i++) {
@@ -344,10 +338,16 @@ PlaceId neighbourCities(HunterView hv, PlaceId DraculaLoc, Player currHunter, Pl
 		curr = curr->next;
 	}
 
+	// NOTE: Error checking: If there's no neighbouring city from DraculaLoc
+	if (i == 0) return hunterLocs[currHunter];
+
 	PlaceId placeToGo = lowestRiskForDracula(hv, neighbouringCity, i, hunterLocs);
 
 	int pathLengthToNeighbouring = -1;
 	PlaceId *pathToNeighbouring = HvGetShortestPathTo(hv, currHunter, placeToGo, &pathLengthToNeighbouring);
+
+	// NOTE: Error checking
+	if (pathLengthToNeighbouring == -1) return hunterLocs[currHunter];
 
 	return pathToNeighbouring[0];
 }
