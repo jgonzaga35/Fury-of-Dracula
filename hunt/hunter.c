@@ -333,7 +333,7 @@ PlaceId neighbourCities(HunterView hv, PlaceId DraculaLoc, Player currHunter, Pl
 	}
 
 	// Go to a random neighbouring city of Dracula's current location
-	// PlaceId dest = doRandom(hv, currHunter, neighbouringCity, i);
+	return doRandom(hv, currHunter, neighbouringCity, i);
 
 	// int pathLengthToNeighbouring = -1;
 	// PlaceId *pathToNeighbouring = HvGetShortestPathTo(hv, currHunter, dest, &pathLengthToNeighbouring);
@@ -343,9 +343,9 @@ PlaceId neighbourCities(HunterView hv, PlaceId DraculaLoc, Player currHunter, Pl
 	// return pathToNeighbouring[0];
 
 	// NOTE: Error checking: If there's no neighbouring city from DraculaLoc
-	if (i == 0) return hunterLocs[currHunter];
+	// if (i == 0) return hunterLocs[currHunter];
 
-	return lowestRiskForDracula(hv, neighbouringCity, i, hunterLocs);
+	// return lowestRiskForDracula(hv, neighbouringCity, i, hunterLocs);
 
 	// int pathLengthToNeighbouring = -1;
 	// PlaceId *pathToNeighbouring = HvGetShortestPathTo(hv, currHunter, placeToGo, &pathLengthToNeighbouring);
