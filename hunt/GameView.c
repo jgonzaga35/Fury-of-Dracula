@@ -308,6 +308,8 @@ static PlaceId resolveDraculaMove(GameView gv, PlaceId move) {
 		case DOUBLE_BACK_5: return gv->draculaLocationHistory[gv->round - 5];
 		default:            assert(0); // impossible
 	}
+
+	return NOWHERE;
 }
 
 static void processDraculaActions(GameView gv, Turn turn) {
@@ -583,7 +585,7 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 		// Return a pointer to the section of the array containing the
 		// player's last *numReturnedLocs locations
 		*canFree = false;
-		return &gv->moveHistory[player][numMovesMade - *numReturnedLocs];
+		return &gv->draculaLocationHistory[numMovesMade - *numReturnedLocs];
 	}
 }
 

@@ -104,6 +104,7 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 	PlaceId location = NOWHERE;
 	for (Round i = numLocs - 1; i >= 0; i--) {
 		PlaceId temp = locs[i];
+		
 		if (placeIsReal(temp)) {
 			location = temp;
 			*round = i;
@@ -111,10 +112,18 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 		// REVIEW: Changed here
 		} else if (isDoubleBack(temp)) {
 			location = traceDoubleBackByIndex(locs, i);
+			if (!placeIsReal(location)) {
+				location = UNKNOWN;
+				continue;
+			}
 			*round = i;
 			break;
 		} else if (temp == HIDE) {
 			location = traceHideByIndex(locs, i);
+			if (!placeIsReal(location)) {
+				location = UNKNOWN;
+				continue;
+			}
 			*round = i;
 			break;
 		}
@@ -277,3 +286,4 @@ bool isDoubleBack(PlaceId location)
 {
 	return (location >= DOUBLE_BACK_1 && location <= DOUBLE_BACK_5);
 }
+
