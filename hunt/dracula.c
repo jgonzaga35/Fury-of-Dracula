@@ -27,8 +27,9 @@
 #define SIZE_OF_CENTRAL_EUROPE 12
 #define SIZE_OF_EAST_EUROPE 12
 #define SIZE_OF_WEST_SEAS 5
-#define SIZE_OF_CENTRAL_SEAS 4
+#define SIZE_OF_CENTRAL_SEAS 1
 
+bool isValid (char *play, PlaceId *validMoves, int *numValidMoves);
 void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]);
 PlaceId MoveToLoc(PlaceId *pastLocs, PlaceId location, int *numPastLocs);
 bool isPortCity(PlaceId i, PlaceId PortCities[]);
@@ -62,7 +63,7 @@ void decideDraculaMove(DraculaView dv)
 	// PlaceId Ireland[] = {GALWAY, DUBLIN, IRISH_SEA};
 	// PlaceId Portugal[] = {LISBON};
 	// PlaceId WesternSeas[] = {NORTH_SEA, ENGLISH_CHANNEL, IRISH_SEA, BAY_OF_BISCAY, ATLANTIC_OCEAN};
-	// PlaceId CentralSeas[] = {MEDITERRANEAN_SEA, TYRRHENIAN_SEA, ADRIATIC_SEA, IONIAN_SEA};
+	PlaceId CentralSeas[] = {MEDITERRANEAN_SEA};
 	// PlaceId EastEurope[] = {VIENNA, SARAJEVO, ZAGREB, BUDAPEST, KLAUSENBURG, CASTLE_DRACULA,
 	// 						GALATZ, CONSTANTA, BUCHAREST, SOFIA, SZEGED, VARNA};
 	// PlaceId CentralEurope[] = {STRASBOURG, BRUSSELS, COLOGNE, AMSTERDAM, HAMBURG, LEIPZIG,
@@ -105,34 +106,65 @@ void decideDraculaMove(DraculaView dv)
 			} 
 		} 
 	}
+	for (int i = 0; i < numValidMoves; i++) {
+		printf("validMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLoc(pastLocs, validMoves[i], &numPastLocs)), riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)]);
+	}
 
 	if (pastLocs[numPastLocs - 1] == KLAUSENBURG) {
-		registerBestPlay("CD", "noice");
-		return;
+		if (!isValid("CD", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("CD", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == CASTLE_DRACULA) {
-		registerBestPlay("GA", "noice");
-		return;
+		if (!isValid("GA", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("GA", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == GALATZ) {
-		registerBestPlay("CN", "noice");
-		return;
+		if (!isValid("CN", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("CN", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == CONSTANTA) {
-		registerBestPlay("BS", "noice");
-		return;
+		if (!isValid("BS", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("BS", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == BLACK_SEA) {
-		registerBestPlay("IO", "noice");
-		return;
+		if (!isValid("IO", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("IO", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == IONIAN_SEA) {
-		registerBestPlay("TS", "noice");
-		return;
+		if (!isValid("TS", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("TS", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == TYRRHENIAN_SEA) {
-		registerBestPlay("MS", "noice");
-		return;
+		if (!isValid("MS", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("MS", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == ALICANTE) {
 		if (huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN)
@@ -142,100 +174,218 @@ void decideDraculaMove(DraculaView dv)
 		}
 		for (int player = 0; player < 4; player++) {
 			if (hunterLocs[player] == MEDITERRANEAN_SEA) {
-				registerBestPlay("MS", "n");
-				return;
+				if (!isValid("MS", validMoves, &numValidMoves)) {
+
+				} else {
+					registerBestPlay("MS", "n");
+					return;
+				}
 			}
 		}
-		registerBestPlay("SR", "n");
-		return;
+		if (!isValid("SR", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("SR", "n");
+			return;
+		}
 	} 
 	if (pastLocs[numPastLocs - 1] == SARAGOSSA) {
 		if ((huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN) + huntersInCountry(France, hunterLocs, SIZE_OF_FRANCE)) >= 1) {
-			registerBestPlay("BA", "n");
+			if (!isValid("BA", validMoves, &numValidMoves)) {
+
+			} else {
+				registerBestPlay("BA", "n");
+				return;
+			}
+		}
+		if (!isValid("MA", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("MA", "n");
 			return;
 		}
-		registerBestPlay("MA", "n");
-		return;
 	} 	
 	if (pastLocs[numPastLocs - 1] ==BARCELONA) {
-		registerBestPlay("MS", "n");
-		return;
+		if (!isValid("MS", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("MS", "n");
+			return;
+		}
 	} 
 	if (pastLocs[numPastLocs - 1] == MADRID) {
 		if ((huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN) + huntersInCountry(France, hunterLocs, SIZE_OF_FRANCE)) >= 1) {
-			registerBestPlay("SN", "n");
+			if (!isValid("SN", validMoves, &numValidMoves)) {
+
+			} else {
+				registerBestPlay("SN", "n");
+				return;
+			}
+		}
+		if (!isValid("LS", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("LS", "n");
 			return;
 		}
-		registerBestPlay("LS", "n");
-		return;
 	} 
 	if (pastLocs[numPastLocs - 1] == SANTANDER) {
-		registerBestPlay("BB", "n");
-		return;
+		if (!isValid("BB", validMoves, &numValidMoves)) {
+			printf("WHAT!\n");
+		} else {
+			registerBestPlay("BB", "n");
+			return;
+		}
 	} 
 	if (pastLocs[numPastLocs - 1] ==BAY_OF_BISCAY) {
-		registerBestPlay("AO", "n");
-		return;
+		if (!isValid("AO", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("AO", "n");
+			return;
+		}
 	} 
 	if (pastLocs[numPastLocs - 1] == LISBON) {
-		registerBestPlay("CA", "n");
-		return;
+		if ((huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN) + huntersInCountry(France, hunterLocs, SIZE_OF_FRANCE) + huntersInCountry(CentralSeas, hunterLocs, SIZE_OF_CENTRAL_SEAS)) >= 1) {
+			if (!isValid("AO", validMoves, &numValidMoves)) {
+
+			} else {
+				registerBestPlay("AO", "n");
+				return;
+			}
+		}
+		if (!isValid("CA", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("CA", "n");
+			return;
+		}
 	} 
 	if (pastLocs[numPastLocs - 1] == CADIZ) {
-		registerBestPlay("GR", "n");
-		return;
+		if (!isValid("GR", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("GR", "n");
+			return;
+		}
 	} 
 	if (pastLocs[numPastLocs - 1] == GRANADA) {
-		registerBestPlay("AL", "n");
-		return;
-	} 
-	if (pastLocs[numPastLocs - 1] == MEDITERRANEAN_SEA) {
-		if (huntersNearCastle(hunterLocs) >= 3) {
+		if (!isValid("AL", validMoves, &numValidMoves)) {
+
+		} else {
 			registerBestPlay("AL", "n");
 			return;
 		}
-		registerBestPlay("AO", "noice");
-		return;
+	} 
+	if (pastLocs[numPastLocs - 1] == MEDITERRANEAN_SEA) {
+		if (huntersNearCastle(hunterLocs) >= 3) {
+			if (!isValid("AL", validMoves, &numValidMoves)) {
+
+			} else {
+				registerBestPlay("AL", "n");
+				return;
+			}
+		}
+		if (!isValid("AO", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("AO", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == ATLANTIC_OCEAN) {
-		registerBestPlay("NS", "noice");
-		return;
+		if (!isValid("NS", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("NS", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == NORTH_SEA) {
-		registerBestPlay("HA", "noice");
-		return;
+		if (!isValid("HA", validMoves, &numValidMoves)) {
+
+		} else {
+			for (int player = 0; player < 4; player++) {
+				if (hunterLocs[player] == HAMBURG) {
+					registerBestPlay("EC", "noice");
+					return;
+				}
+			}
+			registerBestPlay("HA", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == HAMBURG) {
-		registerBestPlay("BR", "noice");
-		return;
+		if (!isValid("BR", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("BR", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == BRUSSELS) {
-		registerBestPlay("PR", "noice");
-		return;
+		if (!isValid("PR", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("PR", "noice");
+			return;
+		}
+	}
+	if (pastLocs[numPastLocs - 1] == ENGLISH_CHANNEL) {
+		if (!isValid("AO", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("AO", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == PRAGUE) {
-		registerBestPlay("VI", "noice");
-		return;
+		if (!isValid("VI", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("VI", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == VIENNA) {
-		registerBestPlay("ZA", "noice");
-		return;
+		if (!isValid("ZA", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("ZA", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == ZAGREB) {
-		registerBestPlay("SJ", "noice");
-		return;
+		if (!isValid("SJ", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("SJ", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == SARAJEVO) {
-		registerBestPlay("SO", "noice");
-		return;
+		if (!isValid("SO", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("SO", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == SOFIA) {
-		registerBestPlay("BC", "noice");
-		return;
+		if (!isValid("BC", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("BC", "noice");
+			return;
+		}
 	}
 	if (pastLocs[numPastLocs - 1] == BUCHAREST) {
-		registerBestPlay("KL", "noice");
-		return;
+		if (!isValid("KL", validMoves, &numValidMoves)) {
+
+		} else {
+			registerBestPlay("KL", "noice");
+			return;
+		}
 	}
 
 	// for (int i = 0; i < numValidMoves; i++) {
@@ -568,6 +718,9 @@ int huntersNearCastle(PlaceId hunterLocs[]) {
 		if (hunterLocs[player] == GALATZ) {
 			count++;
 		}
+		if (hunterLocs[player] == TYRRHENIAN_SEA) {
+			count++;
+		}
 	}
 	return count;
 }
@@ -595,4 +748,14 @@ int huntersInCountry (PlaceId country[], PlaceId hunterLocs[], int size) {
 	}
 
 	return count;
+}
+
+bool isValid (char *play, PlaceId *validMoves, int *numValidMoves) {
+	for (int i = 0; i < *numValidMoves; i++) {
+		if (strstr(placeIdToAbbrev(validMoves[i]), play)) {
+			return true;
+		}
+	}
+
+	return false;
 }
