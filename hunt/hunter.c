@@ -114,7 +114,7 @@ void decideHunterMove(HunterView hv) {
 						int pathLength = -1;
 						PlaceId *path = HvGetShortestPathTo(hv, currHunter, placeToGo, &pathLength);
 						printf("/////////////////////////1234567///////////////\n");
-						if (pathLength == 2) registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac's neighbouring");
+						if (pathLength <= 2) registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac's neighbouring");
 					}
 				}	
 
@@ -204,12 +204,12 @@ void decideHunterMove(HunterView hv) {
 	}
 }
 
-// Return a random neigbouring city
+// Return a random city from places
 PlaceId doRandom(HunterView hv, Player hunter, PlaceId *places, int numLocs) {
 	srand(time(0));
 	PlaceId currLoc = HvGetPlayerLocation(hv, hunter);
 	
-	if(places == NULL) return currLoc;
+	if(places == NULL || numLocs <= 0) return currLoc;
 	
 	int loc = rand() % numLocs;
 	while (places[loc] ==  currLoc) {
