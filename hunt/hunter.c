@@ -52,10 +52,10 @@ void decideHunterMove(HunterView hv) {
 				location = "GA";
 				break;
 			case PLAYER_VAN_HELSING:
-				location = "RO";
+				location = "NU";
 				break;
 			case PLAYER_MINA_HARKER:
-				location = "GR";
+				location = "TO";
 				break;
 			default:
 				break;
