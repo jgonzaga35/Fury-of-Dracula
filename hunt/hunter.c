@@ -86,7 +86,8 @@ void decideHunterMove(HunterView hv) {
 		/////////////////////////////////////////////////////////////////////////////
 		// --------------------When we know where is Dracula---------------------- //
 		/////////////////////////////////////////////////////////////////////////////
-		if(DraculaLoc != NOWHERE) { 	//  
+		
+		if(DraculaLoc != NOWHERE && LastDracRoundSeen != -1) {
 			int diff = HvGetRound(hv) - LastDracRoundSeen; // how many rounds ago
 
 			// If Dracula is there in the past 6 rounds
