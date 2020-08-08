@@ -190,6 +190,9 @@ void decideDraculaMove(DraculaView dv)
 		riskLevel[SALONICA] += 3;
 		riskLevel[ATHENS] += 3;
 	}
+	if (DvGetPlayerLocation(dv, PLAYER_DRACULA) == CASTLE_DRACULA) {
+		riskLevel[GALATZ] -= 3;
+	}
 
 	/////////////////////////////////////////////////////////////////////////////
 	// ---------------------COMPUTING LOWEST RISK MOVE------------------------ //
@@ -198,7 +201,13 @@ void decideDraculaMove(DraculaView dv)
 	// Head to drac if its safe.
 	if (huntersNearCastle(hunterLocs) == 0) prioritiseCastleDrac(riskLevel, hunterLocs);
 	if (huntersNearCastle(hunterLocs) == 1 && health >= 60) prioritiseCastleDrac(riskLevel, hunterLocs);
-
+	if (huntersNearCastle(hunterLocs) == 4) {
+		riskLevel[ZAGREB] -= 3;
+		riskLevel[MUNICH] -= 3;
+		riskLevel[VIENNA] -= 3;
+		riskLevel[SARAJEVO] -= 3;
+		riskLevel[BLACK_SEA] -= 3;
+	}
 
 	// FIND THE MOVES WITH THE MINIMUM RISK LEVEL
 	int min = riskLevel[MoveToLocation(pastLocs, validMoves[numValidMoves - 1], &numPastLocs)];
@@ -295,7 +304,7 @@ void getHunterLocs(DraculaView dv, PlaceId hunterLocs[]) {
 }
 
 void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]) {
-	riskLevel[CASTLE_DRACULA] = -2;
+	riskLevel[CASTLE_DRACULA] = -10;
 	riskLevel[GALATZ] = -2;
 	riskLevel[BUDAPEST] -= 1;
 	riskLevel[KLAUSENBURG] -= 1;
