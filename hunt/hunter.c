@@ -128,11 +128,11 @@ void decideHunterMove(HunterView hv) {
 							curr = curr->next;
 						}
 
-						PlaceId placeToGo = lowestRiskForDracula(hv, neighbouringCity, i, hunterLocs);
+						PlaceId placeToGo = doRandom(hv, currHunter, neighbouringCity, i);
+						//PlaceId placeToGo = lowestRiskForDracula(hv, neighbouringCity, i, hunterLocs);
 						if(MIN_REAL_PLACE <= placeToGo && placeToGo <= MAX_REAL_PLACE) {
 							int pathLength = -1;
 							PlaceId *path = HvGetShortestPathTo(hv, currHunter, placeToGo, &pathLength);
-							//printf("////////////=======================//////////////\n");
 							registerBestPlay(strdup(placeIdToAbbrev(path[0])), "Moving Towards Drac's neighbouring");
 						} else {
 							registerBestPlay(strdup(placeIdToAbbrev(currLoc)), "Moving Towards Drac's neighbouring");
@@ -167,11 +167,11 @@ void decideHunterMove(HunterView hv) {
 		}
 
 		// ------------------------If Dracula health <= x---------------------------
-		// if(HvGetHealth(hv, PLAYER_DRACULA) <= 20) {
-		// 	int pathLength = -1;
-		// 	PlaceId *path = HvGetShortestPathTo(hv, currHunter, CASTLE_DRACULA, &pathLength);
-		// 	locRank[path[0]] += 2;
-		// }
+		if(HvGetHealth(hv, PLAYER_DRACULA) <= 20) {
+			int pathLength = -1;
+			PlaceId *path = HvGetShortestPathTo(hv, currHunter, CASTLE_DRACULA, &pathLength);
+			locRank[path[0]] += 2;
+		}
 
 		// ---------------shouldn't go to where other hunters are already at--------------------
 		for (int i = 0; i < numLocs; i++) {
@@ -182,6 +182,7 @@ void decideHunterMove(HunterView hv) {
 
 		// ----------Go to the vampire's location if it's known and the current player is the closest to vampire--------
 		if (false) closestToVampire(hv, currHunter, locRank);
+
 		// ----------- Don't go to the same location / SEA----------
 		int numReturnedMoves;
 		bool canFree;
