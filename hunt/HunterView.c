@@ -110,22 +110,22 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 			*round = i;
 			break;
 		// REVIEW: Changed here
-		// } else if (isDoubleBack(temp)) {
-		// 	location = traceDoubleBackByIndex(locs, i);
-		// 	if (!placeIsReal(location)) {
-		// 		location = UNKNOWN;
-		// 		continue;
-		// 	}
-		// 	*round = i;
-		// 	break;
-		// } else if (temp == HIDE) {
-		// 	location = traceHideByIndex(locs, i);
-		// 	if (!placeIsReal(location)) {
-		// 		location = UNKNOWN;
-		// 		continue;
-		// 	}
-		// 	*round = i;
-		// 	break;
+		} else if (isDoubleBack(temp)) {
+			location = traceDoubleBackByIndex(locs, i);
+			if (!placeIsReal(location)) {
+				location = UNKNOWN;
+				continue;
+			}
+			*round = i;
+			break;
+		} else if (temp == HIDE) {
+			location = traceHideByIndex(locs, i);
+			if (!placeIsReal(location)) {
+				location = UNKNOWN;
+				continue;
+			}
+			*round = i;
+			break;
 		}
 	}
 	
@@ -277,7 +277,7 @@ PlaceId traceDoubleBackByIndex(PlaceId *pastMoves, int i)
 {
 	int backIndex = pastMoves[i] - 102;
 	if (pastMoves[i - backIndex] == TELEPORT) return CASTLE_DRACULA;
-	if (pastMoves[i - backIndex] == HIDE) return pastMoves[i - backIndex - 1]; 
+	if (pastMoves[i - backIndex] == HIDE) return traceHideByIndex(pastMoves, i - backIndex); 
 	return pastMoves[i - backIndex];
 }
 
