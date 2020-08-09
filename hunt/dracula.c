@@ -64,7 +64,6 @@ int huntersNearCD(PlaceId hunterLocs[]);
 int huntersInCountry (PlaceId country[], PlaceId hunterLocs[], int size);
 int isDoubleBack(PlaceId location);
 bool isCountry (PlaceId country[], PlaceId location, int size);
-bool LoopStrat2(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int numPastLocs, PlaceId hunterLocs[]);
 bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int numPastLocs, PlaceId hunterLocs[]);
 void decideDraculaMove(DraculaView dv)
 {
@@ -79,6 +78,8 @@ void decideDraculaMove(DraculaView dv)
 	srand((unsigned) time(&t));					  // seed for random movements.  
 	int riskLevel[NUM_REAL_PLACES] = {0};		  // Array containing risk levels for each place. 
 	char *play = malloc(sizeof(char) * 2); 		  // The play to be made.
+	PlaceId *validMoves = DvGetValidMoves(dv, &numValidMoves);
+	PlaceId *pastLocs = DvGetLocationHistory(dv, &numPastLocs);  
 
 	///////////////////////////////////////////////////////////////////
 	// ----------------------STARTING ROUND------------------------- //
@@ -87,28 +88,37 @@ void decideDraculaMove(DraculaView dv)
 	// Dracula has the most movement options in STRASBOURG.
 	if (round == 0) {
 		if (huntersNearCD(hunterLocs) <= 1) {
-			registerBestPlay("ST", "come at me bro"); return;
-		} else {
-			registerBestPlay("ST", "come at me bro"); return;
+			registerBestPlay("CD", "liam neesons"); return;
+		}
+		else {
+		 	registerBestPlay("ST", "liam neesons"); return;
 		}
 	}
+	if (round == 1 && pastLocs[0] == CASTLE_DRACULA) {
+		if (huntersNearCD(hunterLocs) <= 1) {
+			registerBestPlay("D1", "liam neesons"); return;
+		} 
+	}
+	if (round == 2 && pastLocs[0] == CASTLE_DRACULA) {
+		if (huntersNearCD(hunterLocs) <= 1) {
+			registerBestPlay("HI", "liam neesons"); return;
+		} 
+	}
 	// If Dracula has no valid moves, use TELEPORT.
-	PlaceId *validMoves = DvGetValidMoves(dv, &numValidMoves);
-	PlaceId *pastLocs = DvGetLocationHistory(dv, &numPastLocs);  
 	if (validMoves == NULL) { 
-		registerBestPlay("TP", "liam neesons"); return;}
+		registerBestPlay("TP", "liam neesons i am neesons"); return;}
 
 	riskLevel[VALONA] = riskLevel[ATHENS] = riskLevel[SALONICA] = 20;
 	// Go to Castle Dracula if it is safe.
 	if (shouldIGoToCastleDrac(pastLocs, validMoves, numPastLocs, numValidMoves, 1, hunterLocs)) return;
 	riskLevel[CASTLE_DRACULA] += 1000;
 	// Debugging...
-	bool canPrint = true;
-	if (canPrint) {
-		for (int i = 0; i < numValidMoves; i++) {
-			printf("validMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLoc(pastLocs, validMoves[i], &numPastLocs)), riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)]);
-		}
-	}
+	// bool canPrint = true;
+	// if (canPrint) {
+	// 	for (int i = 0; i < numValidMoves; i++) {
+	// 		printf("validMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLoc(pastLocs, validMoves[i], &numPastLocs)), riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)]);
+	// 	}
+	// }
 
 	////////////////////////////////////////////////////////////////////
 	// --------------ASSIGNING RISK LEVELS TO EACH LOCATION---------- //
@@ -282,21 +292,11 @@ void decideDraculaMove(DraculaView dv)
 	if (placeIsSea(DvGetPlayerLocation(dv, PLAYER_DRACULA))) {
 		for (int i = 1; i < 6 && i <= numPastLocs; i++) riskLevel[pastLocs[numPastLocs - i]] += 15;
 	}
-	printf("risk of KL is %d\n", riskLevel[KLAUSENBURG]);
-	printf("risk of GA is %d\n", riskLevel[GALATZ]);
 
 	// Should I Loop around the MAP???
-	if (health >= 4 || placeIsLand(DvGetPlayerLocation(dv, PLAYER_DRACULA))) {
-		// if ((DvGetPlayerLocation(dv, PLAYER_DRACULA) == TYRRHENIAN_SEA ||
-		// DvGetPlayerLocation(dv, PLAYER_DRACULA) == IONIAN_SEA ||
-		// DvGetPlayerLocation(dv, PLAYER_DRACULA) == BLACK_SEA ||
-		// DvGetPlayerLocation(dv, PLAYER_DRACULA) == CASTLE_DRACULA)
-		// 	&& (huntersNearCD(hunterLocs) <= 1)) {
-		// 		if (LoopStrat2(pastLocs, validMoves, numValidMoves, numPastLocs, hunterLocs)) return;
-		// }
-		if (health >= 12)
-			if (LoopStrat(pastLocs, validMoves, numValidMoves, numPastLocs, hunterLocs)) return;
-	}
+	if (health >= 12)
+		if (LoopStrat(pastLocs, validMoves, numValidMoves, numPastLocs, hunterLocs)) return;
+	
 
 	if (huntersNearCD(hunterLocs) <= 1) prioritiseCastleDrac(riskLevel, hunterLocs);
 	if (huntersNearCD(hunterLocs) <= 2 && health >= 60) prioritiseCastleDrac(riskLevel, hunterLocs);
@@ -318,13 +318,13 @@ void decideDraculaMove(DraculaView dv)
 	// If there are no low risk moves pick a random valid move.
 	if (lowRiskNum == 0) {
 		strcpy(play, placeIdToAbbrev(validMoves[0]));
-		registerBestPlay(play, "Random");
+		registerBestPlay(play, "liam neesons");
 		return;
 	}
 	
-	for (int i = 0; i < numValidMoves; i++) {
-		printf("validMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLoc(pastLocs, validMoves[i], &numPastLocs)), riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)]);
-	}
+	// for (int i = 0; i < numValidMoves; i++) {
+	// 	printf("validMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLoc(pastLocs, validMoves[i], &numPastLocs)), riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)]);
+	// }
 	// printf("risk of BLACK SEA is %d\n", riskLevel[MEDITERRANEAN_SEA]);
 
 	PlaceId minimum = -1;
@@ -338,7 +338,7 @@ void decideDraculaMove(DraculaView dv)
 	// If the minimum hasn't been found, pick the first lowRiskMove.
 	if (minimum == -1) minimum = lowRiskMoves[0];
 	strcpy(play, placeIdToAbbrev(minimum));
-	registerBestPlay(play, "gg noob");
+	registerBestPlay(play, "liam neesons");
 	return;
 }
 
@@ -560,98 +560,18 @@ int huntersInCountry (PlaceId country[], PlaceId hunterLocs[], int size) {
 }
 
 bool isValid (char *play, PlaceId *validMoves, int numValidMoves) {
-	for (int i = 0; i < numValidMoves; i++) {
-		if (strstr(placeIdToAbbrev(validMoves[i]), play)) {
-			return true;
-		}
-	}
-
+	for (int i = 0; i < numValidMoves; i++) 
+		if (strstr(placeIdToAbbrev(validMoves[i]), play)) return true;
 	return false;
 }
-bool LoopStrat2(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int numPastLocs, PlaceId hunterLocs[]) {
-	for (int i = 0; i < numValidMoves; i++) {
-		printf("%s\n", placeIdToName(validMoves[i]));
-	}
-	if (pastLocs[numPastLocs - 1] == KLAUSENBURG) {
-		if (!isValid("CD", validMoves, numValidMoves)) {
 
-		} else {
-			registerBestPlay("CD", "noice");
-			return true;
-		}
-	}
-	if (pastLocs[numPastLocs - 1] == CASTLE_DRACULA) {
-		if (!isValid("GA", validMoves, numValidMoves)) {
-
-		} else {
-			registerBestPlay("GA", "noice");
-			return true;
-		}
-	}
-	if (pastLocs[numPastLocs - 1] == GALATZ) {
-		if (!isValid("CN", validMoves, numValidMoves)) {
-
-		} else {
-			registerBestPlay("CN", "noice");
-			return true;
-		}
-	}
-	if (pastLocs[numPastLocs - 1] == CONSTANTA) {
-		if (!isValid("BS", validMoves, numValidMoves)) {
-
-		} else {
-			registerBestPlay("BS", "noice");
-			return true;
-		}
-	}
-	if (pastLocs[numPastLocs - 1] == BLACK_SEA) {
-		if (!isValid("IO", validMoves, numValidMoves)) {
-
-		} else {
-			registerBestPlay("IO", "noice");
-			return true;
-		}
-	}
-	if (pastLocs[numPastLocs - 1] == IONIAN_SEA) {
-		if (!isValid("TS", validMoves, numValidMoves)) {
-
-		} else {
-			registerBestPlay("TS", "noice");
-			return true;
-		}
-	}
-	if (pastLocs[numPastLocs - 1] == TYRRHENIAN_SEA) {
-		if (isValid("CG", validMoves, numValidMoves)) {
-			registerBestPlay("CG", "noice");
-			return true;
-		}
-	}
-	if (pastLocs[numPastLocs - 1] == CAGLIARI && pastLocs[numPastLocs - 2] == MEDITERRANEAN_SEA) {
-		if (isValid("HI", validMoves, numValidMoves)) {
-			registerBestPlay("HI", "noice");
-			return true;
-		}
-	}
-	if (pastLocs[numPastLocs - 1] == CAGLIARI) {
-		if (isValid("MS", validMoves, numValidMoves)) {
-			registerBestPlay("MS", "noice");
-			return true;
-		}
-	}
-	if (pastLocs[numPastLocs - 1] == MEDITERRANEAN_SEA) {
-		if (isValid("D2", validMoves, numValidMoves)) {
-			registerBestPlay("D2", "noice");
-			return true;
-		}
-	}
-}
 bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int numPastLocs, PlaceId hunterLocs[]) {
 	
 	if (pastLocs[numPastLocs - 1] == KLAUSENBURG) {
 		if (!isValid("CD", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("CD", "noice");
+			registerBestPlay("CD", "liam neesons");
 			return true;
 		}
 	}
@@ -659,7 +579,7 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (!isValid("GA", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("GA", "noice");
+			registerBestPlay("GA", "liam neesons");
 			return true;
 		}
 	}
@@ -667,7 +587,7 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (!isValid("CN", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("CN", "noice");
+			registerBestPlay("CN", "liam neesons");
 			return true;
 		}
 	}
@@ -675,7 +595,7 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (!isValid("BS", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("BS", "noice");
+			registerBestPlay("BS", "liam neesons");
 			return true;
 		}
 	}
@@ -683,7 +603,7 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (!isValid("IO", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("IO", "noice");
+			registerBestPlay("IO", "liam neesons");
 			return true;
 		}
 	}
@@ -691,7 +611,7 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (!isValid("TS", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("TS", "noice");
+			registerBestPlay("TS", "liam neesons");
 			return true;
 		}
 	}
@@ -699,34 +619,34 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (!isValid("MS", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("MS", "noice");
+			registerBestPlay("MS", "liam neesons");
 			return true;
 		}
 	}
 	if (pastLocs[numPastLocs - 1] == ALICANTE) {
 		if (huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN) >= 1) {
 			if (isValid("MS", validMoves, numValidMoves)) {
-				registerBestPlay("MS", "n");
+				registerBestPlay("MS", "liam neesons");
 				return true;
 			} 
 		}
 		// if (huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN)
 		// + huntersInCountry(France, hunterLocs, SIZE_OF_FRANCE) >= 2) {
 		// 	if (isValid("MS", validMoves, numValidMoves)) {
-		// 		registerBestPlay("MS", "n");
+		// 		registerBestPlay("MS", "liam neesons");
 		// 		return true;
 		// 	}
 		// }
 		for (int player = 0; player < 4; player++) {
 			if (hunterLocs[player] == MEDITERRANEAN_SEA) {
 				if (isValid("MS", validMoves, numValidMoves)) {
-					registerBestPlay("MS", "n");
+					registerBestPlay("MS", "liam neesons");
 					return true;
 				}
 			}
 		}
 		if (isValid("SR", validMoves, numValidMoves)) {
-			registerBestPlay("SR", "n");
+			registerBestPlay("SR", "liam neesons");
 			return true;
 		}
 	} 
@@ -735,14 +655,14 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 			if (!isValid("BA", validMoves, numValidMoves)) {
 
 			} else {
-				registerBestPlay("BA", "n");
+				registerBestPlay("BA", "liam neesons");
 				return true;
 			}
 		}
 		if (!isValid("MA", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("MA", "n");
+			registerBestPlay("MA", "liam neesons");
 			return true;
 		}
 	} 	
@@ -750,7 +670,7 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (!isValid("MS", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("MS", "n");
+			registerBestPlay("MS", "liam neesons");
 			return true;
 		}
 	} 
@@ -759,14 +679,14 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 			if (!isValid("SN", validMoves, numValidMoves)) {
 
 			} else {
-				registerBestPlay("SN", "n");
+				registerBestPlay("SN", "liam neesons");
 				return true;
 			}
 		}
 		if (!isValid("LS", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("LS", "n");
+			registerBestPlay("LS", "liam neesons");
 			return true;
 		}
 	} 
@@ -774,13 +694,13 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN) + 
 		huntersInCountry(France, hunterLocs, SIZE_OF_FRANCE) <= 1) {
 			if (isValid("LS", validMoves, numValidMoves)) {
-				registerBestPlay("LS", "he");
+				registerBestPlay("LS", "liam neesonse");
 				return true;
 			}
 		}
 		if (!isValid("BB", validMoves, numValidMoves)) {
 		} else {
-			registerBestPlay("BB", "n");
+			registerBestPlay("BB", "liam neesons");
 			return true;
 		}
 	} 
@@ -788,29 +708,33 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (!isValid("AO", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("AO", "n");
+			registerBestPlay("AO", "liam neesons");
 			return true;
 		}
 	} 
 	if (pastLocs[numPastLocs - 1] == LISBON) {
 		if ((huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN) + huntersInCountry(France, hunterLocs, SIZE_OF_FRANCE) + huntersInCountry(CentralSeas, hunterLocs, SIZE_OF_CENTRAL_SEAS)) > 1) {
 			if (isValid("AO", validMoves, numValidMoves)) {
-				registerBestPlay("AO", "n");
+				registerBestPlay("AO", "liam neesons");
 				return true;
 			}
 		}
 		if (!isValid("CA", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("CA", "n");
+			registerBestPlay("CA", "liam neesons");
 			return true;
 		}
 	} 
 	if (pastLocs[numPastLocs - 1] == CADIZ) {
-		if (!isValid("GR", validMoves, numValidMoves)) {
-
-		} else {
-			registerBestPlay("GR", "n");
+		if (huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN) >= 1) {
+			if (isValid("AO", validMoves, numValidMoves)) {
+				registerBestPlay("AO", "liam neesons");
+				return true;
+			}
+		}
+		if (isValid("GR", validMoves, numValidMoves)) {
+			registerBestPlay("GR", "liam neesons");
 			return true;
 		}
 	} 
@@ -818,19 +742,19 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (!isValid("AL", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("AL", "n");
+			registerBestPlay("AL", "liam neesons");
 			return true;
 		}
 	} 
 	if (pastLocs[numPastLocs - 1] == MEDITERRANEAN_SEA) {
 		if (huntersNearCD(hunterLocs) >= 3 || huntersInCountry(France, hunterLocs, SIZE_OF_FRANCE) <= 1) {
 			if (isValid("AL", validMoves, numValidMoves)) {
-				registerBestPlay("AL", "n");
+				registerBestPlay("AL", "liam neesons");
 				return true;
 			}
 		}
 		if (isValid("AO", validMoves, numValidMoves)) {
-			registerBestPlay("AO", "noice");
+			registerBestPlay("AO", "liam neesons");
 			return true;
 		}
 	}
@@ -838,19 +762,19 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN) == 0) {
 			for (int i = 0; i < numValidMoves; i++) {
 				if (isCountry(Spain, MoveToLoc(pastLocs, validMoves[i], &numPastLocs), SIZE_OF_SPAIN)) {
-					registerBestPlay(strdup(placeIdToAbbrev(validMoves[i])), "noice");
+					registerBestPlay(strdup(placeIdToAbbrev(validMoves[i])), "liam neesons");
 					return true;
 				}
 			}
 		}
 		if (huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN) < 1) {
 			if (isValid("MS", validMoves, numValidMoves)) {
-				registerBestPlay("MS", "noice");
+				registerBestPlay("MS", "liam neesons");
 				return true;
 			}
 		}
 		if (isValid("NS", validMoves, numValidMoves)) {
-			registerBestPlay("NS", "noice");
+			registerBestPlay("NS", "liam neesons");
 			return true;
 		}
 	}
@@ -858,16 +782,16 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (isValid("HA", validMoves, numValidMoves)) {
 			if (huntersInCountry(UpperEurope, hunterLocs, SIZE_OF_UPPER_EUROPE) >= 1) {
 				// if (isValid("AM", validMoves, numValidMoves)) {
-				// 	registerBestPlay("AM", "noice");
+				// 	registerBestPlay("AM", "liam neesons");
 				// 	return true;
 				// } else 
 				if (isValid("EC", validMoves, numValidMoves)) {
-					registerBestPlay("EC", "noice");
+					registerBestPlay("EC", "liam neesons");
 					return true;
 				}
 			}
 		
-		registerBestPlay("HA", "noice");
+		registerBestPlay("HA", "liam neesons");
 		return true;
 		}
 	}
@@ -875,7 +799,7 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (!isValid("BR", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("BR", "noice");
+			registerBestPlay("BR", "liam neesons");
 			return true;
 		}
 	}
@@ -883,10 +807,10 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 	if (pastLocs[numPastLocs - 1] == BERLIN) {
 		if (isValid("PR", validMoves, numValidMoves)) {
 			if (huntersNearCD(hunterLocs) >= 2) {
-				registerBestPlay("LI", "noice");
+				registerBestPlay("LI", "liam neesons");
 				return true;
 			}
-			registerBestPlay("PR", "noice");
+			registerBestPlay("PR", "liam neesons");
 			return true;
 		}
 	}
@@ -894,12 +818,12 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (huntersInCountry(England, hunterLocs, SIZE_OF_ENGLAND)
 			+ huntersInCountry(France, hunterLocs, SIZE_OF_FRANCE) <= 1) {
 			if (isValid("PL", validMoves, numValidMoves)) {
-				registerBestPlay("PL", "noice");
+				registerBestPlay("PL", "liam neesons");
 				return true;
 			}			
 		}
 		if (isValid("AO", validMoves, numValidMoves)) {
-			registerBestPlay("AO", "noice");
+			registerBestPlay("AO", "liam neesons");
 			return true;
 		}
 	}
@@ -908,57 +832,57 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 			if (huntersNearCD(hunterLocs) >= 2) {
 				return false;
 			}
-			registerBestPlay("VI", "noice");
+			registerBestPlay("VI", "liam neesons");
 			return true;
 		}
 	}
 	if (pastLocs[numPastLocs - 1] == PLYMOUTH) {
 		if (isValid("LO", validMoves, numValidMoves)) {
-			registerBestPlay("LO", "noice");
+			registerBestPlay("LO", "liam neesons");
 			return true;
 		}
 	}
 	if (pastLocs[numPastLocs - 1] == LONDON) {
 		if (isValid("MN", validMoves, numValidMoves)) {
-			registerBestPlay("MN", "noice");
+			registerBestPlay("MN", "liam neesons");
 			return true;
 		}
 	}
 	if (pastLocs[numPastLocs - 1] == MANCHESTER) {
 		if (isValid("LV", validMoves, numValidMoves)) {
-			registerBestPlay("LV", "noice");
+			registerBestPlay("LV", "liam neesons");
 			return true;
 		}
 	}
 	if (pastLocs[numPastLocs - 1] == LIVERPOOL) {
 		if (huntersInCountry(England, hunterLocs, SIZE_OF_ENGLAND) >= 1) {
 			if (isValid("IR", validMoves, numValidMoves)) {
-				registerBestPlay("IR", "noice");
+				registerBestPlay("IR", "liam neesons");
 				return true;
 			}
 		}
 	}
 	if (pastLocs[numPastLocs - 1] == IRISH_SEA) {
 		if (isValid("DU", validMoves, numValidMoves)) {
-			registerBestPlay("DU", "noice");
+			registerBestPlay("DU", "liam neesons");
 			return true;
 		}
 	}
 	if (pastLocs[numPastLocs - 1] == DUBLIN) {
 		if (isValid("GW", validMoves, numValidMoves)) {
-			registerBestPlay("GW", "noice");
+			registerBestPlay("GW", "liam neesons");
 			return true;
 		}
 	}
 	if (pastLocs[numPastLocs - 1] == GALWAY) {
 		if (isValid("AO", validMoves, numValidMoves)) {
-			registerBestPlay("AO", "noice");
+			registerBestPlay("AO", "liam neesons");
 			return true;
 		}
 	}
 	if (pastLocs[numPastLocs - 1] == MANCHESTER) {
 		if (isValid("LV", validMoves, numValidMoves)) {
-			registerBestPlay("LV", "noice");
+			registerBestPlay("LV", "liam neesons");
 			return true;
 		}
 	}
@@ -979,13 +903,13 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		}
 		if (canGoBD) {
 			if (isValid("BD", validMoves, numValidMoves)) {
-				registerBestPlay("BD", "teehee");
+				registerBestPlay("BD", "liam neesons");
 				return true;
 			}
 		}
 		if (canGoZA) {
 			if (isValid("ZA", validMoves, numValidMoves)) {
-				registerBestPlay("ZA", "teehee");
+				registerBestPlay("ZA", "liam neesons");
 				return true;
 			}
 		}
@@ -994,7 +918,7 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (!isValid("SJ", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("SJ", "noice");
+			registerBestPlay("SJ", "liam neesons");
 			return true;
 		}
 	}
@@ -1002,7 +926,7 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (!isValid("SO", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("SO", "noice");
+			registerBestPlay("SO", "liam neesons");
 			return true;
 		}
 	}
@@ -1010,7 +934,7 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (!isValid("BC", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("BC", "noice");
+			registerBestPlay("BC", "liam neesons");
 			return true;
 		}
 	}
@@ -1019,7 +943,7 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 			if (huntersNearCD(hunterLocs) >= 2) {
 				return false;
 			}
-			registerBestPlay("KL", "noice");
+			registerBestPlay("KL", "liam neesons");
 			return true;
 		}
 	}	
@@ -1027,7 +951,7 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		if (!isValid("KL", validMoves, numValidMoves)) {
 
 		} else {
-			registerBestPlay("KL", "noice");
+			registerBestPlay("KL", "liam neesons");
 			return true;
 		}
 	}
@@ -1048,37 +972,12 @@ bool shouldIGoToCastleDrac(PlaceId *pastLocs, PlaceId *validMoves, int numPastLo
 				if (pastLocs[numPastLocs - k] == KLAUSENBURG) visitedKlaus = true;
 			}		
 			
-			if (huntersNearCD(hunterLocs) == 1) {
-				if (visitedKlaus) return false;
-			}
-			if (visitedGalatz && visitedKlaus) {
-				printf("hello\n");
-				return false;
-			}
+			if (huntersNearCD(hunterLocs) == 1) if (visitedKlaus) return false;
+			if (visitedGalatz && visitedKlaus) return false;
 			
-
-			registerBestPlay(strdup(placeIdToAbbrev(validMoves[i])), "oi, you want fight?");
+			registerBestPlay(strdup(placeIdToAbbrev(validMoves[i])), "liam neesons?");
 			return true;
 		} 
 	}
 	return false;
 }
-
-
-	// if (isCountry(England, DvGetPlayerLocation(dv, PLAYER_DRACULA), SIZE_OF_ENGLAND)
-	// 	||  isCountry(Italy, DvGetPlayerLocation(dv, PLAYER_DRACULA), SIZE_OF_ITALY))
-	// riskLevel[pastLocs[numPastLocs - 1]] += 6;
-	// riskLevel[pastLocs[numPastLocs - 2]] += 6;
-	// riskLevel[pastLocs[numPastLocs - 3]] += 6;
-
-
-		// int average = 0;
-	// for (int i = 0; i < numValidMoves; i++) {
-	// 	average += riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)];
-	// }
-	// average = average / numValidMoves;
-	// if (average > 9) {
-	// 	for (int i = 0; i < 6; i++) {
-	// 		riskLevel[pastLocs[numPastLocs - i]] += 3;
-	// 	}
-	// }
