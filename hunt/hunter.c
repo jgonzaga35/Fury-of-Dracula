@@ -105,6 +105,7 @@ void decideHunterMove(HunterView hv) {
 				PlaceId *path = HvGetShortestPathTo(hv, currHunter, DraculaLoc, &pathLength);
 
 				if (currHunter == PLAYER_MINA_HARKER && DraculaLoc == BLACK_SEA) {
+					printf("00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\n");
 					registerBestPlay(strdup(placeIdToAbbrev(DraculaLoc)), "--Encounter--");
 					printf("Hard coded\n");
 					goto end;
