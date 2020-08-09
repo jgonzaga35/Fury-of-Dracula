@@ -108,6 +108,7 @@ void decideHunterMove(HunterView hv) {
 				if ((pathLength == 0 || pathLength == 1) && diff == 1) {
 					registerBestPlay(strdup(placeIdToAbbrev(DraculaLoc)), "Encounter Dracula");
 					printf("Dracula moved into hunter place, stay in the same city\n");
+					return;
 				}
 
 				// If we can arrive where Dracula is right now in two move
