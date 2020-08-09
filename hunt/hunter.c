@@ -105,6 +105,7 @@ void decideHunterMove(HunterView hv) {
 				if ((pathLength == 0 || pathLength == 1) && diff == 1) {
 					registerBestPlay(strdup(placeIdToAbbrev(DraculaLoc)), "--Encounter--");
 					printf("Player %d meet dracula at %s %s\n", currHunter, placeIdToAbbrev(DraculaLoc), placeIdToName(DraculaLoc));
+					goto end;
 				}
 
 				// If we can arrive where Dracula is right now in two move
@@ -224,9 +225,9 @@ void decideHunterMove(HunterView hv) {
 				registerBestPlay(strdup(placeIdToAbbrev(max)), "--Rank--");
 			}
 		}
-
-		return;
 	}
+	end:
+	return;
 }
 
 // Return a random neigbouring city
