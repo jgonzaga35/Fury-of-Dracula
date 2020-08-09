@@ -104,20 +104,14 @@ void decideHunterMove(HunterView hv) {
 				int pathLength = -1;
 				PlaceId *path = HvGetShortestPathTo(hv, currHunter, DraculaLoc, &pathLength);
 
-				if (currHunter == PLAYER_MINA_HARKER && DraculaLoc == BLACK_SEA) {
-					registerBestPlay(strdup(placeIdToAbbrev(DraculaLoc)), "--Encounter--");
-					printf("Hard coded\n");
-					goto end;
-				}
 				// If we are with Dracula this round / we can arrive at where Dracula is right now in a move, definitely stay / move to encounter
 				if ((pathLength == 0 || pathLength == 1) && diff == 1) {
 					registerBestPlay(strdup(placeIdToAbbrev(DraculaLoc)), "--Encounter--");
 					printf("Player %d meet dracula at %s %s\n", currHunter, placeIdToAbbrev(DraculaLoc), placeIdToName(DraculaLoc));
-					goto end;
 				}
 
 				// If we can arrive where Dracula is right now in two move
-				else if (pathLength == 2 && diff <= 1) {
+				else if (pathLength == 2 && diff == 1) {
 					registerBestPlay(strdup(placeIdToAbbrev(path[0])), "--Drac--");
 				}	
 
@@ -136,6 +130,7 @@ void decideHunterMove(HunterView hv) {
 					}
 				}
 
+				// When dracula is two or more cities away, we travel by rail
 				else if (maxByRail >= 2 && diff >= 3) {
 					int numReturnedLocs = -1;
 					PlaceId *byRail = HvWhereCanIGoByType(hv, false, true, false, &numReturnedLocs);
@@ -143,6 +138,9 @@ void decideHunterMove(HunterView hv) {
 					if (numReturnedLocs > 0) {
 						PlaceId lowestRisk = lowestRiskForDracula(hv, byRail, numReturnedLocs, hunterLocs);
 						registerBestPlay(strdup(placeIdToAbbrev(lowestRisk)), "--Rail--");
+					} else {
+						PlaceId lowestRisk = lowestRiskForDracula(hv, byRail, numReturnedLocs, hunterLocs);
+						registerBestPlay(strdup(placeIdToAbbrev(lowestRisk)), "--Rechable--");
 					}
 				}
 				
@@ -237,7 +235,6 @@ void decideHunterMove(HunterView hv) {
 			}
 		}
 	}
-	end:
 	return;
 }
 
