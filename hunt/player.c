@@ -73,7 +73,7 @@ typedef HunterView View;
 
 // # define xPastPlays "GZA.... SED.... HZU...."
 // Test strings
-# define xPastPlays "GMN.... SGA.... HNU.... MTO.... DPA.V.. GED.... SBC.... HBR.... MBA.... DSTT... GLV.... SBE.... HHA.... MAL.... DHIT... GLO.... SKL.... HCO.... MGR.... DZUT... GPL.... SBD.... HAM.... MCA.... DD3T... GEC.... SPR.... HBU.... MLS.... DMUT... GLE.... SBR.... HPAV... MMA.... DZAT... GBO.... SHA.... HBU.... MBA.... DSZT.M. GCF.... SCO.... HMR.... MPA.... DHIT.M. GBO.... SBU.... HCO.... MBU.... DKLT.M. GBB.... SLI.... HAM.... MCO.... DCDT.M. GAO.... SBR.... HBU.... MFR.... DD1T.M. GMS.... SPR.... HFR.... MMU.... DGAT.M. GTS.... SBD.... HMU.... MZA.... DCN.VM. GIO.... SGAT... HVI.... MBD.... DBS..M. GBS.... SCDTT.. HBD.... MBE.... DIO..M. GCNV... SGA.... HBE.... MCN.... DTS.... GBS.... SBC.... HGA.... MVR...."
+# define xPastPlays "GMN.... SGA.... HNU.... MTO.... DZA.V.. GED.... SBC.... HBR.... MBA.... DHIT... GLV.... SBE.... HHA.... MAL.... DVIT... GLO.... SKL.... HCO.... MGR.... DPRT... GPL.... SBD.... HAM.... MCA.... DNUT... GEC.... SPRT... HCO.... MAO.... DMUT... GNS.... SBR.... HFR.... MNS.... DZAT.V. GHA.... SPR.... HCO.... MHA.... DSJT.M. GLI.... SVIT... HFR.... MNUT... DVAT... GCO.... SBR.... HMUT... MMU.... DATT... GFR.... SBD.... HVE.... MNU.... DHIT... GMU.... SVI.... HFL.... MST.... DIO.... GNU.... SZAT... HVE.... MMU.... DSAT... GMU.... SSJT... HSZ.... MZA.... DSO.V.. GVI.... SSOVD.. HBE.... MBD.... DVRT.M. GBE.... SBE.... HSO.... MBE.... DCNT.M. GSJ.... SSO.... HBC.... MSAT... DHIT.M. GBE.... SSJ.... HCNTTD. MSO.... DGAT... GBC.... SSO.... HBE.... MVRT... DCDT... GGAT... SBE.... HBC.... MBE.... DKLT... GKLTD.. SKLD... HKLD..."
 # define xMsgs { "", "", "" }
 
 #endif
