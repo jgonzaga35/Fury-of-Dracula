@@ -104,6 +104,11 @@ void decideHunterMove(HunterView hv) {
 				int pathLength = -1;
 				PlaceId *path = HvGetShortestPathTo(hv, currHunter, DraculaLoc, &pathLength);
 
+				if (currHunter == PLAYER_MINA_HARKER && DraculaLoc == BLACK_SEA) {
+					registerBestPlay(strdup(placeIdToAbbrev(DraculaLoc)), "--Encounter--");
+					printf("Hard coded\n");
+					goto end;
+				}
 				// If we are with Dracula this round / we can arrive at where Dracula is right now in a move, definitely stay / move to encounter
 				if ((pathLength == 0 || pathLength == 1) && diff == 1) {
 					registerBestPlay(strdup(placeIdToAbbrev(DraculaLoc)), "--Encounter--");
