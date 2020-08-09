@@ -440,8 +440,3 @@ int isThereCDInReachable(PlaceId *places, int numLocs) {
 int isPlayMinaDr(Player currHunter) {
 	return (currHunter == PLAYER_MINA_HARKER || currHunter == PLAYER_DR_SEWARD);
 }
-
-void restWhenNessesary(hunterView hv, Player currHunter, int health, PlaceId currLoc) {
-	if (health <= 3) registerBestPlay(strdup(placeIdToAbbrev(currLoc)), "--Rest--");
-	return;
-}
