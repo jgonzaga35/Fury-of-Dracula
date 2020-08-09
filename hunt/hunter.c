@@ -21,34 +21,29 @@
 #define TRUE				1
 #define FALSE				0
 #define NUM_LOCS_NEAR_CD 	12
+#define NUM_PORT_CITIES 	28
 
-#define NUM_PORT_CITIES 28
-#define SIZE_OF_ENGLAND 6
-#define SIZE_OF_SPAIN 6
-#define SIZE_OF_ITALY 7
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
 
+// Helper functions
 PlaceId doRandom(HunterView hv, Player hunter, PlaceId *places, int numLocs);
 PlaceId moveComplement(HunterView hv, Player currHunter);
 static void getHunterLocs(HunterView hv, PlaceId hunterLocs[]);
-static int isKnown(PlaceId location);
-static void closestToVampire(HunterView hv, Player currHunter, int *locRank);
 PlaceId lowestRiskForDracula(HunterView hv, PlaceId *places, int numLocs, PlaceId hunterLocs[4], int draculaAtSea);
 int hasHuntersThere(PlaceId hunterLocs[4], PlaceId location);
 bool isCountry(PlaceId country[], PlaceId location, int size);
 PlaceId neighbourCities(HunterView hv, PlaceId DraculaLoc, Player currHunter, PlaceId hunterLocs[4]);
-
 int isThereCDInReachable(PlaceId *places, int numLocs);
 int isPlayMinaDr(Player currHunter);
 
 void decideHunterMove(HunterView hv) {
 	Round round = HvGetRound(hv);
-	Player currHunter = HvGetPlayer(hv); // Which hunter?
+	Player currHunter = HvGetPlayer(hv);
 	
 	int doneWithBestMove = FALSE;
-	if (round == 0) { // FIRST ROUND
+	if (round == 0) { 					// FIRST ROUND
 		char *location = NULL;
 		switch(currHunter) {
 			case PLAYER_LORD_GODALMING:
@@ -71,34 +66,6 @@ void decideHunterMove(HunterView hv) {
 		return;
 	} else {
 		// for all other rounds
-
-		PlaceId reg1[] = 
-		{
-			ATLANTIC_OCEAN, GALWAY, EDINBURGH, NORTH_SEA, DUBLIN, LIVERPOOL, 
-			MANCHESTER, SWANSEA, IRISH_SEA, PLYMOUTH, LONDON, ENGLISH_CHANNEL, 
-			BAY_OF_BISCAY, NANTES, LE_HAVRE, BRUSSELS, AMSTERDAM
-		};
-
-		PlaceId reg2[] =
-		{
-			LISBON, CADIZ, GRANADA, ALICANTE, MADRID, SARAGOSSA, SANTANDER,
-			TOULOUSE, BARCELONA, MEDITERRANEAN_SEA, TYRRHENIAN_SEA, CAGLIARI,
-			MARSEILLES, GENOA
-		};
-
-		PlaceId reg3[] = 
-		{
-			HAMBURG, BERLIN, PRAGUE, VIENNA, VENICE, ADRIATIC_SEA, BARI, NAPLES,
-			PARIS, CLERMONT_FERRAND, GENEVA, MILAN, ZURICH, STRASBOURG, FRANKFURT,
-			COLOGNE, LISBON, NUREMBURG, MUNICH
-		};
-
-		PlaceId reg4[] =
-		{
-			BUDAPEST, SZEGED, KLAUSENBURG, CASTLE_DRACULA, GALWAY, CONSTANTA,
-			BLACK_SEA, IONIAN_SEA, VALONA, SARAJEVO, ZAGREB, ST_JOSEPH_AND_ST_MARY,
-			BELGRADE, SOFIA, BUCHAREST, VARNA, SALONICA, ATHENS
-		};
 
 		// ---------------Initialize some variables to be used--------------------
 		PlaceId hunterLocs[4]; 
@@ -125,7 +92,7 @@ void decideHunterMove(HunterView hv) {
 		/////////////////////////////////////////////////////////////////////////////
 		// --------------------When we know where is Dracula---------------------- //
 		/////////////////////////////////////////////////////////////////////////////
-		if(DraculaLoc != NOWHERE) { 	//  && LastDracRoundSeen != -1
+		if(DraculaLoc != NOWHERE) { 
 			int diff = HvGetRound(hv) - LastDracRoundSeen; // how many rounds ago
 
 			printf("Dracula is at %s %s, %d rounds before\n", placeIdToAbbrev(DraculaLoc), placeIdToName(DraculaLoc), diff);
@@ -248,9 +215,6 @@ void decideHunterMove(HunterView hv) {
 				}
 			}
 
-			// ----------Go to the vampire's location if it's known and the current player is the closest to vampire--------
-			if (false) closestToVampire(hv, currHunter, locRank);
-
 			// ----------- Don't go to the same location / SEA----------
 			int numReturnedMoves;
 			bool canFree;
@@ -304,34 +268,6 @@ static void getHunterLocs(HunterView hv, PlaceId hunterLocs[]) {
 	for (int player = 0; player < 4; player++) {
 		hunterLocs[player] = HvGetPlayerLocation(hv, player);
 	}
-}
-
-// TODO: the logic is incorrect, if this is of high priority, then go there, increase the rank for the first step is useless
-// Increase the rank if the currHunter is the closest to the vampire
-static void closestToVampire(HunterView hv, Player currHunter, int locRank[NUM_REAL_PLACES]) {
-	PlaceId vampireLoc = HvGetVampireLocation(hv);
-	if (!isKnown(vampireLoc)) return;
-
-	int pathLength[NUM_PLAYERS - 1];
-	PlaceId *paths[NUM_PLAYERS - 1];
-
-	for (int player = 0; player < 4; player++) {
-		paths[player] = HvGetShortestPathTo(hv, player, vampireLoc, &pathLength[player]);
-	}
-
-	Player closest = PLAYER_LORD_GODALMING;
-	for (int player = 0; player < 4; player++) {
-		if (pathLength[player] < pathLength[closest]) closest = player;
-	}
-
-	if (closest == currHunter) locRank[paths[currHunter][0]] += 3;
-
-	return;
-}
-
-// True is the location is known
-static int isKnown(PlaceId location) {
-	return (location != CITY_UNKNOWN && location != NOWHERE && location != SEA_UNKNOWN);
 }
 
 // Compute the least risky location from Dracula's perspective
@@ -406,6 +342,7 @@ bool isCountry(PlaceId country[], PlaceId location, int size) {
 	return false;
 }
 
+// Return whether Castle Dracula is reachable
 int isThereCDInReachable(PlaceId *places, int numLocs) {
 	for (int i = 0; i < numLocs; i++) {
 		if (places[i] == CASTLE_DRACULA) return TRUE;
@@ -413,6 +350,7 @@ int isThereCDInReachable(PlaceId *places, int numLocs) {
 	return FALSE;
 }
 
+// Return whether the current hunter is Mina and Dr Seward
 int isPlayMinaDr(Player currHunter) {
 	return (currHunter == PLAYER_MINA_HARKER || currHunter == PLAYER_DR_SEWARD);
 }
