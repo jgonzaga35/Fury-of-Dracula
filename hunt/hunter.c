@@ -27,6 +27,9 @@
 #define SIZE_OF_SPAIN 6
 #define SIZE_OF_ITALY 7
 
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
 PlaceId doRandom(HunterView hv, Player hunter, PlaceId *places, int numLocs);
 PlaceId moveComplement(HunterView hv, Player currHunter);
 static void getHunterLocs(HunterView hv, PlaceId hunterLocs[]);
@@ -96,7 +99,7 @@ void decideHunterMove(HunterView hv) {
 			printf("Dracula is at %s %s, %d rounds before\n", placeIdToAbbrev(DraculaLoc), placeIdToName(DraculaLoc), diff);
 
 			// If Dracula is there in the past 10 rounds
-			if (0 <= diff && diff <= 6) {
+			if (0 <= diff && diff <= 8) {
 				doneWithBestMove = TRUE;
 				int pathLength = -1;
 				PlaceId *path = HvGetShortestPathTo(hv, currHunter, DraculaLoc, &pathLength);
@@ -191,9 +194,10 @@ void decideHunterMove(HunterView hv) {
 			if (canGoCD) locRank[CASTLE_DRACULA] += 2;
 
 			// ---------------shouldn't go to where other hunters are already at--------------------
+			// REVIEW: See if the value is appropriate
 			for (int i = 0; i < numLocs; i++) {
 				for (int player = 0; player < 4; player++) {
-					if (places[i] == hunterLocs[player]) locRank[places[i]] -= 2;
+					if (places[i] == hunterLocs[player]) locRank[places[i]] -= 5;
 				}
 			}
 
@@ -205,7 +209,7 @@ void decideHunterMove(HunterView hv) {
 			bool canFree;
 			PlaceId *locationHistory = HvGetLocationHistory(hv, currHunter, &numReturnedMoves, &canFree);
 
-			for (int i = 0; i < numReturnedMoves; i++) {
+			for (int i = 0; i < MIN(numReturnedMoves, 5); i++) {
 				if (placeIdToType(places[i]) == SEA) {
 					if (isPlayMinaDr(currHunter)) locRank[places[i]] += 1;
 					else locRank[places[i]] -= 1;
@@ -215,7 +219,9 @@ void decideHunterMove(HunterView hv) {
 				}
 			}
 
-			// ----------Go to the locaion with the highest rank---------
+			if (canFree) free(locationHistory);
+
+ 			// ----------Go to the locaion with the highest rank---------
 			PlaceId max = places[0];
 			for (int i = 0; i < numLocs; i++) {
 				if (locRank[places[i]] > locRank[max]) max = places[i];
@@ -296,12 +302,14 @@ PlaceId lowestRiskForDracula(HunterView hv, PlaceId *places, int numLocs, PlaceI
 	// 					GENEVA, STRASBOURG};
 	PlaceId Italy[] = {GENOA, FLORENCE, ROME, NAPLES, BAY_OF_BISCAY, VENICE, MILAN};
 
+	int currHunter = HvGetPlayer(hv);
 	int riskLevel[NUM_REAL_PLACES] = {0};
+
 	for (int i = 0; i < numLocs; i++) {
 		PlaceId location = places[i];
 		// FIXME: make some hunter favour sea otherwise we can't get to sea
 		if (placeIdToType(location) == SEA) {
-			if (isPlayMinaDr(HvGetPlayer(hv))) riskLevel[location] -= 2;
+			if (isPlayMinaDr(currHunter)) riskLevel[location] -= 2;
 			else riskLevel[location] += 2;
 		}
 		if (hasHuntersThere(hunterLocs, location)) riskLevel[location] += 3;
@@ -322,6 +330,21 @@ PlaceId lowestRiskForDracula(HunterView hv, PlaceId *places, int numLocs, PlaceI
 		if (isCountry(Italy, i, SIZE_OF_ITALY)) riskLevel[i] += 1;
 	}
 
+	// -----------------Doesn't want hunter to go back where they were or where other hunters are-------------
+	int numReturnedMoves;
+	bool canFree;
+	PlaceId *locationHistory = HvGetLocationHistory(hv, currHunter, &numReturnedMoves, &canFree);
+
+	for (int i = 0; i < MIN(numReturnedMoves, 3); i++) {
+		for (int j = 0; j < numLocs; j++) {
+			if (places[j] == locationHistory[i]) riskLevel[locationHistory[i]] += 5;
+		}
+	}
+
+	if (canFree) free(locationHistory);
+
+
+	// --------------Compute least risky---------------
 	PlaceId min = places[0];
 	for (int i = 1; i < numLocs; i++) {
 		if (riskLevel[places[i]] <= riskLevel[min]) min = places[i];
