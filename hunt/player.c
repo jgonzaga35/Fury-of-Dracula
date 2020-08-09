@@ -73,11 +73,7 @@ typedef HunterView View;
 
 // # define xPastPlays "GZA.... SED.... HZU...."
 // Test strings
-<<<<<<< HEAD
 # define xPastPlays "GMN.... SGA.... HFR.... MMA.... DCD.V.. GED.... SCDVD.. HMU.... MAL.... DD1T... GNS.... SCDTD.. HZA.... MMS.... DHIT... GHA.... SBE.... HSZ.... MTS.... DGAT... GBR.... SBC.... HGATD.. MIO.... DCNT... GPR.... SGA.... HSZ.... MBS.... DBS.... GVI.... SBC.... HKL...."
-=======
-# define xPastPlays "GMN.... SGA.... HFR.... MMA.... DCD.V.. GED.... SCDVD.. HMU.... MAL.... DD1T... GNS.... SCDTD.. HZA.... MMS.... DHIT... GHA.... SBE.... HSZ.... MTS.... DGAT... GBR.... SBC.... HGATD.. MIO.... DCNT... GPR.... SGA.... HSZ.... MBS.... DBS.... GVI.... SBC.... HKL.... MCNT..."
->>>>>>> 8ae3e0f2c876604fe191e1984c1d83f4c049156e
 # define xMsgs { "", "", "" }
 
 #endif
