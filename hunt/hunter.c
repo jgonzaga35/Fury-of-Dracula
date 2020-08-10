@@ -158,8 +158,8 @@ void decideHunterMove(HunterView hv) {
 			PlaceId *path;
 			int pathLength = -1;
 
-			if(placeIdToType(history[0]) == SEA && placeIdToType(history[0]) == SEA &&
-			placeIdToType(history[0]) == SEA) {
+			if(placeIdToType(history[0]) == SEA && placeIdToType(history[1]) == SEA &&
+			   placeIdToType(history[2]) == SEA) {
 				switch(currHunter) {
 					case PLAYER_LORD_GODALMING:
 						city = chooseRandCityInReg(reg0, SIZE_OF_PORT0, currHunter);
@@ -184,9 +184,9 @@ void decideHunterMove(HunterView hv) {
 					default:
 						break;
 				}
+				registerBestPlay(moveTo, "port");
+				return;
 			}
-			registerBestPlay(moveTo, "port");
-			return;
 		}
 
 
