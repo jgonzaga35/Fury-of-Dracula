@@ -394,7 +394,7 @@ int huntersNearCD(PlaceId hunterLocs[])
 {
 	int count = 0;
 	for (int player = 0; player < 4; player++) {
-		if (huntersInCountry(areaCD, hunterLocs, SIZE_OF_CD_AREA)) count++;
+		if (isCountry(areaCD, hunterLocs[player], SIZE_OF_CD_AREA)) count++;
 	}
 	return count;
 }

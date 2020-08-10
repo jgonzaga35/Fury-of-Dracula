@@ -60,7 +60,7 @@ typedef DraculaView View;
 # define decideMove decideDraculaMove
 # define ViewFree DvFree
 
-# define xPastPlays "GED.... SBU.... HNA.... MAT.... DKL.V.. GMN.... SAM.... HBO.... MVA.... DCDT... GED.... SBU.... HCF.... MSA.... DD1T... GNS.... SST.... HGE.... MBE.... DHIT... GHA.... SMU.... HMI.... MBD.... DGAT... GBR.... SVI.... HMU.... MVI.... DCNT... GPR.... SBC.... HZA.... MBD.... DBS..V. GBD.... SGAT... HBD.... MBC.... DIO..M. GKL.... SCNT... HBE.... MBE.... DTS..M. GBE.... SVR.... HGA.... MBC.... DMS..M. GVR.... SBS.... HKL.... MBE.... DALT... GBS.... SVR.... HGA.... MBC.... DSRT... GCN.... SBS.... HKL.... MBE.... DMAT... GBS.... SVR.... HGA.... MBC.... DLS.V.. GBS.... SVR.... HGA.... MBC.... DCAT... GIO.... SBS.... HCN.... MBE.... DGRT... GTS.... SIO.... HBS.... MSA.... DALT.M. GTS.... SIO.... HBS.... MSA.... DSRT.M. GGO.... STS.... HIO.... MIO.... DMAT.M. GMR.... SMS.... HTS.... MTS.... DSNT.V. GMR.... SMS.... HTS.... MTS.... DLST.M. GMS.... SALT... HMS.... MMS.... DAO..M. GAL.... SSRT... HAL.... MBA...."
+# define xPastPlays "GMN.... SGA.... HKL.... MMA...."
 # define xMsgs { "", "", "", "" }
 
 #else
