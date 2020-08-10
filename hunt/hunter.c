@@ -503,7 +503,7 @@ PlaceId chooseRandCityInReg(PlaceId *reg, int maxReg) {
 // a row, in the past 10 moves
 int atSeaSuccessive(PlaceId *history, int maxHist) {
 	int flag = 0;
-	for(int i = 0; i + 3 <= 10 && i + 3 <= maxHist ; i ++) {
+	for(int i = 0; i + 3 <= 10 && i + 3 <= maxHist ; i++) {
 		if(placeIdToType(history[i]) == SEA && placeIdToType(history[i + 1]) == SEA &&
 		placeIdToType(history[i + 1] == SEA)) return 1;
 	}
