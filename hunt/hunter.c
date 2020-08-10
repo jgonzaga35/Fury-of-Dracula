@@ -155,13 +155,15 @@ void decideHunterMove(HunterView hv) {
 			int maxHist = -1;
 			bool canFree;
 			PlaceId *history = HvGetLocationHistory(hv, PLAYER_DRACULA, &maxHist, &canFree);
-			char *moveTo = strdup(placeIdToAbbrev(currLoc));
+			char *moveTo = strdup(placeIdToAbbrev(HvGetPlayerLocation(hv, HvGetPlayer(hv))));
 			PlaceId city;
 			PlaceId *path;
 			int pathLength = -1;
 
-			if(atSeaSuccessive(history, maxHist)) {
+			if(atSeaSuccessive(history, maxHist) == 1) {
 				printf("The value of maxHist: %d\n", maxHist);
+				printf("The value of MoveTo is: %s %s\n", moveTo, placeIdToName(placeAbbrevToId(moveTo)));
+				printf("The current lcoatin is : %d %s %s\n", currLoc, placeIdToAbbrev(currLoc), placeIdToName(currLoc));
 				switch(currHunter) {
 					case PLAYER_LORD_GODALMING:
 						city = chooseRandCityInReg(reg0, SIZE_OF_PORT0);
@@ -186,13 +188,13 @@ void decideHunterMove(HunterView hv) {
 					default:
 						break;
 				}
-				if(moveTo != placeIdToAbbrev(HvGetPlayerLocation(hv, HvGetPlayer(hv)))) {
+				if((MIN_REAL_PLACE < placeAbbrevToId(moveTo) && placeAbbrevToId(moveTo) < MAX_REAL_PLACE) 
+					&&  placeAbbrevToId(moveTo) != currLoc) {
 					registerBestPlay(moveTo, "port");
 					return;
 				}
 			}
 		}
-
 
 		/////////////////////////////////////////////////////////////////////////////
 		// --------------------When we know where is Dracula---------------------- //
