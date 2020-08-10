@@ -153,7 +153,7 @@ void decideHunterMove(HunterView hv) {
 		if(round > 3) {
 			int maxHist = -1;
 			PlaceId *history = HvGetLocationHistory(hv, currHunter, &maxHist, false);
-			char *moveTo = currLoc;
+			char *moveTo = strdup(placeIdToAbbrev(currLoc));
 			PlaceId city;
 			PlaceId *path;
 			int pathLength = -1;
@@ -162,22 +162,22 @@ void decideHunterMove(HunterView hv) {
 			placeIdToType(history[0]) == SEA) {
 				switch(currHunter) {
 					case PLAYER_LORD_GODALMING:
-						city = chooseRandCityInReg(reg0, MAX_REG_0, currHunter);
+						city = chooseRandCityInReg(reg0, SIZE_OF_PORT0, currHunter);
 						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
 						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
 						break;
 					case PLAYER_DR_SEWARD:
-						city = chooseRandCityInReg(reg1, MAX_REG_1, currHunter);
+						city = chooseRandCityInReg(reg1, SIZE_OF_PORT1, currHunter);
 						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
 						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
 						break;
 					case PLAYER_VAN_HELSING:
-						city = chooseRandCityInReg(reg2, MAX_REG_2, currHunter);
+						city = chooseRandCityInReg(reg2, SIZE_OF_PORT2, currHunter);
 						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
 						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
 						break;
 					case PLAYER_MINA_HARKER:
-						city = chooseRandCityInReg(reg3, MAX_REG_3, currHunter);
+						city = chooseRandCityInReg(reg3, SIZE_OF_PORT3, currHunter);
 						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
 						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
 						break;
