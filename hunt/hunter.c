@@ -161,6 +161,7 @@ void decideHunterMove(HunterView hv) {
 			int pathLength = -1;
 
 			if(atSeaSuccessive(history, maxHist)) {
+				printf("The value of maxHist: %d\n", maxHist);
 				switch(currHunter) {
 					case PLAYER_LORD_GODALMING:
 						city = chooseRandCityInReg(reg0, SIZE_OF_PORT0);
@@ -185,8 +186,10 @@ void decideHunterMove(HunterView hv) {
 					default:
 						break;
 				}
-				registerBestPlay(moveTo, "port");
-				return;
+				if(moveTo != placeIdToAbbrev(HvGetPlayerLocation(hv, HvGetPlayer(hv)))) {
+					registerBestPlay(moveTo, "port");
+					return;
+				}
 			}
 		}
 
