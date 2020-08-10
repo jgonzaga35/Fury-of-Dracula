@@ -204,7 +204,7 @@ void decideDraculaMove(DraculaView dv)
 	// If low on health, do not go to Seas. 
 	// Else prefer to not travel by sea to avoid wasting health.
 	if (health <= 20) for (int i = 0; i < SIZE_OF_SEAS; i++) riskLevel[seas[i]] += 20;
-	if (health <= 16) for (int i = 0; i < SIZE_OF_SEAS; i++) riskLevel[seas[i]] += 30;
+	if (health <= 16) for (int i = 0; i < SIZE_OF_SEAS; i++) riskLevel[seas[i]] += 10;
 	else for (int i = 0; i < SIZE_OF_SEAS; i++) riskLevel[seas[i]] += 1;
 	if (health <= 6) for (int i = 0; i < SIZE_OF_SEAS; i++) riskLevel[seas[i]] += 300;
 
@@ -288,7 +288,7 @@ void decideDraculaMove(DraculaView dv)
 	}
 
 	// Use the loop strategy if possible...
-	if (health >= 22) if (LoopStrat(pastLocs, validMoves, numValidMoves, numPastLocs, hunterLocs)) return;
+	if (health >= 16) if (LoopStrat(pastLocs, validMoves, numValidMoves, numPastLocs, hunterLocs)) return;
 	
 	// Conditions for prioritising castle dracula
 	if (huntersNearCD(hunterLocs) <= 1) prioritiseCastleDrac(riskLevel, hunterLocs);
@@ -308,9 +308,6 @@ void decideDraculaMove(DraculaView dv)
 		}
 	}	
 
-	// for (int i = 0; i < numValidMoves; i++) {
-	// 	printf("validMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLoc(pastLocs, validMoves[i], &numPastLocs)), riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)]);
-	// }
 	// If there are no low risk moves pick a random valid move.
 	if (lowRiskNum == 0) {
 		// strcpy(play, placeIdToAbbrev(validMoves[0]));
@@ -485,6 +482,15 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 				}
 			}
 		}
+		for (int player = 0; player < 4; player++) {
+			if (hunterLocs[player] == BORDEAUX || hunterLocs[player] == TOULOUSE
+				|| hunterLocs[player] == BARCELONA) {
+				if (isValid("GR", validMoves, numValidMoves)) {
+					registerBestPlay("GR", "liam neesons");
+					return true;
+				}
+			}
+		}
 		if (isValid("SR", validMoves, numValidMoves)) {
 			registerBestPlay("SR", "liam neesons");
 			return true;
@@ -601,6 +607,14 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 	} 
 	if (pastLocs[numPastLocs - 1] == MEDITERRANEAN_SEA) {
 		if (huntersNearCD(hunterLocs) >= 3 || huntersInCountry(France, hunterLocs, SIZE_OF_FRANCE) <= 1) {
+			for (int player = 0; player < 4; player++) {
+				if (hunterLocs[player] == MEDITERRANEAN_SEA) {
+					if (isValid("AO", validMoves, numValidMoves)) {
+						registerBestPlay("AO", "I AM LIAM NEESONS");
+						return true;
+					}
+				}
+			}
 			if (isValid("AL", validMoves, numValidMoves)) {
 				registerBestPlay("AL", "liam neesons");
 				return true;
@@ -612,6 +626,12 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		}
 	}
 	if (pastLocs[numPastLocs - 1] == ATLANTIC_OCEAN) {
+		if (huntersInCountry(UpperEurope, hunterLocs, SIZE_OF_UPPER_EUROPE) == 0) {
+			if (isValid("NS", validMoves, numValidMoves)) {
+				registerBestPlay("NS", "liam neesons");
+				return true;
+			}
+		}
 		if (huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN) == 0) {
 			for (int i = 0; i < numValidMoves; i++) {
 				if (isCountry(Spain, MoveToLoc(pastLocs, validMoves[i], &numPastLocs), SIZE_OF_SPAIN)) {
@@ -625,10 +645,6 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 				registerBestPlay("MS", "liam neesons");
 				return true;
 			}
-		}
-		if (isValid("NS", validMoves, numValidMoves)) {
-			registerBestPlay("NS", "liam neesons");
-			return true;
 		}
 	}
 	if (pastLocs[numPastLocs - 1] == NORTH_SEA) {
