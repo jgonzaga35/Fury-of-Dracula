@@ -24,9 +24,9 @@
 #define NUM_PORT_CITIES 	28
 
 #define SIZE_OF_REG0		17
-#define SIZE_OF_REG1		14
+#define SIZE_OF_REG1		18
 #define SIZE_OF_REG2		19
-#define SIZE_OF_REG3		18
+#define SIZE_OF_REG3		14
 
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
@@ -80,9 +80,9 @@ void decideHunterMove(HunterView hv) {
 
 		PlaceId reg1[] =
 		{
-			LISBON, CADIZ, GRANADA, ALICANTE, MADRID, SARAGOSSA, SANTANDER,
-			TOULOUSE, BARCELONA, MEDITERRANEAN_SEA, TYRRHENIAN_SEA, CAGLIARI,
-			MARSEILLES, GENOA
+			BUDAPEST, SZEGED, KLAUSENBURG, CASTLE_DRACULA, GALWAY, CONSTANTA,
+			BLACK_SEA, IONIAN_SEA, VALONA, SARAJEVO, ZAGREB, ST_JOSEPH_AND_ST_MARY,
+			BELGRADE, SOFIA, BUCHAREST, VARNA, SALONICA, ATHENS
 		};
 
 		PlaceId reg2[] = 
@@ -94,9 +94,9 @@ void decideHunterMove(HunterView hv) {
 
 		PlaceId reg3[] =
 		{
-			BUDAPEST, SZEGED, KLAUSENBURG, CASTLE_DRACULA, GALWAY, CONSTANTA,
-			BLACK_SEA, IONIAN_SEA, VALONA, SARAJEVO, ZAGREB, ST_JOSEPH_AND_ST_MARY,
-			BELGRADE, SOFIA, BUCHAREST, VARNA, SALONICA, ATHENS
+			LISBON, CADIZ, GRANADA, ALICANTE, MADRID, SARAGOSSA, SANTANDER,
+			TOULOUSE, BARCELONA, MEDITERRANEAN_SEA, TYRRHENIAN_SEA, CAGLIARI,
+			MARSEILLES, GENOA
 		};
 
 		// ---------------Initialize some variables to be used--------------------
@@ -125,12 +125,12 @@ void decideHunterMove(HunterView hv) {
 		// --------------------When we know where is Dracula---------------------- //
 		/////////////////////////////////////////////////////////////////////////////
 		if(DraculaLoc != NOWHERE) { 
-			int diff = HvGetRound(hv) - LastDracRoundSeen; // how many rounds ago
+			int diff = round - LastDracRoundSeen; // how many rounds ago
 
 			//printf("Dracula is at %s %s, %d rounds before\n", placeIdToAbbrev(DraculaLoc), placeIdToName(DraculaLoc), diff);
 
 			// If Dracula is there in the past 10 rounds
-			if (0 <= diff && diff <= 9) {
+			if (0 <= diff && diff <= 8) {
 				doneWithBestMove = TRUE;
 				int pathLength = -1;
 				PlaceId *path = HvGetShortestPathTo(hv, currHunter, DraculaLoc, &pathLength);
@@ -153,13 +153,13 @@ void decideHunterMove(HunterView hv) {
 					int numReturnedLocs = -1;
 					PlaceId *notByRail = HvWhereCanIGoByType(hv, true, false, true, &numReturnedLocs);
 					if (numReturnedLocs > 0) {
-						// PlaceId lowestRisk = doRandom(hv,currHunter, notByRail, numReturnedLocs);
-						PlaceId lowestRisk = lowestRiskForDracula(hv, notByRail, numReturnedLocs, hunterLocs, draculaAtSea);
+						PlaceId lowestRisk = doRandom(hv,currHunter, notByRail, numReturnedLocs);
+						// PlaceId lowestRisk = lowestRiskForDracula(hv, notByRail, numReturnedLocs, hunterLocs, draculaAtSea);
 						registerBestPlay(strdup(placeIdToAbbrev(lowestRisk)), "--Rail--");
 					// If no such exist, then go anythere reachable
 					} else {
-						// PlaceId lowestRisk = doRandom(hv,currHunter, notByRail, numReturnedLocs);
-						PlaceId lowestRisk = lowestRiskForDracula(hv, places, numLocs, hunterLocs, draculaAtSea);
+						PlaceId lowestRisk = doRandom(hv,currHunter, notByRail, numReturnedLocs);
+						// PlaceId lowestRisk = lowestRiskForDracula(hv, places, numLocs, hunterLocs, draculaAtSea);
 						registerBestPlay(strdup(placeIdToAbbrev(lowestRisk)), "--Reachable--");
 					}
 				}
@@ -205,8 +205,8 @@ void decideHunterMove(HunterView hv) {
 						}
 
 						if (i > 0) {
-							// PlaceId placeToGo = doRandom(hv,currHunter, neighbouringCity, i);
-							PlaceId placeToGo = lowestRiskForDracula(hv, neighbouringCity, i, hunterLocs, draculaAtSea);
+							PlaceId placeToGo = doRandom(hv,currHunter, neighbouringCity, i);
+							// PlaceId placeToGo = lowestRiskForDracula(hv, neighbouringCity, i, hunterLocs, draculaAtSea);
 
 							int pathLengthToNeighbouring = -1;
 							PlaceId *pathToNeighbouring = HvGetShortestPathTo(hv, currHunter, placeToGo, &pathLengthToNeighbouring);
@@ -225,12 +225,19 @@ void decideHunterMove(HunterView hv) {
 				}
 					
 			// If Dracula isn't there recently, do research
-			} else if (HvGetRound(hv) >= 6 && HvGetRound(hv) % 2 == 0) {
+			} else if (round >= 6) {
 				doneWithBestMove = TRUE;
 				registerBestPlay(strdup(placeIdToAbbrev(currLoc)), "Research");
 			}
 			return;
 		} 
+
+		// If Dracula doesn't appear at all, we rest
+		if (DraculaLoc == NOWHERE && round >= 6) {
+			doneWithBestMove = TRUE;
+			registerBestPlay(strdup(placeIdToAbbrev(currLoc)), "Research");
+			return;
+		}
 
 		/////////////////////////////////////////////////////////////////////////////
 		// ----------------When we don't know where is Dracula-------------------- //
@@ -265,7 +272,7 @@ void decideHunterMove(HunterView hv) {
 				// 	if (draculaAtSea) locRank[places[i]] += 1;
 				// }
 				for (int j = 0; j < numLocs; j++) {
-					if (places[j] == locationHistory[i]) locRank[places[j]] -= 8;
+					if (places[j] == locationHistory[i]) locRank[places[j]] -= 10;
 				}
 			}
 
@@ -349,30 +356,21 @@ PlaceId lowestRiskForDracula(HunterView hv, PlaceId *places, int numLocs, PlaceI
 	for (int i = 0; i < numLocs; i++) {
 		PlaceId location = places[i];
 		if (placeIdToType(location) == SEA && draculaAtSea) {
-			riskLevel[location] -= 2;											// Go through sea if dracula at sea
+			riskLevel[location] -= 23;											// Go through sea if dracula at sea
 		}
 		if (hasHuntersThere(hunterLocs, location)) riskLevel[location] += 4;	// Prevent go to other hunter
 		if (location == hunterLocs[HvGetPlayer(hv)]) riskLevel[location] += 4;	// Prevent staying
 	}
 
 	if (draculaAtSea) {
-		for (int i = 0; i < NUM_PORT_CITIES; i++) riskLevel[PortCities[i]] -= 1;
+		for (int i = 0; i < NUM_PORT_CITIES; i++) riskLevel[PortCities[i]] -= 2;
 	}
-
-	// Locations that are reachable by hunters
-	// // **Note that locations reachable by multiple hunters will have up to +12 Risk!
-	// for (int player = 0; player < NUM_PLAYERS - 1; player++) {
-	// 	int numReturnedLocs = -1;
-	// 	PlaceId *reachableByHunter = HvWhereCanTheyGo(hv, player, &numReturnedLocs);
-	// 	for (int i = 0; i < numReturnedLocs; i++) riskLevel[reachableByHunter[i]] += 1;
-	// }
 
 	// -----------------Doesn't want hunter to go back where they were or where other hunters are-------------
 	int numReturnedMoves;
 	bool canFree;
 	PlaceId *locationHistory = HvGetLocationHistory(hv, currHunter, &numReturnedMoves, &canFree);
 
-	// FIXME: Not sure if it works, no encounter 
 	for (int i = 0; i < MIN(numReturnedMoves, 3); i++) {
 		for (int j = 0; j < numLocs; j++) {
 			if (places[j] == locationHistory[i] && placeIdToType(places[j]) != SEA) riskLevel[locationHistory[i]] += 2;
