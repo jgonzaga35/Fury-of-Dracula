@@ -141,7 +141,7 @@ void decideHunterMove(HunterView hv) {
 					printf("Player %d meet dracula at %s %s\n", currHunter, placeIdToAbbrev(DraculaLoc), placeIdToName(DraculaLoc));
 				}
 
-				// If we can arrive where Dracula is right now in two move
+				// If we can arrive where Dracula is right now in two mov e
 				else if (pathLength == 2 && diff == 1) {
 					registerBestPlay(strdup(placeIdToAbbrev(path[0])), "--Drac--");
 				}	
