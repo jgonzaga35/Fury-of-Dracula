@@ -274,7 +274,7 @@ void decideDraculaMove(DraculaView dv)
 	}
 
 	// Don't backtrack at sea!
-	if (placeIsSea(currLoc)) for (int i = 1; i < 6 && i <= numPastLocs; i++) riskLevel[pastLocs[numPastLocs - i]] += 10;
+	if (placeIsSea(currLoc) || health <= 8) for (int i = 1; i < 6 && i <= numPastLocs; i++) riskLevel[pastLocs[numPastLocs - i]] += 10;
 
 	// Try to go to BLACK_SEA if at CONSTANTA.
 	if (currLoc == CONSTANTA) {
