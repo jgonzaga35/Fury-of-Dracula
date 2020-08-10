@@ -96,8 +96,17 @@ void decideHunterMove(HunterView hv) {
 		registerBestPlay(location, "--Start--");
 		return;
 	} else {
-		// for all other rounds
 
+		if(HvGetPlayer(hv) == PLAYER_DR_SEWARD) {
+			int pathL = -1;
+			PlaceId *path = HvGetShortestPathTo(hv, PLAYER_DR_SEWARD, CASTLE_DRACULA, &pathL);
+			if(pathL == 0) registerBestPlay(strdup(placeIdToAbbrev(CASTLE_DRACULA)), "");
+			else {
+				registerBestPlay(strdup(placeIdToAbbrev(path[0])), "");
+			}
+			return;
+		}
+		// for all other rounds
 		PlaceId reg0[] = 
 		{
 			ATLANTIC_OCEAN, GALWAY, EDINBURGH, NORTH_SEA, DUBLIN, LIVERPOOL, 
@@ -147,54 +156,53 @@ void decideHunterMove(HunterView hv) {
 
 		int draculaAtSea = FALSE;
 		if (placeIdToType(HvGetPlayerLocation(hv, PLAYER_DRACULA)) == SEA) draculaAtSea = TRUE;
-
 		/////////////////////////////////////////////////////////////////////////////
 		// ---------------------If Drac at sea >= 3 rounds------------------------ //
 		/////////////////////////////////////////////////////////////////////////////
-		if(round > 3) {
-			int maxHist = -1;
-			bool canFree;
-			PlaceId *history = HvGetLocationHistory(hv, PLAYER_DRACULA, &maxHist, &canFree);
-			char *moveTo = strdup(placeIdToAbbrev(HvGetPlayerLocation(hv, HvGetPlayer(hv))));
-			PlaceId city;
-			PlaceId *path;
-			int pathLength = -1;
+		// if(round > 3) {
+		// 	int maxHist = -1;
+		// 	bool canFree;
+		// 	PlaceId *history = HvGetLocationHistory(hv, PLAYER_DRACULA, &maxHist, &canFree);
+		// 	char *moveTo = strdup(placeIdToAbbrev(HvGetPlayerLocation(hv, HvGetPlayer(hv))));
+		// 	PlaceId city;
+		// 	PlaceId *path;
+		// 	int pathLength = -1;
 
-			if(atSeaSuccessive(history, maxHist) == 1) {
-				printf("The value of maxHist: %d\n", maxHist);
-				printf("The value of MoveTo is: %s %s\n", moveTo, placeIdToName(placeAbbrevToId(moveTo)));
-				printf("The current lcoatin is : %d %s %s\n", currLoc, placeIdToAbbrev(currLoc), placeIdToName(currLoc));
-				switch(currHunter) {
-					case PLAYER_LORD_GODALMING:
-						city = chooseRandCityInReg(reg0, SIZE_OF_PORT0);
-						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
-						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
-						break;
-					case PLAYER_DR_SEWARD:
-						city = chooseRandCityInReg(reg1, SIZE_OF_PORT1);
-						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
-						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
-						break;
-					case PLAYER_VAN_HELSING:
-						city = chooseRandCityInReg(reg2, SIZE_OF_PORT2);
-						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
-						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
-						break;
-					case PLAYER_MINA_HARKER:
-						city = chooseRandCityInReg(reg3, SIZE_OF_PORT3);
-						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
-						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
-						break;
-					default:
-						break;
-				}
-				if((MIN_REAL_PLACE < placeAbbrevToId(moveTo) && placeAbbrevToId(moveTo) < MAX_REAL_PLACE) 
-					&&  placeAbbrevToId(moveTo) != currLoc) {
-					registerBestPlay(moveTo, "port");
-					return;
-				}
-			}
-		}
+		// 	if(atSeaSuccessive(history, maxHist) == 1) {
+		// 		printf("The value of maxHist: %d\n", maxHist);
+		// 		printf("The value of MoveTo is: %s %s\n", moveTo, placeIdToName(placeAbbrevToId(moveTo)));
+		// 		printf("The current lcoatin is : %d %s %s\n", currLoc, placeIdToAbbrev(currLoc), placeIdToName(currLoc));
+		// 		switch(currHunter) {
+		// 			case PLAYER_LORD_GODALMING:
+		// 				city = chooseRandCityInReg(reg0, SIZE_OF_PORT0);
+		// 				path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
+		// 				if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
+		// 				break;
+		// 			case PLAYER_DR_SEWARD:
+		// 				city = chooseRandCityInReg(reg1, SIZE_OF_PORT1);
+		// 				path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
+		// 				if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
+		// 				break;
+		// 			case PLAYER_VAN_HELSING:
+		// 				city = chooseRandCityInReg(reg2, SIZE_OF_PORT2);
+		// 				path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
+		// 				if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
+		// 				break;
+		// 			case PLAYER_MINA_HARKER:
+		// 				city = chooseRandCityInReg(reg3, SIZE_OF_PORT3);
+		// 				path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
+		// 				if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
+		// 				break;
+		// 			default:
+		// 				break;
+		// 		}
+		// 		if((MIN_REAL_PLACE < placeAbbrevToId(moveTo) && placeAbbrevToId(moveTo) < MAX_REAL_PLACE) 
+		// 			&&  placeAbbrevToId(moveTo) != currLoc) {
+		// 			registerBestPlay(moveTo, "port");
+		// 			return;
+		// 		}
+		// 	}
+		// }
 
 		/////////////////////////////////////////////////////////////////////////////
 		// --------------------When we know where is Dracula---------------------- //
@@ -294,7 +302,56 @@ void decideHunterMove(HunterView hv) {
 							registerBestPlay(strdup(placeIdToAbbrev(path[0])), "--Drac--");
 						}
 					} else {
-						registerBestPlay(strdup(placeIdToAbbrev(currLoc)), "--Rest--");
+						if (round % MAX_REAL_PLACE < 10) {
+							registerBestPlay(strdup(placeIdToAbbrev(currLoc)), "--Rest--");
+						} else if(round > 3) {
+							int maxHist = -1;
+							bool canFree;
+							PlaceId *history = HvGetLocationHistory(hv, PLAYER_DRACULA, &maxHist, &canFree);
+							char *moveTo = strdup(placeIdToAbbrev(HvGetPlayerLocation(hv, HvGetPlayer(hv))));
+							PlaceId city;
+							PlaceId *path;
+							int pathLength = -1;
+
+							if(atSeaSuccessive(history, maxHist) == 1) {
+								printf("The value of maxHist: %d\n", maxHist);
+								printf("The value of MoveTo is: %s %s\n", moveTo, placeIdToName(placeAbbrevToId(moveTo)));
+								printf("The current lcoatin is : %d %s %s\n", currLoc, placeIdToAbbrev(currLoc), placeIdToName(currLoc));
+								switch(currHunter) {
+									case PLAYER_LORD_GODALMING:
+										city = chooseRandCityInReg(reg0, SIZE_OF_PORT0);
+										city = LIVERPOOL;
+										path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
+										if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
+										break;
+									case PLAYER_DR_SEWARD:
+										city = chooseRandCityInReg(reg1, SIZE_OF_PORT1);
+										city = KLAUSENBURG;
+										path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
+										if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
+										break;
+									case PLAYER_VAN_HELSING:
+										city = chooseRandCityInReg(reg2, SIZE_OF_PORT2);
+										city = AMSTERDAM;
+										path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
+										if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
+										break;
+									case PLAYER_MINA_HARKER:
+										city = chooseRandCityInReg(reg3, SIZE_OF_PORT3);
+										city = CADIZ;
+										path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
+										if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
+										break;
+									default:
+										break;
+								}
+								if((MIN_REAL_PLACE < placeAbbrevToId(moveTo) && placeAbbrevToId(moveTo) < MAX_REAL_PLACE) 
+									&&  placeAbbrevToId(moveTo) != currLoc) {
+									registerBestPlay(moveTo, "port");
+									return;
+								}
+							}
+						}	
 					}
 				}
 					
