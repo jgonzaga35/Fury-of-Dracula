@@ -129,15 +129,16 @@ void decideDraculaMove(DraculaView dv)
 	// --------------ASSIGNING RISK LEVELS TO EACH LOCATION---------- //
 	////////////////////////////////////////////////////////////////////
 
-	////////////////////////////////////////////////////////////////////
-	// -------------LOCATIONS REACHABLE BY HUNTERS------------------- //
-	////////////////////////////////////////////////////////////////////
-
 	int hunterRisk[4];
 	for (int player = PLAYER_LORD_GODALMING; player < PLAYER_DRACULA; player++) {
+		// If Dracula is very healthy: Hunters have a risk value of maximum 3.
 		if (health >= 60) hunterRisk[player] = DvGetHealth(dv, player) - 6; 
-		else hunterRisk[player] = DvGetHealth(dv, player) - 4;
-		if (health < 10) hunterRisk[player] = 16;
+
+		// Usually hunters have a risk value of maximum 6.
+		else hunterRisk[player] = DvGetHealth(dv, player) - 3;
+
+		// If low on health, hunters have a risk value of 30.
+		if (health < 20) hunterRisk[player] = 30;
 	}
 
 	Map m = MapNew();	
@@ -179,9 +180,6 @@ void decideDraculaMove(DraculaView dv)
 		}
 	}
 	MapFree(m);
-	/////////////////////////////////////////////////////////////////////////
-	// --------------LOCATIONS WITH TRAPS OR VAMPIRES PLACED-------------- //
-	/////////////////////////////////////////////////////////////////////////
 
 	// Avoid vampires
 	riskLevel[DvGetVampireLocation(dv)] += 1;
@@ -202,10 +200,6 @@ void decideDraculaMove(DraculaView dv)
 
 	// Don't backtrack at CD!
 	if (iAmNearCD(currLoc)) for (int i = 1; i <= numPastLocs && i < 6; i++) riskLevel[pastLocs[numPastLocs - i]] += 20;
-	
-	//////////////////////////////////////////////////////////////////////////
-	// -------------LOCATIONS CONNECTED TO THE SEA------------------------- //
-	//////////////////////////////////////////////////////////////////////////
 
 	// If low on health, do not go to Seas. 
 	// Else prefer to not travel by sea to avoid wasting health.
@@ -376,8 +370,6 @@ void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]) {
 	riskLevel[SOFIA] -= 2;
 	riskLevel[CONSTANTA] -= 2;
 	riskLevel[ZAGREB] -= 3;
-	riskLevel[SARAJEVO] -= 0;
-	riskLevel[VIENNA] -= 0;
 	riskLevel[VARNA] -= 1;
 	riskLevel[PRAGUE] -= 2;
 	return;
