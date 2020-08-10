@@ -308,9 +308,9 @@ void decideDraculaMove(DraculaView dv)
 		}
 	}	
 
-	for (int i = 0; i < numValidMoves; i++) {
-		printf("validMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLoc(pastLocs, validMoves[i], &numPastLocs)), riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)]);
-	}
+	// for (int i = 0; i < numValidMoves; i++) {
+	// 	printf("validMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLoc(pastLocs, validMoves[i], &numPastLocs)), riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)]);
+	// }
 	// If there are no low risk moves pick a random valid move.
 	if (lowRiskNum == 0) {
 		// strcpy(play, placeIdToAbbrev(validMoves[0]));
