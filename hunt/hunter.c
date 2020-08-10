@@ -28,8 +28,33 @@
 #define SIZE_OF_REG2		19
 #define SIZE_OF_REG3		14
 
+#define SIZE_OF_PORT0		8
+#define SIZE_OF_PORT1		11
+#define SIZE_OF_PORT2		12
+#define SIZE_OF_PORT3		10
+
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
+static PlaceId portReg0[] = {
+	LIVERPOOL, MANCHESTER, LONDON, PLYMOUTH, 
+	SWANSEA, EDINBURGH, LE_HAVRE, ENGLISH_CHANNEL
+};
+
+static PlaceId portReg1[] = {
+	KLAUSENBURG, CASTLE_DRACULA, GALWAY, CONSTANTA, VALONA, 
+	SARAJEVO, BELGRADE, SOFIA, BUCHAREST, VARNA, SALONICA
+};
+
+static PlaceId portReg2[] = {
+	AMSTERDAM, HAMBURG, BERLIN, COLOGNE, BRUSSELS, FRANKFURT, 
+	LEIPZIG, STRASBOURG, NUREMBURG, PRAGUE, PARIS, NUREMBURG
+};
+
+static PlaceId portReg3[] = {
+	CADIZ, LISBON, MADRID, GRANADA, ALICANTE, SANTANDER, 
+	SARAGOSSA, BARCELONA, BORDEAUX, TOULOUSE
+};
 
 // Helper functions
 PlaceId doRandom(HunterView hv, Player hunter, PlaceId *places, int numLocs);
@@ -41,6 +66,7 @@ bool isCountry(PlaceId country[], PlaceId location, int size);
 PlaceId neighbourCities(HunterView hv, PlaceId DraculaLoc, Player currHunter, PlaceId hunterLocs[4]);
 int isThereCDInReachable(PlaceId *places, int numLocs);
 int isPlayMinaDr(Player currHunter);
+PlaceId chooseRandCityInReg(PlaceId *reg, int maxReg, Player hunter);
 
 void decideHunterMove(HunterView hv) {
 	Round round = HvGetRound(hv);
@@ -120,6 +146,49 @@ void decideHunterMove(HunterView hv) {
 
 		int draculaAtSea = FALSE;
 		if (placeIdToType(HvGetPlayerLocation(hv, PLAYER_DRACULA)) == SEA) draculaAtSea = TRUE;
+
+		/////////////////////////////////////////////////////////////////////////////
+		// ---------------------If Drac at sea >= 3 rounds------------------------ //
+		/////////////////////////////////////////////////////////////////////////////
+		if(round > 3) {
+			int maxHist = -1;
+			PlaceId *history = HvGetLocationHistory(hv, currHunter, &maxHist, false);
+			char *moveTo = strdup(placeIdToAbbrev(currLoc));
+			PlaceId city;
+			PlaceId *path;
+			int pathLength = -1;
+
+			if(placeIdToType(history[0]) == SEA && placeIdToType(history[1]) == SEA &&
+			   placeIdToType(history[2]) == SEA) {
+				switch(currHunter) {
+					case PLAYER_LORD_GODALMING:
+						city = chooseRandCityInReg(reg0, SIZE_OF_PORT0, currHunter);
+						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
+						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
+						break;
+					case PLAYER_DR_SEWARD:
+						city = chooseRandCityInReg(reg1, SIZE_OF_PORT1, currHunter);
+						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
+						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
+						break;
+					case PLAYER_VAN_HELSING:
+						city = chooseRandCityInReg(reg2, SIZE_OF_PORT2, currHunter);
+						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
+						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
+						break;
+					case PLAYER_MINA_HARKER:
+						city = chooseRandCityInReg(reg3, SIZE_OF_PORT3, currHunter);
+						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
+						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
+						break;
+					default:
+						break;
+				}
+				registerBestPlay(moveTo, "port");
+				return;
+			}
+		}
+
 
 		/////////////////////////////////////////////////////////////////////////////
 		// --------------------When we know where is Dracula---------------------- //
@@ -416,4 +485,9 @@ int isThereCDInReachable(PlaceId *places, int numLocs) {
 // Return whether the current hunter is Mina and Dr Seward
 int isPlayMinaDr(Player currHunter) {
 	return (currHunter == PLAYER_MINA_HARKER || currHunter == PLAYER_DR_SEWARD);
+}
+
+PlaceId chooseRandCityInReg(PlaceId *reg, int maxReg, Player hunter) {
+	srand(time(0));
+	return reg[rand() % maxReg];
 }
