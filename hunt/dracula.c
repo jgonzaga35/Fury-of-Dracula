@@ -286,7 +286,7 @@ void decideDraculaMove(DraculaView dv)
 	}
 
 	// Use the loop strategy if possible...
-	if (health >= 16) if (LoopStrat(pastLocs, validMoves, numValidMoves, numPastLocs, hunterLocs)) return;
+	if (health >= 22) if (LoopStrat(pastLocs, validMoves, numValidMoves, numPastLocs, hunterLocs)) return;
 	
 	// Conditions for prioritising castle dracula
 	if (huntersNearCD(hunterLocs) <= 1) prioritiseCastleDrac(riskLevel, hunterLocs);
