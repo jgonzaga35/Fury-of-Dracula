@@ -66,7 +66,8 @@ bool isCountry(PlaceId country[], PlaceId location, int size);
 PlaceId neighbourCities(HunterView hv, PlaceId DraculaLoc, Player currHunter, PlaceId hunterLocs[4]);
 int isThereCDInReachable(PlaceId *places, int numLocs);
 int isPlayMinaDr(Player currHunter);
-PlaceId chooseRandCityInReg(PlaceId *reg, int maxReg, Player hunter);
+PlaceId chooseRandCityInReg(PlaceId *reg, int maxReg);
+int atSeaSuccessive(PlaceId *history, int maxHist);
 
 void decideHunterMove(HunterView hv) {
 	Round round = HvGetRound(hv);
@@ -152,32 +153,32 @@ void decideHunterMove(HunterView hv) {
 		/////////////////////////////////////////////////////////////////////////////
 		if(round > 3) {
 			int maxHist = -1;
-			PlaceId *history = HvGetLocationHistory(hv, currHunter, &maxHist, false);
+			bool canFree;
+			PlaceId *history = HvGetLocationHistory(hv, PLAYER_DRACULA, &maxHist, &canFree);
 			char *moveTo = strdup(placeIdToAbbrev(currLoc));
 			PlaceId city;
 			PlaceId *path;
 			int pathLength = -1;
 
-			if(placeIdToType(history[0]) == SEA && placeIdToType(history[1]) == SEA &&
-			   placeIdToType(history[2]) == SEA) {
+			if(atSeaSuccessive(history, maxHist)) {
 				switch(currHunter) {
 					case PLAYER_LORD_GODALMING:
-						city = chooseRandCityInReg(reg0, SIZE_OF_PORT0, currHunter);
+						city = chooseRandCityInReg(reg0, SIZE_OF_PORT0);
 						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
 						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
 						break;
 					case PLAYER_DR_SEWARD:
-						city = chooseRandCityInReg(reg1, SIZE_OF_PORT1, currHunter);
+						city = chooseRandCityInReg(reg1, SIZE_OF_PORT1);
 						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
 						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
 						break;
 					case PLAYER_VAN_HELSING:
-						city = chooseRandCityInReg(reg2, SIZE_OF_PORT2, currHunter);
+						city = chooseRandCityInReg(reg2, SIZE_OF_PORT2);
 						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
 						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
 						break;
 					case PLAYER_MINA_HARKER:
-						city = chooseRandCityInReg(reg3, SIZE_OF_PORT3, currHunter);
+						city = chooseRandCityInReg(reg3, SIZE_OF_PORT3);
 						path = HvGetShortestPathTo(hv, currHunter, city, &pathLength);
 						if(pathLength > 0) moveTo = strdup(placeIdToAbbrev(path[0]));
 						break;
@@ -487,7 +488,19 @@ int isPlayMinaDr(Player currHunter) {
 	return (currHunter == PLAYER_MINA_HARKER || currHunter == PLAYER_DR_SEWARD);
 }
 
-PlaceId chooseRandCityInReg(PlaceId *reg, int maxReg, Player hunter) {
+// chooes a random city in an array
+PlaceId chooseRandCityInReg(PlaceId *reg, int maxReg) {
 	srand(time(0));
 	return reg[rand() % maxReg];
+}
+
+// looks at the history array and returns 1 if the player was at sea 3 rounds in
+// a row, in the past 10 moves
+int atSeaSuccessive(PlaceId *history, int maxHist) {
+	int flag = 0;
+	for(int i = 0; i + 3 <= 10 && i + 3 <= maxHist ; i ++) {
+		if(placeIdToType(history[i]) == SEA && placeIdToType(history[i + 1]) == SEA &&
+		placeIdToType(history[i + 1] == SEA)) return 1;
+	}
+	return 0;
 }
