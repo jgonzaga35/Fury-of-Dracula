@@ -783,6 +783,14 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		}
 	}
 	if (pastLocs[numPastLocs - 1] == BUDAPEST) {
+		for (int player = 0; player < 4; player++) {
+			if (hunterLocs[player] == KLAUSENBURG) {
+				if (isValid("ZA", validMoves, numValidMoves)) {
+					registerBestPlay("ZA", "liam neesons");
+					return true;
+				}
+			}
+		}
 		if (isValid("KL", validMoves, numValidMoves)) {
 			if (huntersNearCD(hunterLocs) >= 2) {
 				return false;
