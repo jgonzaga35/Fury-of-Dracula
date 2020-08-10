@@ -150,17 +150,17 @@ void decideDraculaMove(DraculaView dv)
 		}
 		// Locations reachable by road
 		PlaceId *riskyLocsRoad = DvWhereCanTheyGoByType(dv, player, true, false, false, &numRiskyLocs);
-		for (int i = 0; i < numRiskyLocs; i++) if (placeIsLand(riskyLocsRoad[i])) riskLevel[riskyLocsRoad[i]] += hunterRisk[player];
+		for (int i = 0; i < numRiskyLocs; i++) if (placeIsLand(riskyLocsRoad[i])) riskLevel[riskyLocsRoad[i]] += hunterRisk[player] + 10;
 		
 		// Locations reachable by rail
 		PlaceId *riskyLocsRail = DvWhereCanTheyGoByType(dv, player, false, true, false, &numRiskyLocs);
-		for (int i = 0; i < numRiskyLocs; i++) if (placeIsLand(riskyLocsRail[i])) riskLevel[riskyLocsRail[i]] += hunterRisk[player] + 1;
+		for (int i = 0; i < numRiskyLocs; i++) if (placeIsLand(riskyLocsRail[i])) riskLevel[riskyLocsRail[i]] += hunterRisk[player] + 10;
 
 		// Locations reachable by sea
 		PlaceId *riskyLocsSea = DvWhereCanTheyGoByType(dv, player, false, false, true, &numRiskyLocs);
-		for (int i = 0; i < numRiskyLocs; i++) if (placeIsLand(riskyLocsSea[i])) riskLevel[riskyLocsSea[i]] += hunterRisk[player];
+		for (int i = 0; i < numRiskyLocs; i++) if (placeIsLand(riskyLocsSea[i])) riskLevel[riskyLocsSea[i]] += hunterRisk[player] + 10;
 
-		// Risky Locs in general
+		// // Risky Locs in general
 		PlaceId *riskyLocs = DvWhereCanTheyGo(dv, player, &numRiskyLocs);
 		int numMyLocs = 0;
 		PlaceId *myLocs = DvWhereCanIGoByType(dv, true, false, &numMyLocs);
@@ -203,25 +203,25 @@ void decideDraculaMove(DraculaView dv)
 
 	// If low on health, do not go to Seas. 
 	// Else prefer to not travel by sea to avoid wasting health.
-	if (health <= 20) for (int i = 0; i < SIZE_OF_SEAS; i++) riskLevel[seas[i]] += 15;
+	if (health <= 20) for (int i = 0; i < SIZE_OF_SEAS; i++) riskLevel[seas[i]] += 20;
 	else for (int i = 0; i < SIZE_OF_SEAS; i++) riskLevel[seas[i]] += 1;
 
 	// Do not go to Port cities - decrease chance of being forced out to sea.
-	if (isPortCity(currLoc)) {
+	if (isPortCity(currLoc) && health < 30) {
 		for (int i = 1; i <= numPastLocs && i < 6; i++) riskLevel[pastLocs[numPastLocs - i]] += 1;
 	}
 
-	// Special Case: Prioritise Budapest over Zagreb if in Vienna and there are not many hunters near CD.
-	if (huntersNearCD(hunterLocs) <= 1 && currLoc == VIENNA) {
-		riskLevel[ZAGREB] += 2;
-		riskLevel[BUDAPEST] -= 1;
-	}
+	// // Special Case: Prioritise Budapest over Zagreb if in Vienna and there are not many hunters near CD.
+	// if (huntersNearCD(hunterLocs) <= 1 && currLoc == VIENNA) {
+	// 	riskLevel[ZAGREB] += 2;
+	// 	riskLevel[BUDAPEST] -= 1;
+	// }
 
-	// Prefer to choose Alicante over Barcelona if in MEDITERRANEAN SEA.
-	if (currLoc == MEDITERRANEAN_SEA) {
-		riskLevel[BARCELONA] += 2;
-		riskLevel[ALICANTE] -= 2;
-	}
+	// // Prefer to choose Alicante over Barcelona if in MEDITERRANEAN SEA.
+	// if (currLoc == MEDITERRANEAN_SEA) {
+	// 	riskLevel[BARCELONA] += 2;
+	// 	riskLevel[ALICANTE] -= 2;
+	// }
 
 	// Port Cities are more risky if hunters are at sea.
 	for (int i = 0; i < 4; i++) if (placeIsSea(hunterLocs[i])) {
@@ -241,7 +241,7 @@ void decideDraculaMove(DraculaView dv)
 		for (int i = 0; i < NUM_PORT_CITIES; i++) riskLevel[PortCities[i]] -= 14;
 		if (health > 6) {
 			riskLevel[BLACK_SEA] -= 15;
-			riskLevel[ADRIATIC_SEA] -= 15;
+			riskLevel[ADRIATIC_SEA] -= 5;
 		}
 	}
 
@@ -274,7 +274,7 @@ void decideDraculaMove(DraculaView dv)
 	}
 
 	// Don't backtrack at sea!
-	if (placeIsSea(currLoc)) for (int i = 1; i < 6 && i <= numPastLocs; i++) riskLevel[pastLocs[numPastLocs - i]] += 10;
+	if (placeIsSea(currLoc) || health <= 8) for (int i = 1; i < 6 && i <= numPastLocs; i++) riskLevel[pastLocs[numPastLocs - i]] += 10;
 
 	// Try to go to BLACK_SEA if at CONSTANTA.
 	if (currLoc == CONSTANTA) {
@@ -306,6 +306,9 @@ void decideDraculaMove(DraculaView dv)
 		}
 	}	
 
+	// for (int i = 0; i < numValidMoves; i++) {
+	// 	printf("validMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLoc(pastLocs, validMoves[i], &numPastLocs)), riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)]);
+	// }
 	// If there are no low risk moves pick a random valid move.
 	if (lowRiskNum == 0) {
 		// strcpy(play, placeIdToAbbrev(validMoves[0]));
@@ -360,7 +363,7 @@ void getHunterLocs(DraculaView dv, PlaceId hunterLocs[]) {
 }
 
 void prioritiseCastleDrac(int riskLevel[], PlaceId hunterLocs[]) {
-	riskLevel[CASTLE_DRACULA] = -10;
+	riskLevel[CASTLE_DRACULA] = -50;
 	riskLevel[GALATZ] = -5;
 	riskLevel[BUDAPEST] -= 2;
 	riskLevel[KLAUSENBURG] -= 5;
