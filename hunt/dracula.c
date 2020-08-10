@@ -647,8 +647,18 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 	if (pastLocs[numPastLocs - 1] == BERLIN) {
 		if (isValid("PR", validMoves, numValidMoves)) {
 			if (huntersNearCD(hunterLocs) >= 2) {
-				registerBestPlay("LI", "liam neesons");
-				return true;
+				for (int player = 0; player < 4; player++) {
+					if (hunterLocs[player] == PRAGUE ||
+						hunterLocs[player] == VIENNA ||
+						hunterLocs[player] == ZAGREB ||
+						hunterLocs[player] == MUNICH ||
+						hunterLocs[player] == NUREMBURG ||
+						hunterLocs[player] == BUDAPEST ||
+						hunterLocs[player] == KLAUSENBURG) {
+							registerBestPlay("LI", "liam neesons");
+							return true;
+					}
+				}
 			}
 			registerBestPlay("PR", "liam neesons");
 			return true;
@@ -773,6 +783,14 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 		}
 	}
 	if (pastLocs[numPastLocs - 1] == BUDAPEST) {
+		for (int player = 0; player < 4; player++) {
+			if (hunterLocs[player] == KLAUSENBURG) {
+				if (isValid("ZA", validMoves, numValidMoves)) {
+					registerBestPlay("ZA", "liam neesons");
+					return true;
+				}
+			}
+		}
 		if (isValid("KL", validMoves, numValidMoves)) {
 			if (huntersNearCD(hunterLocs) >= 2) {
 				return false;
