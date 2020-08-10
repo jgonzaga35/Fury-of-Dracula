@@ -28,8 +28,33 @@
 #define SIZE_OF_REG2		19
 #define SIZE_OF_REG3		14
 
+#define SIZE_OF_PORT0		8
+#define SIZE_OF_PORT1		11
+#define SIZE_OF_PORT2		12
+#define SIZE_OF_PORT3		10
+
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #define MIN(x, y) (((x) < (y)) ? (x) : (y))
+
+static PlaceId portReg0[] = {
+	LIVERPOOL, MANCHESTER, LONDON, PLYMOUTH, 
+	SWANSEA, EDINBURGH, LE_HAVRE, ENGLISH_CHANNEL
+};
+
+static PlaceId portReg1[] = {
+	KLAUSENBURG, CASTLE_DRACULA, GALWAY, CONSTANTA, VALONA, 
+	SARAJEVO, BELGRADE, SOFIA, BUCHAREST, VARNA, SALONICA
+};
+
+static PlaceId portReg2[] = {
+	AMSTERDAM, HAMBURG, BERLIN, COLOGNE, BRUSSELS, FRANKFURT, 
+	LEIPZIG, STRASBOURG, NUREMBURG, PRAGUE, PARIS, NUREMBURG
+};
+
+static PlaceId portReg3[] = {
+	CADIZ, LISBON, MADRID, GRANADA, ALICANTE, SANTANDER, 
+	SARAGOSSA, BARCELONA, BORDEAUX, TOULOUSE
+};
 
 // Helper functions
 PlaceId doRandom(HunterView hv, Player hunter, PlaceId *places, int numLocs);
