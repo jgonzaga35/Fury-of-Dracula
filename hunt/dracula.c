@@ -308,9 +308,9 @@ void decideDraculaMove(DraculaView dv)
 		}
 	}	
 
-	// for (int i = 0; i < numValidMoves; i++) {
-	// 	printf("validMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLoc(pastLocs, validMoves[i], &numPastLocs)), riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)]);
-	// }
+	for (int i = 0; i < numValidMoves; i++) {
+		printf("validMoves[%d] is %s with risk %d\n", i, placeIdToName(MoveToLoc(pastLocs, validMoves[i], &numPastLocs)), riskLevel[MoveToLoc(pastLocs, validMoves[i], &numPastLocs)]);
+	}
 	// If there are no low risk moves pick a random valid move.
 	if (lowRiskNum == 0) {
 		// strcpy(play, placeIdToAbbrev(validMoves[0]));
@@ -647,8 +647,18 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 	if (pastLocs[numPastLocs - 1] == BERLIN) {
 		if (isValid("PR", validMoves, numValidMoves)) {
 			if (huntersNearCD(hunterLocs) >= 2) {
-				registerBestPlay("LI", "liam neesons");
-				return true;
+				for (int player = 0; player < 4; player++) {
+					if (hunterLocs[player] == PRAGUE ||
+						hunterLocs[player] == VIENNA ||
+						hunterLocs[player] == ZAGREB ||
+						hunterLocs[player] == MUNICH ||
+						hunterLocs[player] == NUREMBURG ||
+						hunterLocs[player] == BUDAPEST ||
+						hunterLocs[player] == KLAUSENBURG) {
+							registerBestPlay("LI", "liam neesons");
+							return true;
+					}
+				}
 			}
 			registerBestPlay("PR", "liam neesons");
 			return true;
