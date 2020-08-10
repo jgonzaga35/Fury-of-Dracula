@@ -204,7 +204,9 @@ void decideDraculaMove(DraculaView dv)
 	// If low on health, do not go to Seas. 
 	// Else prefer to not travel by sea to avoid wasting health.
 	if (health <= 20) for (int i = 0; i < SIZE_OF_SEAS; i++) riskLevel[seas[i]] += 20;
+	if (health <= 16) for (int i = 0; i < SIZE_OF_SEAS; i++) riskLevel[seas[i]] += 30;
 	else for (int i = 0; i < SIZE_OF_SEAS; i++) riskLevel[seas[i]] += 1;
+	if (health <= 6) for (int i = 0; i < SIZE_OF_SEAS; i++) riskLevel[seas[i]] += 300;
 
 	// Do not go to Port cities - decrease chance of being forced out to sea.
 	if (isPortCity(currLoc) && health < 30) {
@@ -502,12 +504,26 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 				return true;
 			}
 		}
+		for (int player = 0; player < 4; player++) {
+			if (hunterLocs[player] == MADRID || hunterLocs[player] == LISBON) {
+				if (isValid("BO", validMoves, numValidMoves)) {
+					registerBestPlay("BO", "liam neesons");
+					return true;
+				}
+			}
+		}
 		if (isValid("MA", validMoves, numValidMoves)) {
 			registerBestPlay("MA", "liam neesons");
 			return true;
 		}
 	} 	
-	if (pastLocs[numPastLocs - 1] ==BARCELONA) {
+	if (pastLocs[numPastLocs - 1] == BORDEAUX) {
+		if (isValid("BB", validMoves, numValidMoves)) {
+			registerBestPlay("BB", "liam neesons");
+			return true;
+		}
+	} 
+	if (pastLocs[numPastLocs - 1] == BARCELONA) {
 		if (isValid("MS", validMoves, numValidMoves)) {
 			registerBestPlay("MS", "liam neesons");
 			return true;
