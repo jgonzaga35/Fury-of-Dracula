@@ -160,6 +160,7 @@ void decideHunterMove(HunterView hv) {
 			PlaceId *path;
 			int pathLength = -1;
 
+			printf("move to is %s\n", moveTo);
 			if(atSeaSuccessive(history, maxHist)) {
 				printf("The value of maxHist: %d\n", maxHist);
 				switch(currHunter) {
@@ -186,7 +187,8 @@ void decideHunterMove(HunterView hv) {
 					default:
 						break;
 				}
-				if(moveTo != placeIdToAbbrev(HvGetPlayerLocation(hv, HvGetPlayer(hv)))) {
+				printf("move to is %s\n", moveTo);
+				if(placeIdToName(placeAbbrevToId(moveTo)) != placeIdToName(currLoc)) {
 					registerBestPlay(moveTo, "port");
 					return;
 				}
@@ -501,7 +503,7 @@ PlaceId chooseRandCityInReg(PlaceId *reg, int maxReg) {
 // a row, in the past 10 moves
 int atSeaSuccessive(PlaceId *history, int maxHist) {
 	int flag = 0;
-	for(int i = 0; i + 3 <= 10 && i + 3 <= maxHist ; i ++) {
+	for(int i = 0; i + 3 <= 10 && i + 3 <= maxHist ; i++) {
 		if(placeIdToType(history[i]) == SEA && placeIdToType(history[i + 1]) == SEA &&
 		placeIdToType(history[i + 1] == SEA)) return 1;
 	}
