@@ -500,7 +500,14 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 					}
 				}
 			}
-			if (isValid("BA", validMoves, numValidMoves)) {
+			bool canGo = false;
+			for (int player = 0; player < 4; player++) {
+				if (hunterLocs[player] == BARCELONA) {
+					canGo = true;
+					break;
+				}
+			}
+			if (canGo && isValid("BA", validMoves, numValidMoves)) {
 				registerBestPlay("BA", "liam neesons");
 				return true;
 			}
