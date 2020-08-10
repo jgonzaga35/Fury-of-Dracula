@@ -148,6 +148,7 @@ void decideHunterMove(HunterView hv) {
 
 				// If we are get the place where Dracula was in the last round, simply go to a neighbour that's the lowest risk for dracula
 				else if (pathLength == 0 && diff == 2) {
+					//TODO: in here, shouldn't consider history coz Dracual can be where hunter is
 					// Shouldn't go by rail, might go too far, since we are only one city away
 					int numReturnedLocs = -1;
 					PlaceId *notByRail = HvWhereCanIGoByType(hv, true, false, true, &numReturnedLocs);
@@ -189,6 +190,7 @@ void decideHunterMove(HunterView hv) {
 				
 				// In all other sitution, go to the neighbouring cities of where dracula was
 				else {
+					//TODO: need to deal with the situation when dracula is at sea
 					if (currHunterHealth > 3 || (diff == 3 && pathLength == 1)) {
 						// Get the neighbouring cities of where dracula is in an array
 						Map m = MapNew();	
