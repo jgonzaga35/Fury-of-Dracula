@@ -21,7 +21,7 @@
 
 #define NUM_PORT_CITIES 28
 #define SIZE_OF_ENGLAND 7
-#define SIZE_OF_SPAIN 10
+#define SIZE_OF_SPAIN 11
 #define SIZE_OF_ITALY 7
 #define SIZE_OF_FRANCE 8
 #define SIZE_OF_CENTRAL_EUROPE 12
@@ -107,8 +107,10 @@ void decideDraculaMove(DraculaView dv)
 		return;
 	}
 
-	riskLevel[VALONA] = riskLevel[ATHENS] = riskLevel[SALONICA] = 20;
-
+	riskLevel[VALONA] = riskLevel[ATHENS] = riskLevel[SALONICA] = riskLevel[COLOGNE] = 20;
+	if (pastLocs[numPastLocs - 1] == KLAUSENBURG && isValid("CD", validMoves, numValidMoves)) {
+		riskLevel[GALATZ] += 100;
+	}
 	// Go to Castle Dracula if it is safe.
 	if (shouldIGoToCastleDrac(pastLocs, validMoves, numPastLocs, numValidMoves, 1, hunterLocs)) {
 		return;
@@ -273,11 +275,7 @@ void decideDraculaMove(DraculaView dv)
 		}
 	}
 	// Should I Loop around the MAP???
-	if (health >= 12) {
-		if (LoopStrat(pastLocs, validMoves, numValidMoves, numPastLocs, hunterLocs)) {
-			return;
-		}
-	}
+	if (LoopStrat(pastLocs, validMoves, numValidMoves, numPastLocs, hunterLocs)) return;
 	
 	if (huntersNearCD(hunterLocs) <= 1) prioritiseCastleDrac(riskLevel, hunterLocs);
 	if (huntersNearCD(hunterLocs) <= 2 && health >= 60) prioritiseCastleDrac(riskLevel, hunterLocs);
@@ -604,6 +602,14 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 	} 
 	if (pastLocs[numPastLocs - 1] == SARAGOSSA) {
 		if ((huntersInCountry(Spain, hunterLocs, SIZE_OF_SPAIN) + huntersInCountry(France, hunterLocs, SIZE_OF_FRANCE)) > 1) {
+			for (int player = 0; player < 4; player++) {
+				if (hunterLocs[player] == TOULOUSE || hunterLocs[player] == MEDITERRANEAN_SEA) {
+					if (isValid("SN", validMoves, numValidMoves)) {
+						registerBestPlay("SN", "liam neesons");
+						return true;
+					}
+				}
+			}
 			if (isValid("BA", validMoves, numValidMoves)) {
 				registerBestPlay("BA", "liam neesons");
 				return true;
