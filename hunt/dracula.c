@@ -505,7 +505,7 @@ bool LoopStrat(PlaceId *pastLocs, PlaceId *validMoves, int numValidMoves, int nu
 			}
 		}
 		for (int player = 0; player < 4; player++) {
-			if (hunterLocs[player] == MADRID || hunterLocs[player] == LISBON) {
+			if (hunterLocs[player] == MADRID || hunterLocs[player] == LISBON || hunterLocs[player] == BARCELONA) {
 				if (isValid("BO", validMoves, numValidMoves)) {
 					registerBestPlay("BO", "liam neesons");
 					return true;
